@@ -1,0 +1,21 @@
+# 环境变量文件，包含API密钥等敏感信息
+.env
+
+# Python虚拟环境
+.venv/
+__pycache__/
+*.py[cod]
+*$py.class
+
+# 输出文件
+*.mp3
+*.mp4
+
+# 工作目录中的临时文件
+workstore/*/audios/
+workstore/*/images/
+workstore/*/subtitles/
+workstore/*/videos/
+
+# 系统文件
+.DS_Store

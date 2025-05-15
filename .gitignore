@@ -12,10 +12,13 @@ __pycache__/
 *.mp4
 
 # 工作目录中的临时文件
-workstore/*/audios/
-workstore/*/images/
-workstore/*/subtitles/
-workstore/*/videos/
+# 排除整个workstore目录
+workstore/
+# 以下规则保留但已被上面的规则覆盖
+# workstore/*/audios/
+# workstore/*/images/
+# workstore/*/subtitles/
+# workstore/*/videos/
 
 # 系统文件
 .DS_Store

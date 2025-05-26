@@ -1,8 +1,9 @@
-from moviepy.editor import ImageClip, CompositeVideoClip, AudioFileClip, CompositeAudioClip, TextClip
+from moviepy import ImageClip, CompositeVideoClip, AudioFileClip, CompositeAudioClip, TextClip
 import numpy as np
 import json
 import os
 import sys
+from dotenv import load_dotenv
 
 # 获取当前脚本的绝对路径
 # Get the absolute path of the current script
@@ -15,28 +16,28 @@ project_root = os.path.dirname(os.path.dirname(current_script_path))
 if project_root not in sys.path:
     sys.path.insert(0, project_root)
 
-from workflow import add_time
+from workflow import generate_video as gen_video
+load_dotenv()
+FONT_DIR = os.environ.get("FONT_DIR")
 
-def generate_video(work_flow_record, result_dir, scream_size = (1280, 720), bg_pic_path='lib/img/background.png', font_path='lib/font/STHeiti Medium.ttc'):
+def generate_video(work_flow_record, result_dir, user_name = None, screan_size = (1280, 720), bg_pic_path='lib/img/background.png', font_path='lib/font/STHeiti Medium.ttc'):
     """
     生成视频的函数
 
     参数:
     work_flow_record (dict): 工作流记录，包含视频内容信息
     result_dir (str): 结果输出目录
-    scream_size (tuple): 屏幕尺寸，默认为 (1280, 720)
+    screan_size (tuple): 屏幕尺寸，默认为 (1280, 720)
     bg_pic_path (str): 背景图片路径，默认为 'lib/img/background.png'
 
     返回:
     ImageClip: 背景图片剪辑对象
     """
-    print(f'*' * 10,'content',f'*' * 10)
-    print(work_flow_record['content'][-1]['voice_time'])
-    vedio_duration = work_flow_record['content'][-1]['voice_time'][0]+work_flow_record['content'][-1]['voice_time'][1]
-    print(f'*' * 10,'vedio_duration',f'*' * 10)
-    print(vedio_duration)
+
+    video_duration = work_flow_record['content'][-1]['voice_time'][0]+work_flow_record['content'][-1]['voice_time'][1]
+
     # 初始化背景图片
-    bg_clip  = ImageClip(bg_pic_path).with_duration(vedio_duration).resized(scream_size)
+    bg_clip  = ImageClip(bg_pic_path).with_duration(video_duration).resized(screan_size)
 
     # 生成图片剪辑表
     img_clips = []
@@ -47,18 +48,7 @@ def generate_video(work_flow_record, result_dir, scream_size = (1280, 720), bg_p
 
     # 生成图片剪辑
     # 定义透明度动态曲线函数
-    def custom_fade(t):
-        """透明度动态曲线：
-        - 前0.5秒从0到1（淡入）
-        - 最后0.5秒从1到0（淡出）
-        - 中间保持不透明
-        """
-        if t < 0.5:  # 淡入阶段
-            return t / 0.5
-        elif t > (img_clip.duration - 0.5):  # 淡出阶段
-            return 1 - (t - (img_clip.duration - 0.5)) / 0.5
-        else:  # 保持阶段
-            return 1.0
+    
     for index, item in enumerate(work_flow_record['content']):
         for i in range(len(item['picture_path'])):
             img_path = item['picture_path'][i]
@@ -66,27 +56,32 @@ def generate_video(work_flow_record, result_dir, scream_size = (1280, 720), bg_p
             img_clip = img_clip.with_position(('center', 'center')).resized(0.4)
             #img_clip = img_clip.with_opacity(lambda t: custom_fade(t))
             img_clips.append(img_clip)
-
+    
+    #生成用户名
+    caption_clips = []
+    if user_name is not None:
+        user_name_text = f"@{user_name}"
+        user_name_clip = TextClip(user_name_text, font=font_path, fontsize=45, color='black').with_position((25, 50), relative=True).with_duration(video_duration)
+        caption_clips.append(user_name_clip)
     # 生成字幕剪辑
     TEXT_STYLE = {
     "font_size": 45,
     "color": "black",
-    # "font": "Arial-Bold",  # Windows系统黑体 (已移出)
-    "size": (scream_size[0]-150, None)  # 限制文字宽度
+    "size": (screan_size[0]-150, None)  # 限制文字宽度
     }
 
-    caption_clips = []
+    
     for index, item in enumerate(work_flow_record['content']):
         for i in range(len(item['caption_text'])):
             caption_text = item['caption_text'][i]
             caption_start_time = item['caption_time'][i][0]
             caption_duration_time = item['caption_time'][i][1]
             caption_clip = TextClip(font_path, caption_text, **TEXT_STYLE).with_start(caption_start_time).with_duration(caption_duration_time)
-            caption_clip = caption_clip.with_position(('center', scream_size[1]-100))
+            caption_clip = caption_clip.with_position(('center', screan_size[1]-100))
             caption_clips.append(caption_clip)
 
     # 合并图片剪辑
-    img_concat_clip = CompositeVideoClip([bg_clip]+img_clips+caption_clips, size = scream_size).with_duration(vedio_duration)
+    img_concat_clip = CompositeVideoClip([bg_clip]+img_clips+caption_clips, size = screan_size).with_duration(video_duration)
 
     # 生成音频剪辑
     audio_clips = []
@@ -118,17 +113,15 @@ def generate_video(work_flow_record, result_dir, scream_size = (1280, 720), bg_p
 
 
 
-work_flow_record = json.load(open('workstore/work_flow_record.json'))
-
-work_flow_record = add_time(work_flow_record, "workstore/user1/你相信星座运势吗？/audios", 1.0)
+work_flow_record = json.load(open('workstore/user1/月光下的萤火约定/work_flow_record.json'))
 
 
-result_dir = "workstore/user1/你相信星座运势吗？"
+
+
+result_dir = "workstore/user1/月光下的萤火约定"
 #保存work_flow_record
-with open(os.path.join('workstore/user1/你相信星座运势吗？', "1.json"), "w") as f:
-    json.dump(work_flow_record, f, ensure_ascii=False)
 
-generate_video(work_flow_record, result_dir)
+gen_video(work_flow_record, result_dir, user_name='宝宝自己待一会儿')
 
 
 """

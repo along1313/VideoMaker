@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+
+{% block title %}个人中心 - 百速一键AI视频生成{% endblock %}
+
+{% block content %}
+<div class="profile-container">
+    <div class="profile-card">
+        <h2>个人中心</h2>
+        
+        <div class="user-info">
+            <div class="info-item">
+                <span class="label">用户名：</span>
+                <span class="value">{{ current_user.username }}</span>
+            </div>
+            <div class="info-item">
+                <span class="label">邮箱：</span>
+                <span class="value">{{ current_user.email }}</span>
+            </div>
+            <div class="info-item">
+                <span class="label">剩余视频额度：</span>
+                <span class="value credits">{{ current_user.credits }}条</span>
+            </div>
+            <div class="info-item">
+                <span class="label">注册时间：</span>
+                <span class="value">{{ current_user.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</span>
+            </div>
+        </div>
+        
+        <div class="action-buttons">
+            <button class="el-button el-button--primary" onclick="window.location.href='{{ url_for('recharge') }}';">充值视频额度</button>
+            <button class="el-button el-button--info" onclick="window.location.href='{{ url_for('my_videos') }}';">查看我的视频</button>
+        </div>
+    </div>
+    
+    <!-- 充值记录 -->
+    <div class="payment-history">
+        <h3>充值记录</h3>
+        
+        <el-table
+            :data="payments"
+            style="width: 100%"
+            v-if="payments.length > 0">
+            <el-table-column
+                prop="created_at"
+                label="充值时间"
+                width="180">
+            </el-table-column>
+            <el-table-column
+                prop="amount"
+                label="充值金额(元)"
+                width="120">
+            </el-table-column>
+            <el-table-column
+                prop="credits"
+                label="获得额度(条)">
+            </el-table-column>
+            <el-table-column
+                prop="status"
+                label="状态">
+                <template slot-scope="scope">
+                    <el-tag type="success" v-if="scope.row.status === 'completed'">成功</el-tag>
+                    <el-tag type="warning" v-else>处理中</el-tag>
+                </template>
+            </el-table-column>
+        </el-table>
+        
+        <div class="empty-data" v-else>
+            <p>暂无充值记录</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    new Vue({
+        el: '#app',
+        data() {
+            return {
+                payments: []
+            }
+        },
+        mounted() {
+            this.loadPayments();
+        },
+        methods: {
+            loadPayments() {
+                // 加载充值记录
+                axios.get('/api/payment-history')
+                .then(response => {
+                    if (response.data.success) {
+                        this.payments = response.data.payments.map(payment => {
+                            return {
+                                ...payment,
+                                created_at: new Date(payment.created_at).toLocaleString()
+                            };
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('获取充值记录失败', error);
+                });
+            },
+            goToRecharge() {
+                window.location.href = '{{ url_for("recharge") }}';
+            },
+            goToVideos() {
+                window.location.href = '{{ url_for("my_videos") }}';
+            }
+        }
+    });
+</script>
+{% endblock %}

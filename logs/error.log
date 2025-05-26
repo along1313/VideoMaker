@@ -1,0 +1,605 @@
+[2025-05-23 11:15:53,437] [ERROR] [logger:61] - 视频生成失败: Error code: 400, with error text {"contentFilter":[{"level":1,"role":"assistant"}],"error":{"code":"1301","message":"系统检测到输入或生成内容可能包含不安全或敏感内容，请您避免输入易产生敏感内容的提示语，感谢您的配合。"}}
+Traceback (most recent call last):
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/app.py", line 157, in generate_video_task
+    run_work_flow(
+    ~~~~~~~~~~~~~^
+        text=prompt,
+        ^^^^^^^^^^^^
+    ...<6 lines>...
+        user_name="百速AI视频"
+        ^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/service/work_flow_service.py", line 91, in run_work_flow
+    work_flow_record = picture_prompt_service.generate(work_flow_record, style)
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/service/picture_prompt_service.py", line 49, in generate
+    return self.llm.generate(messages, max_tokens=max_tokens, get_only_answer=get_only_answer)
+           ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/service/ai_service.py", line 20, in generate
+    response = self.client.chat.completions.create(
+        model=self.model_str,
+    ...<3 lines>...
+        max_tokens=max_tokens,
+    )
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/zhipuai/api_resource/chat/completions.py", line 96, in create
+    return self._post(
+           ~~~~~~~~~~^
+        "/chat/completions",
+        ^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+        stream_cls=StreamResponse[ChatCompletionChunk],
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/zhipuai/core/_http_client.py", line 809, in post
+    return cast(ResponseT, self.request(cast_type, opts, stream=stream, stream_cls=stream_cls))
+                           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/zhipuai/core/_http_client.py", line 495, in request
+    return self._request(
+           ~~~~~~~~~~~~~^
+        cast_type=cast_type,
+        ^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+        remaining_retries=remaining_retries,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/zhipuai/core/_http_client.py", line 582, in _request
+    raise self._make_status_error(err.response) from None
+zhipuai.core._errors.APIRequestFailedError: Error code: 400, with error text {"contentFilter":[{"level":1,"role":"assistant"}],"error":{"code":"1301","message":"系统检测到输入或生成内容可能包含不安全或敏感内容，请您避免输入易产生敏感内容的提示语，感谢您的配合。"}}
+[2025-05-23 11:15:53,454] [ERROR] [logger:86] - [任务 e1efbeb1-32bc-4f66-9c22-db39c92d6d81] 视频生成失败: Error code: 400, with error text {"contentFilter":[{"level":1,"role":"assistant"}],"error":{"code":"1301","message":"系统检测到输入或生成内容可能包含不安全或敏感内容，请您避免输入易产生敏感内容的提示语，感谢您的配合。"}} - 状态: failed
+[2025-05-23 11:27:38,785] [ERROR] [logger:61] - 视频生成失败: Error code: 400, with error text {"contentFilter":[{"level":1,"role":"assistant"}],"error":{"code":"1301","message":"系统检测到输入或生成内容可能包含不安全或敏感内容，请您避免输入易产生敏感内容的提示语，感谢您的配合。"}}
+Traceback (most recent call last):
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/app.py", line 157, in generate_video_task
+    run_work_flow(
+    ~~~~~~~~~~~~~^
+        text=prompt,
+        ^^^^^^^^^^^^
+    ...<6 lines>...
+        user_name="百速AI视频"
+        ^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/service/work_flow_service.py", line 74, in run_work_flow
+    work_flow_record = picture_prompt_service.generate(work_flow_record, style)
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/service/picture_prompt_service.py", line 49, in generate
+    return self.llm.generate(messages, max_tokens=max_tokens, get_only_answer=get_only_answer)
+           ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/service/ai_service.py", line 20, in generate
+    response = self.client.chat.completions.create(
+        model=self.model_str,
+    ...<3 lines>...
+        max_tokens=max_tokens,
+    )
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/zhipuai/api_resource/chat/completions.py", line 96, in create
+    return self._post(
+           ~~~~~~~~~~^
+        "/chat/completions",
+        ^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+        stream_cls=StreamResponse[ChatCompletionChunk],
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/zhipuai/core/_http_client.py", line 809, in post
+    return cast(ResponseT, self.request(cast_type, opts, stream=stream, stream_cls=stream_cls))
+                           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/zhipuai/core/_http_client.py", line 495, in request
+    return self._request(
+           ~~~~~~~~~~~~~^
+        cast_type=cast_type,
+        ^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+        remaining_retries=remaining_retries,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/zhipuai/core/_http_client.py", line 582, in _request
+    raise self._make_status_error(err.response) from None
+zhipuai.core._errors.APIRequestFailedError: Error code: 400, with error text {"contentFilter":[{"level":1,"role":"assistant"}],"error":{"code":"1301","message":"系统检测到输入或生成内容可能包含不安全或敏感内容，请您避免输入易产生敏感内容的提示语，感谢您的配合。"}}
+[2025-05-23 11:27:38,798] [ERROR] [logger:86] - [任务 66fc598c-aa58-46a2-9639-e7c01c67492f] 视频生成失败: Error code: 400, with error text {"contentFilter":[{"level":1,"role":"assistant"}],"error":{"code":"1301","message":"系统检测到输入或生成内容可能包含不安全或敏感内容，请您避免输入易产生敏感内容的提示语，感谢您的配合。"}} - 状态: failed
+[2025-05-23 11:49:23,523] [ERROR] [logger:61] - 创建视频记录失败: (sqlite3.OperationalError) table video has no column named mode
+[SQL: INSERT INTO video (title, user_id, style, prompt, video_path, cover_path, status, mode, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)]
+[parameters: ('视频_20250523114923', 1, '绘本', '白雪公主的故事\n很久很久以前，在一个遥远的王国里，有一位美丽的王后。她在冬天时生下了一个小女孩，女孩皮肤像雪一样白，嘴唇像血一样红，头发像乌木一样黑。因此，王后给她取名叫“白雪公主 ”。\n\n可惜的是，王后不久就去世了，国王后来娶了一位新王后。这位新王后非常美丽，但也非常虚荣。她有一面魔镜，每 ... (593 characters truncated) ... 下。就在这一刻，白雪公主奇迹般地醒了过来！\n\n原来，那只毒苹果的魔咒只有真爱之吻才能解除。\n\n王子向白雪公主求婚，她也爱上了王子，两人举行了盛大的婚礼。恶毒的王后也被揭穿了真面目，受到了应有的惩罚。\n\n从此以后，白雪公主和王子过上了幸福快乐的生活，而七个小矮人也继续过着勤劳善良的日子。', None, None, 'pending', 'script', '2025-05-23 03:49:23.522596')]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+Traceback (most recent call last):
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py", line 1963, in _exec_single_context
+    self.dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor, str_statement, effective_parameters, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/sqlalchemy/engine/default.py", line 943, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+sqlite3.OperationalError: table video has no column named mode
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/app.py", line 421, in generate_video_api
+    db.session.commit()
+    ~~~~~~~~~~~~~~~~~^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/sqlalchemy/orm/scoping.py", line 599, in commit
+    return self._proxied.commit()
+           ~~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/sqlalchemy/orm/session.py", line 2032, in commit
+    trans.commit(_to_root=True)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "<string>", line 2, in commit
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/sqlalchemy/orm/state_changes.py", line 139, in _go
+    ret_value = fn(self, *arg, **kw)
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/sqlalchemy/orm/session.py", line 1313, in commit
+    self._prepare_impl()
+    ~~~~~~~~~~~~~~~~~~^^
+  File "<string>", line 2, in _prepare_impl
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/sqlalchemy/orm/state_changes.py", line 139, in _go
+    ret_value = fn(self, *arg, **kw)
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/sqlalchemy/orm/session.py", line 1288, in _prepare_impl
+    self.session.flush()
+    ~~~~~~~~~~~~~~~~~~^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/sqlalchemy/orm/session.py", line 4345, in flush
+    self._flush(objects)
+    ~~~~~~~~~~~^^^^^^^^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/sqlalchemy/orm/session.py", line 4480, in _flush
+    with util.safe_reraise():
+         ~~~~~~~~~~~~~~~~~^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/sqlalchemy/util/langhelpers.py", line 224, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/sqlalchemy/orm/session.py", line 4441, in _flush
+    flush_context.execute()
+    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/sqlalchemy/orm/unitofwork.py", line 466, in execute
+    rec.execute(self)
+    ~~~~~~~~~~~^^^^^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/sqlalchemy/orm/unitofwork.py", line 642, in execute
+    util.preloaded.orm_persistence.save_obj(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self.mapper,
+        ^^^^^^^^^^^^
+        uow.states_for_mapper_hierarchy(self.mapper, False, False),
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        uow,
+        ^^^^
+    )
+    ^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/sqlalchemy/orm/persistence.py", line 93, in save_obj
+    _emit_insert_statements(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        base_mapper,
+        ^^^^^^^^^^^^
+    ...<3 lines>...
+        insert,
+        ^^^^^^^
+    )
+    ^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/sqlalchemy/orm/persistence.py", line 1233, in _emit_insert_statements
+    result = connection.execute(
+        statement,
+        params,
+        execution_options=execution_options,
+    )
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py", line 1415, in execute
+    return meth(
+        self,
+        distilled_parameters,
+        execution_options or NO_OPTIONS,
+    )
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/sqlalchemy/sql/elements.py", line 523, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self, distilled_params, execution_options
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py", line 1637, in _execute_clauseelement
+    ret = self._execute_context(
+        dialect,
+    ...<8 lines>...
+        cache_hit=cache_hit,
+    )
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py", line 1842, in _execute_context
+    return self._exec_single_context(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^
+        dialect, context, statement, parameters
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py", line 1982, in _exec_single_context
+    self._handle_dbapi_exception(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        e, str_statement, effective_parameters, cursor, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py", line 2351, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py", line 1963, in _exec_single_context
+    self.dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor, str_statement, effective_parameters, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/sqlalchemy/engine/default.py", line 943, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+sqlalchemy.exc.OperationalError: (sqlite3.OperationalError) table video has no column named mode
+[SQL: INSERT INTO video (title, user_id, style, prompt, video_path, cover_path, status, mode, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)]
+[parameters: ('视频_20250523114923', 1, '绘本', '白雪公主的故事\n很久很久以前，在一个遥远的王国里，有一位美丽的王后。她在冬天时生下了一个小女孩，女孩皮肤像雪一样白，嘴唇像血一样红，头发像乌木一样黑。因此，王后给她取名叫“白雪公主 ”。\n\n可惜的是，王后不久就去世了，国王后来娶了一位新王后。这位新王后非常美丽，但也非常虚荣。她有一面魔镜，每 ... (593 characters truncated) ... 下。就在这一刻，白雪公主奇迹般地醒了过来！\n\n原来，那只毒苹果的魔咒只有真爱之吻才能解除。\n\n王子向白雪公主求婚，她也爱上了王子，两人举行了盛大的婚礼。恶毒的王后也被揭穿了真面目，受到了应有的惩罚。\n\n从此以后，白雪公主和王子过上了幸福快乐的生活，而七个小矮人也继续过着勤劳善良的日子。', None, None, 'pending', 'script', '2025-05-23 03:49:23.522596')]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+[2025-05-23 11:51:27,583] [ERROR] [logger:61] - 创建视频记录失败: (sqlite3.OperationalError) table video has no column named mode
+[SQL: INSERT INTO video (title, user_id, style, prompt, video_path, cover_path, status, mode, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)]
+[parameters: ('视频_20250523115127', 1, '绘本', '白雪公主的故事\n很久很久以前，在一个遥远的王国里，有一位美丽的王后。她在冬天时生下了一个小女孩，女孩皮肤像雪一样白，嘴唇像血一样红，头发像乌木一样黑。因此，王后给她取名叫“白雪公主 ”。\n\n可惜的是，王后不久就去世了，国王后来娶了一位新王后。这位新王后非常美丽，但也非常虚荣。她有一面魔镜，每 ... (593 characters truncated) ... 下。就在这一刻，白雪公主奇迹般地醒了过来！\n\n原来，那只毒苹果的魔咒只有真爱之吻才能解除。\n\n王子向白雪公主求婚，她也爱上了王子，两人举行了盛大的婚礼。恶毒的王后也被揭穿了真面目，受到了应有的惩罚。\n\n从此以后，白雪公主和王子过上了幸福快乐的生活，而七个小矮人也继续过着勤劳善良的日子。', None, None, 'pending', 'script', '2025-05-23 03:51:27.581934')]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+Traceback (most recent call last):
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py", line 1963, in _exec_single_context
+    self.dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor, str_statement, effective_parameters, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/sqlalchemy/engine/default.py", line 943, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+sqlite3.OperationalError: table video has no column named mode
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/app.py", line 421, in generate_video_api
+    db.session.commit()
+    ~~~~~~~~~~~~~~~~~^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/sqlalchemy/orm/scoping.py", line 599, in commit
+    return self._proxied.commit()
+           ~~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/sqlalchemy/orm/session.py", line 2032, in commit
+    trans.commit(_to_root=True)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "<string>", line 2, in commit
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/sqlalchemy/orm/state_changes.py", line 139, in _go
+    ret_value = fn(self, *arg, **kw)
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/sqlalchemy/orm/session.py", line 1313, in commit
+    self._prepare_impl()
+    ~~~~~~~~~~~~~~~~~~^^
+  File "<string>", line 2, in _prepare_impl
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/sqlalchemy/orm/state_changes.py", line 139, in _go
+    ret_value = fn(self, *arg, **kw)
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/sqlalchemy/orm/session.py", line 1288, in _prepare_impl
+    self.session.flush()
+    ~~~~~~~~~~~~~~~~~~^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/sqlalchemy/orm/session.py", line 4345, in flush
+    self._flush(objects)
+    ~~~~~~~~~~~^^^^^^^^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/sqlalchemy/orm/session.py", line 4480, in _flush
+    with util.safe_reraise():
+         ~~~~~~~~~~~~~~~~~^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/sqlalchemy/util/langhelpers.py", line 224, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/sqlalchemy/orm/session.py", line 4441, in _flush
+    flush_context.execute()
+    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/sqlalchemy/orm/unitofwork.py", line 466, in execute
+    rec.execute(self)
+    ~~~~~~~~~~~^^^^^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/sqlalchemy/orm/unitofwork.py", line 642, in execute
+    util.preloaded.orm_persistence.save_obj(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self.mapper,
+        ^^^^^^^^^^^^
+        uow.states_for_mapper_hierarchy(self.mapper, False, False),
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        uow,
+        ^^^^
+    )
+    ^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/sqlalchemy/orm/persistence.py", line 93, in save_obj
+    _emit_insert_statements(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        base_mapper,
+        ^^^^^^^^^^^^
+    ...<3 lines>...
+        insert,
+        ^^^^^^^
+    )
+    ^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/sqlalchemy/orm/persistence.py", line 1233, in _emit_insert_statements
+    result = connection.execute(
+        statement,
+        params,
+        execution_options=execution_options,
+    )
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py", line 1415, in execute
+    return meth(
+        self,
+        distilled_parameters,
+        execution_options or NO_OPTIONS,
+    )
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/sqlalchemy/sql/elements.py", line 523, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self, distilled_params, execution_options
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py", line 1637, in _execute_clauseelement
+    ret = self._execute_context(
+        dialect,
+    ...<8 lines>...
+        cache_hit=cache_hit,
+    )
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py", line 1842, in _execute_context
+    return self._exec_single_context(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^
+        dialect, context, statement, parameters
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py", line 1982, in _exec_single_context
+    self._handle_dbapi_exception(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        e, str_statement, effective_parameters, cursor, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py", line 2351, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py", line 1963, in _exec_single_context
+    self.dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor, str_statement, effective_parameters, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/sqlalchemy/engine/default.py", line 943, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+sqlalchemy.exc.OperationalError: (sqlite3.OperationalError) table video has no column named mode
+[SQL: INSERT INTO video (title, user_id, style, prompt, video_path, cover_path, status, mode, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)]
+[parameters: ('视频_20250523115127', 1, '绘本', '白雪公主的故事\n很久很久以前，在一个遥远的王国里，有一位美丽的王后。她在冬天时生下了一个小女孩，女孩皮肤像雪一样白，嘴唇像血一样红，头发像乌木一样黑。因此，王后给她取名叫“白雪公主 ”。\n\n可惜的是，王后不久就去世了，国王后来娶了一位新王后。这位新王后非常美丽，但也非常虚荣。她有一面魔镜，每 ... (593 characters truncated) ... 下。就在这一刻，白雪公主奇迹般地醒了过来！\n\n原来，那只毒苹果的魔咒只有真爱之吻才能解除。\n\n王子向白雪公主求婚，她也爱上了王子，两人举行了盛大的婚礼。恶毒的王后也被揭穿了真面目，受到了应有的惩罚。\n\n从此以后，白雪公主和王子过上了幸福快乐的生活，而七个小矮人也继续过着勤劳善良的日子。', None, None, 'pending', 'script', '2025-05-23 03:51:27.581934')]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+[2025-05-23 11:57:10,137] [ERROR] [logger:61] - 视频生成失败: name 'run_work_flow_with_script' is not defined
+Traceback (most recent call last):
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/app.py", line 161, in generate_video_task
+    run_work_flow_with_script(
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+NameError: name 'run_work_flow_with_script' is not defined
+[2025-05-23 11:57:10,139] [ERROR] [logger:86] - [任务 af21c6bb-e3f5-4647-a843-7a0def3d0b9d] 视频生成失败: name 'run_work_flow_with_script' is not defined - 状态: failed
+[2025-05-23 12:00:37,009] [ERROR] [logger:61] - 视频生成失败: Error code: 400, with error text {"contentFilter":[{"level":1,"role":"assistant"}],"error":{"code":"1301","message":"系统检测到输入或生成内容可能包含不安全或敏感内容，请您避免输入易产生敏感内容的提示语，感谢您的配合。"}}
+Traceback (most recent call last):
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/app.py", line 161, in generate_video_task
+    run_work_flow_with_script(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^
+        script=prompt,
+        ^^^^^^^^^^^^^^
+    ...<6 lines>...
+        user_name="百速AI视频"
+        ^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/service/work_flow_service.py", line 225, in run_work_flow_with_script
+    work_flow_record = picture_prompt_service.generate(work_flow_record, style)
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/service/picture_prompt_service.py", line 49, in generate
+    return self.llm.generate(messages, max_tokens=max_tokens, get_only_answer=get_only_answer)
+           ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/service/ai_service.py", line 20, in generate
+    response = self.client.chat.completions.create(
+        model=self.model_str,
+    ...<3 lines>...
+        max_tokens=max_tokens,
+    )
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/zhipuai/api_resource/chat/completions.py", line 96, in create
+    return self._post(
+           ~~~~~~~~~~^
+        "/chat/completions",
+        ^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+        stream_cls=StreamResponse[ChatCompletionChunk],
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/zhipuai/core/_http_client.py", line 809, in post
+    return cast(ResponseT, self.request(cast_type, opts, stream=stream, stream_cls=stream_cls))
+                           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/zhipuai/core/_http_client.py", line 495, in request
+    return self._request(
+           ~~~~~~~~~~~~~^
+        cast_type=cast_type,
+        ^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+        remaining_retries=remaining_retries,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/zhipuai/core/_http_client.py", line 582, in _request
+    raise self._make_status_error(err.response) from None
+zhipuai.core._errors.APIRequestFailedError: Error code: 400, with error text {"contentFilter":[{"level":1,"role":"assistant"}],"error":{"code":"1301","message":"系统检测到输入或生成内容可能包含不安全或敏感内容，请您避免输入易产生敏感内容的提示语，感谢您的配合。"}}
+[2025-05-23 12:00:37,030] [ERROR] [logger:86] - [任务 f90963ec-eaa2-4c5a-8f33-dec5f593505d] 视频生成失败: Error code: 400, with error text {"contentFilter":[{"level":1,"role":"assistant"}],"error":{"code":"1301","message":"系统检测到输入或生成内容可能包含不安全或敏感内容，请您避免输入易产生敏感内容的提示语，感谢您的配合。"}} - 状态: failed
+[2025-05-23 16:40:45,152] [ERROR] [logger:61] - 视频生成失败: Error code: 400, with error text {"error":{"code":"1210","message":"API 调用参数有误，请检查文档。"}}
+Traceback (most recent call last):
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/app.py", line 161, in generate_video_task
+    run_work_flow_with_script(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^
+        script=prompt,
+        ^^^^^^^^^^^^^^
+    ...<6 lines>...
+        user_name="百速AI视频"
+        ^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/service/work_flow_service.py", line 208, in run_work_flow_with_script
+    work_flow_record = picture_prompt_service.generate(work_flow_record, style)
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/service/picture_prompt_service.py", line 49, in generate
+    return self.llm.generate(messages, max_tokens=max_tokens, get_only_answer=get_only_answer)
+           ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/service/ai_service.py", line 20, in generate
+    response = self.client.chat.completions.create(
+        model=self.model_str,
+    ...<3 lines>...
+        max_tokens=max_tokens,
+    )
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/zhipuai/api_resource/chat/completions.py", line 96, in create
+    return self._post(
+           ~~~~~~~~~~^
+        "/chat/completions",
+        ^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+        stream_cls=StreamResponse[ChatCompletionChunk],
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/zhipuai/core/_http_client.py", line 809, in post
+    return cast(ResponseT, self.request(cast_type, opts, stream=stream, stream_cls=stream_cls))
+                           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/zhipuai/core/_http_client.py", line 495, in request
+    return self._request(
+           ~~~~~~~~~~~~~^
+        cast_type=cast_type,
+        ^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+        remaining_retries=remaining_retries,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/zhipuai/core/_http_client.py", line 582, in _request
+    raise self._make_status_error(err.response) from None
+zhipuai.core._errors.APIRequestFailedError: Error code: 400, with error text {"error":{"code":"1210","message":"API 调用参数有误，请检查文档。"}}
+[2025-05-23 16:40:45,164] [ERROR] [logger:86] - [任务 5988e862-e4a4-4661-bd1e-99d68bdaa8b9] 视频生成失败: Error code: 400, with error text {"error":{"code":"1210","message":"API 调用参数有误，请检查文档。"}} - 状态: failed
+[2025-05-23 16:57:36,288] [ERROR] [logger:61] - 视频生成失败: Error code: 400, with error text {"error":{"code":"1210","message":"API 调用参数有误，请检查文档。"}}
+Traceback (most recent call last):
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/app.py", line 174, in generate_video_task
+        run_work_flow(
+        ~~~~~~~~~~~~~^
+            text=prompt,
+            ^^^^^^^^^^^^
+    ...<6 lines>...
+        user_name="百速AI视频"
+        ^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/service/work_flow_service.py", line 74, in run_work_flow
+    work_flow_record = picture_prompt_service.generate(work_flow_record, style)
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/service/picture_prompt_service.py", line 49, in generate
+    return self.llm.generate(messages, max_tokens=max_tokens, get_only_answer=get_only_answer)
+           ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/service/ai_service.py", line 20, in generate
+    response = self.client.chat.completions.create(
+        model=self.model_str,
+    ...<3 lines>...
+        max_tokens=max_tokens,
+    )
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/zhipuai/api_resource/chat/completions.py", line 96, in create
+    return self._post(
+           ~~~~~~~~~~^
+        "/chat/completions",
+        ^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+        stream_cls=StreamResponse[ChatCompletionChunk],
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/zhipuai/core/_http_client.py", line 809, in post
+    return cast(ResponseT, self.request(cast_type, opts, stream=stream, stream_cls=stream_cls))
+                           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/zhipuai/core/_http_client.py", line 495, in request
+    return self._request(
+           ~~~~~~~~~~~~~^
+        cast_type=cast_type,
+        ^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+        remaining_retries=remaining_retries,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/zhipuai/core/_http_client.py", line 582, in _request
+    raise self._make_status_error(err.response) from None
+zhipuai.core._errors.APIRequestFailedError: Error code: 400, with error text {"error":{"code":"1210","message":"API 调用参数有误，请检查文档。"}}
+[2025-05-23 16:57:36,296] [ERROR] [logger:86] - [任务 b458b098-baf1-4ed3-9fd7-c945a69f2c19] 视频生成失败: Error code: 400, with error text {"error":{"code":"1210","message":"API 调用参数有误，请检查文档。"}} - 状态: failed
+[2025-05-23 16:58:25,405] [ERROR] [logger:61] - 视频生成失败: Error code: 400, with error text {"error":{"code":"1210","message":"API 调用参数有误，请检查文档。"}}
+Traceback (most recent call last):
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/app.py", line 174, in generate_video_task
+        run_work_flow(
+        ~~~~~~~~~~~~~^
+            text=prompt,
+            ^^^^^^^^^^^^
+    ...<6 lines>...
+        user_name="百速AI视频"
+        ^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/service/work_flow_service.py", line 74, in run_work_flow
+    work_flow_record = picture_prompt_service.generate(work_flow_record, style)
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/service/picture_prompt_service.py", line 49, in generate
+    return self.llm.generate(messages, max_tokens=max_tokens, get_only_answer=get_only_answer)
+           ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/service/ai_service.py", line 20, in generate
+    response = self.client.chat.completions.create(
+        model=self.model_str,
+    ...<3 lines>...
+        max_tokens=max_tokens,
+    )
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/zhipuai/api_resource/chat/completions.py", line 96, in create
+    return self._post(
+           ~~~~~~~~~~^
+        "/chat/completions",
+        ^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+        stream_cls=StreamResponse[ChatCompletionChunk],
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/zhipuai/core/_http_client.py", line 809, in post
+    return cast(ResponseT, self.request(cast_type, opts, stream=stream, stream_cls=stream_cls))
+                           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/zhipuai/core/_http_client.py", line 495, in request
+    return self._request(
+           ~~~~~~~~~~~~~^
+        cast_type=cast_type,
+        ^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+        remaining_retries=remaining_retries,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/zhipuai/core/_http_client.py", line 582, in _request
+    raise self._make_status_error(err.response) from None
+zhipuai.core._errors.APIRequestFailedError: Error code: 400, with error text {"error":{"code":"1210","message":"API 调用参数有误，请检查文档。"}}
+[2025-05-23 16:58:25,408] [ERROR] [logger:86] - [任务 362dbba5-0092-4a26-81bd-2f6558f0ad67] 视频生成失败: Error code: 400, with error text {"error":{"code":"1210","message":"API 调用参数有误，请检查文档。"}} - 状态: failed
+[2025-05-26 10:44:29,691] [ERROR] [logger:61] - 应用启动失败: No module named 'alipay.aop'
+Traceback (most recent call last):
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/run.py", line 86, in <module>
+    from app import app, db
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/app.py", line 17, in <module>
+    from service.ai_service import LLMService, ImageModelService, TTSModelService, AlipayService
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/service/ai_service.py", line 6, in <module>
+    from alipay.aop.api.AlipayClientConfig import AlipayClientConfig
+ModuleNotFoundError: No module named 'alipay.aop'
+[2025-05-26 10:46:35,460] [ERROR] [logger:61] - 应用启动失败: No module named 'alipay.aop'
+Traceback (most recent call last):
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/run.py", line 86, in <module>
+    from app import app, db
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/app.py", line 17, in <module>
+    from service.ai_service import LLMService, ImageModelService, TTSModelService, AlipayService
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/service/ai_service.py", line 6, in <module>
+    from alipay.aop.api.AlipayClientConfig import AlipayClientConfig
+ModuleNotFoundError: No module named 'alipay.aop'
+[2025-05-26 10:55:16,072] [ERROR] [logger:61] - 应用启动失败: cannot import name 'AliPay' from 'alipay' (/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/alipay/__init__.py)
+Traceback (most recent call last):
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/run.py", line 86, in <module>
+    from app import app, db
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/app.py", line 17, in <module>
+    from service.ai_service import LLMService, ImageModelService, TTSModelService, AlipayService
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/service/ai_service.py", line 7, in <module>
+    from alipay import AliPay, ISVAliPay
+ImportError: cannot import name 'AliPay' from 'alipay' (/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/alipay/__init__.py)
+[2025-05-26 10:59:22,272] [ERROR] [logger:61] - 应用启动失败: cannot import name 'AliPay' from 'alipay' (unknown location)
+Traceback (most recent call last):
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/run.py", line 86, in <module>
+    from app import app, db
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/app.py", line 17, in <module>
+    from service.ai_service import LLMService, ImageModelService, TTSModelService, AlipayService
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/service/ai_service.py", line 6, in <module>
+    from alipay import AliPay
+ImportError: cannot import name 'AliPay' from 'alipay' (unknown location)

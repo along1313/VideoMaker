@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}百速一键AI视频生成{% endblock %}</title>
+    <!-- 引入Vue.js -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.min.js"></script>
+    <!-- 引入Element UI -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/element-ui@2.15.10/lib/theme-chalk/index.css">
+    <script src="https://cdn.jsdelivr.net/npm/element-ui@2.15.10/lib/index.js"></script>
+    <!-- 我们将在Vue实例初始化时设置自定义分隔符 -->
+    <!-- 引入Axios -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <!-- 自定义样式 -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    {% block head %}{% endblock %}
+</head>
+<body>
+    <div id="app">
+        <!-- 导航栏 -->
+        <el-header height="60px">
+            <nav class="navbar">
+                <div class="logo">
+                    <a href="{{ url_for('index') }}">
+                        <h1>百速一键AI视频生成</h1>
+                    </a>
+                </div>
+                <div class="nav-links">
+                    <a href="{{ url_for('index') }}">首页</a>
+                    {% if current_user.is_authenticated %}
+                        <a href="{{ url_for('my_videos') }}">我的视频</a>
+                        <a href="{{ url_for('profile') }}">个人中心</a>
+                        <a href="{{ url_for('logout') }}">退出登录</a>
+                        <span class="credits">剩余额度: {{ current_user.credits }}条</span>
+                    {% else %}
+                        <a href="{{ url_for('login') }}">登录</a>
+                        <a href="{{ url_for('register') }}">注册</a>
+                    {% endif %}
+                </div>
+            </nav>
+        </el-header>
+
+        <!-- 主要内容 -->
+        <el-main>
+            {% block content %}{% endblock %}
+        </el-main>
+
+        <!-- 页脚 -->
+        <el-footer height="60px">
+            <div class="footer">
+                <p>&copy; 2023 百速一键AI视频生成 - 让创意更简单</p>
+            </div>
+        </el-footer>
+    </div>
+
+    <!-- 全局Vue配置，更改分隔符避免与Jinja2冲突 -->
+    <script>
+        // 在创建Vue实例前设置全局配置
+        Vue.config.devtools = true;
+        
+        // 定义Vue的构造函数，覆盖原始的Vue
+        const OriginalVue = Vue;
+        Vue = function(options) {
+            // 在每个实例中设置分隔符
+            if (!options.delimiters) {
+                options.delimiters = ['${', '}'];
+            }
+            return new OriginalVue(options);
+        }
+        
+        // 复制原始 Vue 的属性和方法
+        for (const key in OriginalVue) {
+            if (OriginalVue.hasOwnProperty(key)) {
+                Vue[key] = OriginalVue[key];
+            }
+        }
+    </script>
+    
+    <!-- 自定义脚本 -->
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

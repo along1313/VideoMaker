@@ -12,15 +12,24 @@ from service.picture_prompt_service import PicturePromptService
 from service.picture_generate_service import PictureGenerateService
 from service.voice_generate_service import VoiceGenerateService
 from utility import parse_json
-from workflow import generate_picture, generate_audio, add_time
+from workflow import generate_picture, generate_audio, add_time, generate_video
 
-#读取workstore/work_flow_record.json
-with open("workstore/work_flow_record.json", "r") as f:
-    work_flow_record = json.load(f)
+"""
+work_flow_record = json.load(open("workstore/user1/森林深处的星光契约/work_flow_record.json", "r"))
+style = "绘本"
+result_dir = "workstore/user1"
 
-work_flow_record = add_time(work_flow_record, "workstore/user1/你相信星座运势吗？/audios", 1.0)
-print(work_flow_record)
+generate_video(work_flow_record, style, result_dir, "lib/font/STHeiti Medium.ttc" ,"测试", bgm_path="lib/music/bgm.wav")
+"""
 
-#将work_flow_record保存到文件中
-with open("workstore/user1/你相信星座运势吗？/work_flow_record_add.json", "w") as f:
-    json.dump(work_flow_record, f, ensure_ascii=False)
+llm = LLMService()
+script_service = ScriptService(llm)
+script = script_service.generate_text("选择一个心理学效应生成一个短视频")
+print(script)
+json_data = script_service.generate_json(script)
+print(f'******json_data*****')
+print(json_data)
+cleaned_json_data = parse_json(json_data)
+print(f'******cleaned_json_data*****')
+print(cleaned_json_data)
+

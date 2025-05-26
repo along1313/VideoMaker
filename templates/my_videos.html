@@ -1,0 +1,115 @@
+{% extends 'base.html' %}
+
+{% block title %}我的视频 - 百速一键AI视频生成{% endblock %}
+
+{% block content %}
+<div class="videos-container">
+    <h2>我的视频</h2>
+    
+    <div class="videos-grid" v-if="videos.length > 0">
+        <div class="video-card" v-for="video in videos" :key="video.id">
+            <div class="video-thumbnail">
+                <img :src="video.cover_path ? '/video/' + video.cover_path : '/static/img/default-cover.png'" :alt="video.title">
+                <div class="video-status" v-if="video.status !== 'completed'">
+                    <el-tag type="warning" v-if="video.status === 'pending'">等待处理</el-tag>
+                    <el-tag type="info" v-if="video.status === 'processing'">处理中</el-tag>
+                    <el-tag type="danger" v-if="video.status === 'failed'">处理失败</el-tag>
+                </div>
+                <div class="video-play" v-if="video.status === 'completed'" @click="playVideo(video)">
+                    <i class="el-icon-video-play"></i>
+                </div>
+            </div>
+            <div class="video-info">
+                <h3>${ video.title }</h3>
+                <p class="video-date">${ formatDate(video.created_at) }</p>
+                <p class="video-style">风格: ${ video.style }</p>
+                <div class="video-actions">
+                    <el-button size="mini" type="primary" @click="playVideo(video)" :disabled="video.status !== 'completed'">播放</el-button>
+                    <el-button size="mini" type="success" @click="downloadVideo(video)" :disabled="video.status !== 'completed'">下载</el-button>
+                    <el-button size="mini" type="danger" @click="deleteVideo(video)">删除</el-button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="empty-videos" v-else>
+        <p>您还没有生成任何视频</p>
+        <el-button type="primary" @click="goToHome">立即创建</el-button>
+    </div>
+    
+    <!-- 视频播放对话框 -->
+    <el-dialog
+        :title="currentVideo.title"
+        :visible.sync="videoDialogVisible"
+        width="70%"
+        center>
+        <div class="video-player-container">
+            <video controls :src="'/video/' + currentVideo.video_path" class="full-width-video"></video>
+        </div>
+    </el-dialog>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    new Vue({
+        el: '#app',
+        data() {
+            return {
+                videos: [],
+                videoDialogVisible: false,
+                currentVideo: {}
+            }
+        },
+        mounted() {
+            this.loadVideos();
+        },
+        methods: {
+            loadVideos() {
+                // 从后端获取视频列表
+                // 使用后端渲染的数据初始化
+                this.videos = JSON.parse('{{ videos|tojson|safe }}');
+            },
+            formatDate(dateString) {
+                const date = new Date(dateString);
+                return date.toLocaleString();
+            },
+            playVideo(video) {
+                if (video.status === 'completed') {
+                    this.currentVideo = video;
+                    this.videoDialogVisible = true;
+                }
+            },
+            downloadVideo(video) {
+                if (video.status === 'completed') {
+                    window.open('/video/' + video.video_path, '_blank');
+                }
+            },
+            deleteVideo(video) {
+                this.$confirm('确定要删除这个视频吗?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    axios.post(`/api/delete-video/${video.id}`)
+                    .then(response => {
+                        if (response.data.success) {
+                            this.$message.success('视频已删除');
+                            // 从列表中移除
+                            this.videos = this.videos.filter(v => v.id !== video.id);
+                        } else {
+                            this.$message.error(response.data.message);
+                        }
+                    })
+                    .catch(error => {
+                        this.$message.error('删除失败: ' + (error.response?.data?.message || '未知错误'));
+                    });
+                }).catch(() => {});
+            },
+            goToHome() {
+                window.location.href = '{{ url_for("index") }}';
+            }
+        }
+    });
+</script>
+{% endblock %}

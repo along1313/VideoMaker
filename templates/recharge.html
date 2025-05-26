@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+
+{% block title %}充值视频额度 - 百速一键AI视频生成{% endblock %}
+
+{% block content %}
+<div class="recharge-container">
+    <div class="recharge-card">
+        <h2>充值视频额度</h2>
+        
+        <div class="current-credits">
+            <p>当前剩余额度: <span class="credits-value">{{ current_user.credits }}条</span></p>
+        </div>
+        
+        <form method="POST" action="{{ url_for('recharge') }}">
+            <div class="recharge-options">
+                <h3>选择充值套餐</h3>
+                
+                <div class="options-grid">
+                    <div class="option-card" :class="{ 'active': selectedAmount === 10 }" @click="selectAmount(10)">
+                        <div class="option-amount">10元</div>
+                        <div class="option-credits">10条视频</div>
+                        <div class="option-tag">基础套餐</div>
+                    </div>
+                    
+                    <div class="option-card" :class="{ 'active': selectedAmount === 50 }" @click="selectAmount(50)">
+                        <div class="option-amount">50元</div>
+                        <div class="option-credits">55条视频</div>
+                        <div class="option-tag">超值套餐</div>
+                        <div class="option-bonus">赠送5条</div>
+                    </div>
+                    
+                    <div class="option-card" :class="{ 'active': selectedAmount === 100 }" @click="selectAmount(100)">
+                        <div class="option-amount">100元</div>
+                        <div class="option-credits">120条视频</div>
+                        <div class="option-tag">至尊套餐</div>
+                        <div class="option-bonus">赠送20条</div>
+                    </div>
+                </div>
+                
+                <div class="custom-amount">
+                    <h3>自定义充值金额</h3>
+                    <el-input-number
+                        v-model="customAmount"
+                        :min="1"
+                        :max="1000"
+                        @change="selectCustomAmount"
+                        placeholder="请输入充值金额">
+                    </el-input-number>
+                    <p class="amount-hint">充值金额 = 获得视频条数</p>
+                </div>
+                
+                <input type="hidden" name="amount" v-bind:value="selectedAmount">
+            </div>
+            
+            <div class="payment-methods">
+                <h3>选择支付方式</h3>
+                <div class="methods-list">
+                    <div class="method-item" :class="{ 'active': paymentMethod === 'alipay' }" @click="selectPaymentMethod('alipay')">
+                        <img src="{{ url_for('static', filename='img/alipay.png') }}" alt="支付宝">
+                        <span>支付宝</span>
+                    </div>
+                    <div class="method-item" :class="{ 'active': paymentMethod === 'wechat' }" @click="selectPaymentMethod('wechat')">
+                        <img src="{{ url_for('static', filename='img/wechat.png') }}" alt="微信支付">
+                        <span>微信支付</span>
+                    </div>
+                </div>
+                <input type="hidden" name="payment_method" :value="paymentMethod">
+            </div>
+            
+            <div class="recharge-submit">
+                <el-button type="primary" native-type="submit" :disabled="!selectedAmount || !paymentMethod">立即充值</el-button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    new Vue({
+        el: '#app',
+        data() {
+            return {
+                selectedAmount: 0,
+                customAmount: 0,
+                paymentMethod: '',
+                paymentMethod: ''
+            }
+        },
+        methods: {
+            selectAmount(amount) {
+                this.selectedAmount = amount;
+                this.customAmount = 0;
+            },
+            selectCustomAmount() {
+                if (this.customAmount > 0) {
+                    this.selectedAmount = this.customAmount;
+                }
+            },
+            selectPaymentMethod(method) {
+                this.paymentMethod = method;
+            }
+        }
+    });
+</script>
+{% endblock %}

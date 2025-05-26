@@ -33,16 +33,17 @@ class PicturePromptService:
         }
         """
 
-    def generate(self, script: str, style: int = None, max_tokens: int=32000, get_only_answer: bool=True) -> str:
+    def generate(self, script: str, style: str = None, max_tokens: int=32000, get_only_answer: bool=True) -> str:
         style_config = STYLE_CONFIG.get(style)
         if style_config is None:
+            print("未设置风格，使用默认风格")
             messages = [
                 {"role": "system", "content": self.system_prompt},
                 {"role": "user", "content": script}
             ]
         else:
             messages = [
-                {"role": "system", "content": style_config['picture_prompt_system_prompt']},
+                {"role": "system", "content": style_config['img_prompt_system_prompt']},
                 {"role": "user", "content": script}
-            ]   
+            ]
         return self.llm.generate(messages, max_tokens=max_tokens, get_only_answer=get_only_answer)

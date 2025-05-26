@@ -1,0 +1,292 @@
+{% extends 'base.html' %}
+
+{% block title %}百速一键AI视频生成 - 首页{% endblock %}
+
+{% block content %}
+<div class="home-container">
+    <!-- 标题区域 -->
+    <div class="hero-section">
+        <h1 class="main-title">百速一键AI视频生成</h1>
+        <p class="subtitle">输入提示词，选择风格，一键生成精美AI视频</p>
+    </div>
+
+    <!-- 输入区域 -->
+    <div class="input-section">
+        <div class="mode-switch">
+            <span class="mode-label" :class="{ 'active': inputMode === 'prompt' }">提示词</span>
+            <el-switch
+                v-model="inputMode"
+                active-value="script"
+                inactive-value="prompt"
+                @change="onModeChange"
+                class="mode-toggle">
+            </el-switch>
+            <span class="mode-label" :class="{ 'active': inputMode === 'script' }">文案</span>
+        </div>
+        
+        <el-input
+            type="textarea"
+            :rows="inputMode === 'prompt' ? 4 : 8"
+            :placeholder="inputMode === 'prompt' ? '请输入视频内容提示词，例如：以很多人都有的心理困扰问题，选择一个主题，做一个分析和如何解决的视频' : '请输入完整文案内容，将根据文案自动生成视频'"
+            v-model="prompt"
+            class="prompt-input">
+        </el-input>
+    </div>
+
+    <!-- 风格选择区域 -->
+    <div class="style-section">
+        <h3>选择视频风格</h3>
+        <div class="style-grid">
+            {% for style_name, style_img in styles.items() %}
+            <div class="style-card" :class="{ 'active': selectedStyle === '{{ style_name|safe }}' }" @click="selectStyle('{{ style_name|safe }}')">
+                <img src="{{ style_img }}" alt="{{ style_name }}">
+                <p>{{ style_name }}</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- 生成按钮 -->
+    <div class="action-section">
+        <el-button type="primary" size="large" @click="generateVideo" :loading="isGenerating" :disabled="!prompt || isGenerating">
+            ${ isGenerating ? '生成中...' : '一键生成视频' }
+        </el-button>
+    </div>
+
+    <!-- 生成状态区域 -->
+    <div class="status-section" v-if="showStatus">
+        <h3>生成状态</h3>
+        <el-progress :percentage="generationProgress" :status="generationStatus === 'failed' ? 'exception' : ''"></el-progress>
+        <p class="status-message">${ statusMessage }</p>
+        
+        <!-- 状态日志 -->
+        <div class="status-logs" ref="statusLogs">
+            <p v-for="(log, index) in statusLogs" :key="index">${ log }</p>
+        </div>
+    </div>
+
+    <!-- 生成结果区域 -->
+    <div class="result-section" v-if="videoCompleted">
+        <h3>生成结果</h3>
+        <div class="video-player">
+            <video controls :src="videoUrl" poster="coverUrl"></video>
+            <div class="video-info">
+                <h4>${ videoTitle }</h4>
+                <div class="video-actions">
+                    <el-button type="success" size="small" @click="downloadVideo">下载视频</el-button>
+                    <el-button type="danger" size="small" @click="deleteVideo">删除视频</el-button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 登录提示 -->
+    <el-dialog
+        title="需要登录"
+        :visible.sync="showLoginDialog"
+        width="30%">
+        <span>请先登录后再生成视频</span>
+        <span slot="footer" class="dialog-footer">
+            <el-button @click="showLoginDialog = false">取消</el-button>
+            <el-button type="primary" @click="goToLogin">去登录</el-button>
+        </span>
+    </el-dialog>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    new Vue({
+        el: '#app',
+        data() {
+            return {
+                prompt: '',
+                inputMode: 'prompt', // 默认为提示词模式
+                selectedStyle: '3D景深', // 默认风格
+                isGenerating: false,
+                showStatus: false,
+                generationProgress: 0,
+                generationStatus: '',
+                statusMessage: '',
+                statusLogs: [],
+                videoId: null,
+                videoCompleted: false,
+                videoUrl: '',
+                coverUrl: '',
+                videoTitle: '',
+                showLoginDialog: false,
+                statusInterval: null
+            }
+        },
+        methods: {
+            // 选择风格
+            selectStyle(style) {
+                this.selectedStyle = style;
+            },
+            
+            // 切换输入模式
+            onModeChange() {
+                // 当切换模式时清空提示词
+                this.prompt = '';
+            },
+            
+            // 生成视频
+            generateVideo() {
+                // 检查是否登录
+                {% if current_user.is_authenticated %}
+                    this.startGeneration();
+                {% else %}
+                    this.showLoginDialog = true;
+                {% endif %}
+            },
+            
+            // 开始生成视频
+            startGeneration() {
+                if (!this.prompt) {
+                    const message = this.inputMode === 'prompt' ? '请输入提示词' : '请输入文案内容';
+                    this.$message.error(message);
+                    return;
+                }
+                
+                this.isGenerating = true;
+                this.showStatus = true;
+                this.generationProgress = 0;
+                this.statusMessage = '正在提交生成任务...';
+                this.statusLogs = ['开始生成视频...'];
+                this.videoCompleted = false;
+                
+                // 发送生成请求
+                axios.post('/api/generate-video', {
+                    prompt: this.prompt,
+                    style: this.selectedStyle,
+                    mode: this.inputMode  // 增加模式参数
+                })
+                .then(response => {
+                    if (response.data.success) {
+                        this.videoId = response.data.video_id;
+                        this.statusMessage = response.data.message;
+                        this.statusLogs.push(response.data.message);
+                        
+                        // 开始轮询状态
+                        this.pollStatus();
+                    } else {
+                        this.handleError(response.data.message);
+                    }
+                })
+                .catch(error => {
+                    this.handleError(error.response?.data?.message || '生成请求失败');
+                });
+            },
+            
+            // 轮询生成状态
+            pollStatus() {
+                if (this.statusInterval) {
+                    clearInterval(this.statusInterval);
+                }
+                
+                this.statusInterval = setInterval(() => {
+                    if (!this.videoId) return;
+                    
+                    axios.get(`/api/video-status/${this.videoId}`)
+                    .then(response => {
+                        if (response.data.success) {
+                            this.generationStatus = response.data.status;
+                            this.generationProgress = response.data.progress;
+                            this.statusMessage = response.data.message;
+                            
+                            // 更新日志
+                            if (response.data.logs && response.data.logs.length > this.statusLogs.length) {
+                                this.statusLogs = response.data.logs;
+                                this.scrollToBottom();
+                            }
+                            
+                            // 检查是否完成
+                            if (response.data.status === 'completed') {
+                                this.videoCompleted = true;
+                                this.isGenerating = false;
+                                clearInterval(this.statusInterval);
+                                this.loadVideoInfo();
+                            } else if (response.data.status === 'failed') {
+                                this.handleError('视频生成失败: ' + response.data.message);
+                                clearInterval(this.statusInterval);
+                            }
+                        }
+                    })
+                    .catch(error => {
+                        console.error('获取状态失败', error);
+                    });
+                }, 2000); // 每2秒轮询一次
+            },
+            
+            // 加载视频信息
+            loadVideoInfo() {
+                axios.get(`/api/video-info/${this.videoId}`)
+                .then(response => {
+                    if (response.data.success) {
+                        this.videoUrl = response.data.video_url;
+                        this.coverUrl = response.data.cover_url;
+                        this.videoTitle = response.data.title;
+                    }
+                })
+                .catch(error => {
+                    console.error('获取视频信息失败', error);
+                });
+            },
+            
+            // 下载视频
+            downloadVideo() {
+                if (this.videoUrl) {
+                    window.open(this.videoUrl, '_blank');
+                }
+            },
+            
+            // 删除视频
+            deleteVideo() {
+                this.$confirm('确定要删除这个视频吗?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    axios.post(`/api/delete-video/${this.videoId}`)
+                    .then(response => {
+                        if (response.data.success) {
+                            this.$message.success('视频已删除');
+                            this.videoCompleted = false;
+                            this.videoId = null;
+                        } else {
+                            this.$message.error(response.data.message);
+                        }
+                    })
+                    .catch(error => {
+                        this.$message.error('删除失败: ' + (error.response?.data?.message || '未知错误'));
+                    });
+                }).catch(() => {});
+            },
+            
+            // 处理错误
+            handleError(message) {
+                this.isGenerating = false;
+                this.generationStatus = 'failed';
+                this.statusMessage = message;
+                this.statusLogs.push('错误: ' + message);
+                this.scrollToBottom();
+                this.$message.error(message);
+            },
+            
+            // 滚动到日志底部
+            scrollToBottom() {
+                this.$nextTick(() => {
+                    if (this.$refs.statusLogs) {
+                        this.$refs.statusLogs.scrollTop = this.$refs.statusLogs.scrollHeight;
+                    }
+                });
+            },
+            
+            // 跳转到登录页
+            goToLogin() {
+                window.location.href = '{{ url_for("login") }}';
+            }
+        }
+    });
+</script>
+{% endblock %}

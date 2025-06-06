@@ -1,0 +1,234 @@
+{% extends "admin/base.html" %}
+
+{% block title %}管理后台 - 编辑用户{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">
+        <a href="{{ url_for('admin_users') }}" class="text-decoration-none text-muted">
+            <i class="bi bi-arrow-left"></i>
+        </a>
+        编辑用户
+    </h1>
+    <div class="btn-toolbar mb-2 mb-md-0">
+        <a href="{{ url_for('admin_users') }}" class="btn btn-outline-secondary me-2">
+            <i class="bi bi-x-lg"></i> 取消
+        </a>
+        <button type="submit" form="userForm" class="btn btn-primary">
+            <i class="bi bi-save"></i> 保存更改
+        </button>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h6 class="mb-0">基本信息</h6>
+            </div>
+            <div class="card-body">
+                <form id="userForm" method="post" action="{{ url_for('admin_edit_user', user_id=user.id) }}">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">用户名</label>
+                            <input type="text" class="form-control" name="username" value="{{ user.username }}" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">邮箱</label>
+                            <input type="email" class="form-control" name="email" value="{{ user.email }}" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">新密码</label>
+                            <input type="password" class="form-control" name="password" placeholder="留空则不修改">
+                            <div class="form-text">密码至少6个字符</div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">确认新密码</label>
+                            <input type="password" class="form-control" name="password_confirm">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">视频额度</label>
+                            <input type="number" class="form-control" name="credits" value="{{ user.credits }}" min="0" required>
+                        </div>
+                        <div class="col-12">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="isActive" name="is_active" {% if user.is_active %}checked{% endif %}>
+                                <label class="form-check-label" for="isActive">启用账户</label>
+                            </div>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="isAdmin" name="is_admin" {% if user.is_admin %}checked{% endif %}>
+                                <label class="form-check-label" for="isAdmin">设为管理员</label>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-header">
+                <h6 class="mb-0">用户统计</h6>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <div class="border rounded p-3 text-center">
+                            <div class="text-muted small mb-1">创建时间</div>
+                            <div class="h5 mb-0">{{ user.created_at.strftime('%Y-%m-%d %H:%M') }}</div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="border rounded p-3 text-center">
+                            <div class="text-muted small mb-1">最后登录</div>
+                            <div class="h5 mb-0">
+                                {% if user.last_login_at %}
+                                    {{ user.last_login_at.strftime('%Y-%m-%d %H:%M') }}
+                                {% else %}
+                                    从未登录
+                                {% endif %}
+                            </div>
+                            {% if user.last_login_ip %}
+                                <div class="small text-muted">{{ user.last_login_ip }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="border rounded p-3 text-center">
+                            <div class="text-muted small mb-1">登录次数</div>
+                            <div class="h5 mb-0">{{ user.login_logs|length }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-4">
+        <div class="card mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h6 class="mb-0">最近活动</h6>
+                <a href="{{ url_for('admin_user_logs', user_id=user.id) }}" class="btn btn-sm btn-outline-primary">
+                    查看全部
+                </a>
+            </div>
+            <div class="list-group list-group-flush">
+                {% for log in user.login_logs|sort(attribute='created_at', reverse=true)|slice(5) %}
+                <div class="list-group-item">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <div class="fw-bold">{{ log.login_ip }}</div>
+                            <div class="small text-muted">{{ log.user_agent|truncate(30) }}</div>
+                        </div>
+                        <div class="text-end">
+                            <div class="small text-muted">{{ log.created_at.strftime('%m-%d %H:%M') }}</div>
+                            <span class="badge bg-light text-dark">{{ log.created_at|humanize() }}</span>
+                        </div>
+                    </div>
+                </div>
+                {% else %}
+                <div class="text-center py-4 text-muted">
+                    <i class="bi bi-activity fs-4 d-block mb-2"></i>
+                    暂无活动记录
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-header">
+                <h6 class="mb-0">危险操作</h6>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#resetPasswordModal">
+                        <i class="bi bi-key"></i> 重置密码
+                    </button>
+                    {% if current_user.id != user.id %}
+                    <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteUserModal">
+                        <i class="bi bi-trash"></i> 删除用户
+                    </button>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 重置密码确认模态框 -->
+<div class="modal fade" id="resetPasswordModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">重置密码</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>确定要将用户 <strong>{{ user.username }}</strong> 的密码重置为 <code>123456</code> 吗？</p>
+                <div class="alert alert-warning">
+                    <i class="bi bi-exclamation-triangle-fill"></i> 用户下次登录时必须修改密码！
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                <form method="post" action="{{ url_for('admin_reset_password', user_id=user.id) }}">
+                    <button type="submit" class="btn btn-danger">确认重置</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 删除用户确认模态框 -->
+{% if current_user.id != user.id %}
+<div class="modal fade" id="deleteUserModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">确认删除</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>确定要删除用户 <strong>{{ user.username }}</strong> 吗？此操作无法撤销！</p>
+                <div class="alert alert-danger">
+                    <i class="bi bi-exclamation-triangle-fill"></i> 警告：这将永久删除该用户及其所有数据！
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                <form method="post" action="{{ url_for('admin_delete_user', user_id=user.id) }}">
+                    <button type="submit" class="btn btn-danger">确认删除</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// 表单验证
+var userForm = document.getElementById('userForm');
+if (userForm) {
+    userForm.addEventListener('submit', function(event) {
+        var password = userForm.querySelector('input[name="password"]').value;
+        var passwordConfirm = userForm.querySelector('input[name="password_confirm"]').value;
+        
+        if (password || passwordConfirm) {
+            if (password !== passwordConfirm) {
+                event.preventDefault();
+                alert('两次输入的密码不一致！');
+                return false;
+            }
+            
+            if (password.length < 6) {
+                event.preventDefault();
+                alert('密码长度不能少于6个字符！');
+                return false;
+            }
+        }
+    });
+}
+</script>
+{% endblock %}

@@ -93,9 +93,9 @@ if __name__ == '__main__':
         
         # 启动Web服务器
         print("启动百速一键AI视频生成应用...")
-        print("请访问 http://localhost:5001 打开网页界面")
-        log_info("百速一键AI视频生成应用服务器已启动，监听端口: 5001")
-        app.run(debug=True, host='0.0.0.0', port=5001)
+        print("请访问 http://localhost:5002 打开网页界面")
+        log_info("百速一键AI视频生成应用服务器已启动，监听端口: 5002")
+        app.run(debug=True, host='0.0.0.0', port=5002)
     except Exception as e:
         error_message = f"应用启动失败: {str(e)}"
         print(error_message)

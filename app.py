@@ -2,13 +2,24 @@ import os
 import json
 import uuid
 import traceback
-from flask import Flask, request, jsonify, render_template, session, redirect, url_for, send_from_directory
+from flask import Flask, request, jsonify, render_template, session, redirect, url_for, send_from_directory, flash, send_file, abort
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 import threading
 import time
 from datetime import datetime
+import logging
+from logging.handlers import RotatingFileHandler
+from flask import abort, flash, request, jsonify, render_template, redirect, url_for, session, send_from_directory
+import requests
+import os
+from dateutil.relativedelta import relativedelta
+from functools import wraps
+from sqlalchemy import or_
+import socket
+import json
+from flask_migrate import Migrate
 
 # 导入日志模块
 from logger import log_info, log_error, log_warning, log_video_task
@@ -26,6 +37,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # 初始化数据库
 db = SQLAlchemy(app)
+migrate = Migrate(app, db)
 
 # 初始化登录管理器
 login_manager = LoginManager()
@@ -35,6 +47,15 @@ login_manager.login_view = 'login'
 # 全局变量存储生成状态
 generation_status = {}
 
+# 管理员权限装饰器
+def admin_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not current_user.is_authenticated or not current_user.is_admin:
+            abort(403)  # 禁止访问
+        return f(*args, **kwargs)
+    return decorated_function
+
 # 用户模型
 class User(UserMixin, db.Model):
     """用户模型，存储用户信息"""
@@ -43,7 +64,16 @@ class User(UserMixin, db.Model):
     password_hash = db.Column(db.String(200), nullable=False)
     email = db.Column(db.String(100), unique=True, nullable=False)
     credits = db.Column(db.Integer, default=3)  # 新用户赠送3条视频额度
+    is_admin = db.Column(db.Boolean, default=False)  # 是否为管理员
+    last_login_ip = db.Column(db.String(50))  # 最后登录IP
+    last_login_at = db.Column(db.DateTime)  # 最后登录时间
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    login_logs = db.relationship('UserLoginLog', backref='user', lazy=True)  # 登录日志
+    videos = db.relationship('Video', backref='user', lazy=True)  # 视频
+    payments = db.relationship('Payment', backref='user', lazy=True)  # 充值记录
+    
+    def is_administrator(self):
+        return self.is_admin
     
     def set_password(self, password):
         """设置密码哈希"""
@@ -66,8 +96,15 @@ class Video(db.Model):
     status = db.Column(db.String(20), default='pending')  # pending, processing, completed, failed
     mode = db.Column(db.String(20), default='prompt')  # prompt(提示词模式) 或 script(文案模式)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    
-    user = db.relationship('User', backref=db.backref('videos', lazy=True))
+
+# 用户登录日志模型
+class UserLoginLog(db.Model):
+    """用户登录日志"""
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    login_ip = db.Column(db.String(50), nullable=False)
+    user_agent = db.Column(db.String(200))
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
 # 充值记录模型
 class Payment(db.Model):
@@ -78,8 +115,7 @@ class Payment(db.Model):
     credits = db.Column(db.Integer, nullable=False)
     status = db.Column(db.String(20), default='completed')
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    
-    user = db.relationship('User', backref=db.backref('payments', lazy=True))
+    # 移除重复的 user 关系，因为已经在 User 模型中定义了 backref
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -176,11 +212,11 @@ def generate_video_task(prompt, style, user_id, video_id, mode='prompt'):
                 result_dir=result_dir,
                 user_id=str(user_id),
                 style=style,
-            llm=llm,
-            image_model=image_model,
-            tts_model=tts_model,
-            user_name="百速AI视频"
-        )
+                llm=llm,
+                image_model=image_model,
+                tts_model=tts_model,
+                user_name="百速AI视频"
+            )
         
         # 恢复原始print函数
         builtins.print = original_print
@@ -322,33 +358,49 @@ def profile():
 @app.route('/my-videos')
 @login_required
 def my_videos():
-    """我的视频列表"""
     try:
-        # 获取用户的视频，最多显示20个，按创建时间倒序排列
         video_objects = Video.query.filter_by(user_id=current_user.id).order_by(Video.created_at.desc()).limit(20).all()
-        
-        # 将Video对象转换为可序列化的字典
         videos = []
         for video in video_objects:
-            # 处理时间格式，确保可序列化
             created_at = video.created_at.strftime('%Y-%m-%d %H:%M:%S') if video.created_at else None
+            
+            # 处理视频路径
+            video_path = video.video_path or ''
+            # 移除可能存在的重复前缀
+            if video_path.startswith('workstore/1/workstore/'):
+                video_path = video_path.replace('workstore/1/workstore/', 'workstore/1/')
+            
+            # 确保视频路径格式正确
+            if video_path and not video_path.startswith('workstore/'):
+                video_path = f'workstore/1/{video_path}'
+            
+            # 处理封面路径
+            cover_path = video.cover_path or ''
+            if not cover_path:
+                # 如果没有封面路径，尝试使用默认封面
+                cover_path = f'/workstore/1/{video.title}/covers/cover_4:3.png' if video.title else ''
+            elif not cover_path.startswith(('http://', 'https://', '/static/', '/workstore/')):
+                cover_path = f'/workstore/1/{video.title}/{cover_path}' if video.title else f'/static/{cover_path}'
             
             videos.append({
                 'id': video.id,
-                'title': video.title,
-                'style': video.style,
-                'prompt': video.prompt,
-                'status': video.status,
-                'video_path': video.video_path,
-                'cover_path': video.cover_path,
-                'created_at': created_at
+                'title': video.title or '未命名视频',
+                'style': video.style or '默认风格',
+                'prompt': video.prompt or '',
+                'status': video.status or 'unknown',
+                'created_at': created_at,
+                'video_path': video_path,
+                'cover_path': cover_path
             })
         
-        log_info(f"用户 {current_user.username} 访问我的视频页面，找到 {len(videos)} 个视频")
-        return render_template('my_videos.html', videos=videos)
+        return render_template('my_videos.html', 
+                             videos_json=json.dumps(videos, ensure_ascii=False),
+                             error=None)
     except Exception as e:
-        log_error(f"获取用户视频列表失败: {str(e)}", exc_info=True)
-        return render_template('my_videos.html', videos=[], error=f"获取视频列表失败: {str(e)}")
+        app.logger.error(f"Error in my_videos: {str(e)}", exc_info=True)
+        return render_template('my_videos.html', 
+                             videos_json=json.dumps([], ensure_ascii=False),
+                             error=f'加载视频列表失败: {str(e)}')
 
 # 路由：充值
 @app.route('/recharge', methods=['GET', 'POST'])
@@ -619,16 +671,456 @@ def video_file(filename):
     """提供视频文件"""
     return send_from_directory('workstore', filename)
 
+# 管理员仪表盘
+@app.route('/admin')
+@login_required
+@admin_required
+def admin_dashboard():
+    """管理员仪表盘"""
+    # 获取统计数据
+    user_count = User.query.count()
+    video_count = Video.query.count()
+    total_income = db.session.query(db.func.sum(Payment.amount)).scalar() or 0
+    
+    # 今日新增用户
+    today = datetime.utcnow().date()
+    new_users_today = User.query.filter(
+        db.func.date(User.created_at) == today
+    ).count()
+    
+    # 最近7天用户增长
+    end_date = datetime.utcnow()
+    start_date = end_date - timedelta(days=6)
+    
+    # 生成日期范围
+    date_range = [start_date + timedelta(days=i) for i in range(7)]
+    date_labels = [d.strftime('%m-%d') for d in date_range]
+    
+    # 查询每天的用户数
+    user_growth = []
+    for single_date in date_range:
+        next_date = single_date + timedelta(days=1)
+        count = User.query.filter(
+            User.created_at >= single_date,
+            User.created_at < next_date
+        ).count()
+        user_growth.append(count)
+    
+    # 用户角色分布
+    admin_count = User.query.filter_by(is_admin=True).count()
+    user_distribution = {
+        'admin': admin_count,
+        'regular': user_count - admin_count
+    }
+    
+    # 最近登录的用户
+    recent_users = User.query.filter(
+        User.last_login_at.isnot(None)
+    ).order_by(
+        User.last_login_at.desc()
+    ).limit(5).all()
+    
+    return render_template('admin/dashboard.html',
+                         user_count=user_count,
+                         video_count=video_count,
+                         total_income=total_income,
+                         new_users_today=new_users_today,
+                         growth_dates=date_labels,
+                         growth_counts=user_growth,
+                         user_distribution=user_distribution,
+                         recent_users=recent_users)
+
+# 用户管理
+@app.route('/admin/users')
+@login_required
+@admin_required
+def admin_users():
+    """用户管理"""
+    page = request.args.get('page', 1, type=int)
+    per_page = 20
+    query = User.query
+    
+    # 搜索功能
+    search = request.args.get('q', '').strip()
+    if search:
+        query = query.filter(
+            or_(
+                User.username.like(f'%{search}%'),
+                User.email.like(f'%{search}%')
+            )
+        )
+    
+    # 角色筛选
+    role = request.args.get('role', '')
+    if role == 'admin':
+        query = query.filter_by(is_admin=True)
+    elif role == 'user':
+        query = query.filter_by(is_admin=False)
+    
+    # 排序
+    query = query.order_by(User.created_at.desc())
+    
+    # 分页
+    pagination = query.paginate(page=page, per_page=per_page, error_out=False)
+    users = pagination.items
+    
+    return render_template('admin/users.html',
+                         users=users,
+                         pagination=pagination,
+                         total_users=query.count())
+
+# 编辑用户
+@app.route('/admin/user/<int:user_id>/edit', methods=['GET', 'POST'])
+@login_required
+@admin_required
+def admin_edit_user(user_id):
+    """编辑用户信息"""
+    user = User.query.get_or_404(user_id)
+    
+    if request.method == 'POST':
+        # 更新用户信息
+        user.username = request.form.get('username', user.username)
+        user.email = request.form.get('email', user.email)
+        user.credits = int(request.form.get('credits', user.credits))
+        user.is_admin = 'is_admin' in request.form
+        user.is_active = 'is_active' in request.form
+        
+        # 更新密码（如果提供了新密码）
+        password = request.form.get('password', '').strip()
+        if password:
+            user.set_password(password)
+        
+        db.session.commit()
+        flash('用户信息已更新', 'success')
+        return redirect(url_for('admin_edit_user', user_id=user.id))
+    
+    return render_template('admin/edit_user.html', user=user)
+
+# 添加用户
+@app.route('/admin/user/add', methods=['POST'])
+@login_required
+@admin_required
+def admin_add_user():
+    """添加新用户"""
+    username = request.form.get('username', '').strip()
+    email = request.form.get('email', '').strip()
+    password = request.form.get('password', '').strip()
+    password_confirm = request.form.get('password_confirm', '').strip()
+    credits = int(request.form.get('credits', 0))
+    is_admin = 'is_admin' in request.form
+    
+    # 验证输入
+    if not all([username, email, password, password_confirm]):
+        flash('请填写所有必填字段', 'danger')
+        return redirect(url_for('admin_users'))
+    
+    if password != password_confirm:
+        flash('两次输入的密码不一致', 'danger')
+        return redirect(url_for('admin_users'))
+    
+    if len(password) < 6:
+        flash('密码长度不能少于6个字符', 'danger')
+        return redirect(url_for('admin_users'))
+    
+    # 检查用户名和邮箱是否已存在
+    if User.query.filter_by(username=username).first():
+        flash('用户名已存在', 'danger')
+        return redirect(url_for('admin_users'))
+    
+    if User.query.filter_by(email=email).first():
+        flash('邮箱已被注册', 'danger')
+        return redirect(url_for('admin_users'))
+    
+    # 创建新用户
+    user = User(
+        username=username,
+        email=email,
+        credits=credits,
+        is_admin=is_admin
+    )
+    user.set_password(password)
+    
+    db.session.add(user)
+    db.session.commit()
+    
+    flash('用户添加成功', 'success')
+    return redirect(url_for('admin_edit_user', user_id=user.id))
+
+# 删除用户
+@app.route('/admin/user/<int:user_id>/delete', methods=['POST'])
+@login_required
+@admin_required
+def admin_delete_user(user_id):
+    """删除用户"""
+    if current_user.id == user_id:
+        flash('不能删除当前登录的管理员账户', 'danger')
+        return redirect(url_for('admin_users'))
+    
+    user = User.query.get_or_404(user_id)
+    
+    # 删除相关数据（根据实际需求调整）
+    UserLoginLog.query.filter_by(user_id=user_id).delete()
+    
+    # 删除用户
+    db.session.delete(user)
+    db.session.commit()
+    
+    flash('用户已删除', 'success')
+    return redirect(url_for('admin_users'))
+
+# 重置用户密码
+@app.route('/admin/user/<int:user_id>/reset-password', methods=['POST'])
+@login_required
+@admin_required
+def admin_reset_password(user_id):
+    """重置用户密码"""
+    user = User.query.get_or_404(user_id)
+    new_password = '123456'  # 默认重置密码
+    user.set_password(new_password)
+    db.session.commit()
+    
+    flash(f'已重置用户 {user.username} 的密码为: 123456', 'success')
+    return redirect(url_for('admin_edit_user', user_id=user.id))
+
+# 查看用户登录日志
+@app.route('/admin/user/<int:user_id>/logs')
+@login_required
+@admin_required
+def admin_user_logs(user_id):
+    """查看用户登录日志"""
+    user = User.query.get_or_404(user_id)
+    page = request.args.get('page', 1, type=int)
+    per_page = 20
+    
+    # 查询登录日志
+    query = UserLoginLog.query.filter_by(user_id=user_id)
+    
+    # 分页
+    pagination = query.order_by(
+        UserLoginLog.created_at.desc()
+    ).paginate(page=page, per_page=per_page, error_out=False)
+    
+    logs = pagination.items
+    
+    return render_template('admin/user_logs.html',
+                         user=user,
+                         logs=logs,
+                         pagination=pagination,
+                         get_ip_info=get_ip_info)
+
+def get_ip_info(ip=None):
+    """
+    获取IP地址信息
+    :param ip: IP地址，如果为None则获取请求IP
+    :return: IP信息字典
+    """
+    if not ip:
+        if request:
+            # 获取客户端IP
+            if request.headers.get('X-Forwarded-For'):
+                ip = request.headers.get('X-Forwarded-For').split(',')[0]
+            else:
+                ip = request.remote_addr or '127.0.0.1'
+        else:
+            ip = '127.0.0.1'
+    
+    try:
+        # 使用ip-api.com免费API获取IP信息
+        response = requests.get(f'http://ip-api.com/json/{ip}?fields=status,message,country,regionName,city,isp,org,as,query', timeout=3)
+        if response.status_code == 200:
+            data = response.json()
+            if data.get('status') == 'success':
+                return {
+                    'ip': data.get('query', ip),
+                    'country': data.get('country', ''),
+                    'region': data.get('regionName', ''),
+                    'city': data.get('city', ''),
+                    'isp': data.get('isp', ''),
+                    'org': data.get('org', ''),
+                    'as': data.get('as', '')
+                }
+    except Exception as e:
+        print(f"获取IP信息失败: {str(e)}")
+    
+    # 如果获取失败，返回基本IP信息
+    return {
+        'ip': ip,
+        'country': '未知',
+        'region': '未知',
+        'city': '未知',
+        'isp': '未知',
+        'org': '未知',
+        'as': '未知'
+    }
+
+# 视频文件访问路由
+@app.route('/video/<path:filepath>')
+@login_required
+def serve_video(filepath):
+    """提供视频文件访问"""
+    try:
+        # 记录请求路径
+        app.logger.info(f"请求视频文件: {filepath}")
+        
+        # 解码URL编码的路径
+        filepath = unquote(filepath)
+        
+        # 安全检查：确保路径在 workstore 目录下
+        if not filepath.startswith('workstore/'):
+            app.logger.error(f"拒绝访问非workstore路径: {filepath}")
+            return 'Access denied', 403
+        
+        # 构建完整路径
+        base_dir = os.path.join(os.getcwd(), 'workstore')
+        rel_path = filepath[len('workstore/'):]  # 移除开头的 'workstore/'
+        full_path = os.path.join(base_dir, rel_path)
+        
+        # 标准化路径，处理 '..' 和 '.'
+        full_path = os.path.normpath(full_path)
+        
+        # 再次检查路径是否仍在 workstore 目录下
+        if not full_path.startswith(os.path.abspath(base_dir) + os.sep):
+            app.logger.error(f"尝试访问workstore之外的路径: {full_path}")
+            return 'Access denied', 403
+        
+        # 检查文件是否存在
+        if not os.path.exists(full_path):
+            # 如果路径是目录，尝试查找 output.mp4
+            if os.path.isdir(full_path):
+                full_path = os.path.join(full_path, 'output.mp4')
+                if not os.path.exists(full_path):
+                    app.logger.error(f"视频文件不存在: {full_path}")
+                    return 'Video not found', 404
+            else:
+                app.logger.error(f"视频路径不存在: {full_path}")
+                return 'Video not found', 404
+        
+        app.logger.info(f"正在提供视频文件: {full_path}")
+        
+        # 发送文件
+        response = send_file(full_path, conditional=True)
+        response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+        response.headers['Pragma'] = 'no-cache'
+        response.headers['Expires'] = '0'
+        return response
+        
+    except Exception as e:
+        app.logger.error(f"提供视频文件时出错: {str(e)}", exc_info=True)
+        return str(e), 500
+
+# 处理 workstore 目录下的静态文件
+@app.route('/workstore/<path:filename>')
+@login_required
+def serve_workstore_file(filename):
+    """提供 workstore 目录下的文件访问"""
+    try:
+        # 记录请求路径
+        app.logger.info(f"请求 workstore 文件: {filename}")
+        
+        # 构建完整路径
+        base_dir = os.path.join(os.getcwd(), 'workstore')
+        full_path = os.path.join(base_dir, filename)
+        
+        # 标准化路径，处理 '..' 和 '.'
+        full_path = os.path.normpath(full_path)
+        
+        # 检查路径是否在 workstore 目录下
+        if not full_path.startswith(os.path.abspath(base_dir) + os.sep):
+            app.logger.error(f"尝试访问 workstore 之外的路径: {full_path}")
+            return 'Access denied', 403
+        
+        # 检查文件是否存在
+        if not os.path.exists(full_path):
+            # 如果是目录，尝试查找 output.mp4
+            if os.path.isdir(full_path):
+                output_path = os.path.join(full_path, 'output.mp4')
+                if os.path.exists(output_path):
+                    full_path = output_path
+                else:
+                    # 尝试查找封面图片
+                    cover_path = os.path.join(full_path, 'covers', 'cover_4:3.png')
+                    if os.path.exists(cover_path):
+                        full_path = cover_path
+                    else:
+                        app.logger.error(f"文件不存在: {full_path} (尝试查找 output.mp4 和 cover_4:3.png 都失败)")
+                        return 'File not found', 404
+            else:
+                # 检查是否是封面图片请求
+                if 'covers/' in filename and filename.endswith('.png'):
+                    # 尝试返回默认封面
+                    default_cover = os.path.join(app.static_folder, 'img', 'default-cover.png')
+                    if os.path.exists(default_cover):
+                        return send_file(default_cover, conditional=True)
+                
+                app.logger.error(f"文件不存在: {full_path}")
+                return 'File not found', 404
+        
+        # 发送文件
+        return send_file(full_path, conditional=True)
+        
+    except Exception as e:
+        app.logger.error(f"提供文件时出错: {str(e)}", exc_info=True)
+        return str(e), 500
+
+# 封面图片访问路由
+@app.route('/covers/<path:filename>')
+@login_required
+def serve_cover(filename):
+    """提供封面图片访问"""
+    # 确保文件路径安全
+    if '..' in filename or filename.startswith('/'):
+        abort(404)
+    
+    # 设置封面目录路径
+    covers_dir = os.path.join(app.root_path, 'static', 'covers')
+    
+    # 确保目录存在
+    if not os.path.exists(covers_dir):
+        os.makedirs(covers_dir, exist_ok=True)
+    
+    return send_from_directory(covers_dir, filename, as_attachment=False)
+
+# 上下文处理器：添加模板全局变量
+@app.context_processor
+def inject_now():
+    return {
+        'now': datetime.utcnow(),
+        'get_ip_info': get_ip_info
+    }
+
 # 初始化数据库
-# 初始化数据库函数
 def create_tables():
     """创建数据库表"""
     db.create_all()
+    # 创建默认管理员账户（如果不存在）
+    admin = User.query.filter_by(username='admin').first()
+    if not admin:
+        admin = User(
+            username='admin',
+            email='admin@example.com',
+            is_admin=True
+        )
+        admin.set_password('admin123')
+        db.session.add(admin)
+        db.session.commit()
+        print("已创建默认管理员账户: admin / admin123")
 
 if __name__ == '__main__':
     # 确保数据库表存在
     with app.app_context():
         db.create_all()
+        # 创建默认管理员账户（如果不存在）
+        admin = User.query.filter_by(username='admin').first()
+        if not admin:
+            admin = User(
+                username='admin',
+                email='admin@example.com',
+                is_admin=True
+            )
+            admin.set_password('admin123')
+            db.session.add(admin)
+            db.session.commit()
+            print("已创建默认管理员账户: admin / admin123")
     
-    # 启动应用
-    app.run(debug=True, host='0.0.0.0', port=5001)
+    # 启动Flask应用
+    app.run(debug=True, host='0.0.0.0', port=5000)

@@ -3,13 +3,27 @@
 {% block title %}我的视频 - 百速一键AI视频生成{% endblock %}
 
 {% block content %}
-<div class="videos-container">
+<!-- 存储服务器端传递的数据 -->
+<script type="application/json" id="videos-data">{{ videos_json|safe }}</script>
+<div id="error-message" style="display:none;">{{ error|default('')|safe }}</div>
+
+<div class="videos-container" id="app">
     <h2>我的视频</h2>
+    
+    <!-- 错误提示 -->
+    <el-alert
+        v-if="error"
+        :title="error"
+        type="error"
+        show-icon
+        :closable="false"
+        style="margin-bottom: 20px;">
+    </el-alert>
     
     <div class="videos-grid" v-if="videos.length > 0">
         <div class="video-card" v-for="video in videos" :key="video.id">
             <div class="video-thumbnail">
-                <img :src="video.cover_path ? '/video/' + video.cover_path : '/static/img/default-cover.png'" :alt="video.title">
+                <img :src="getCoverUrl(video.cover_path)" :alt="video.title || '未命名视频'">
                 <div class="video-status" v-if="video.status !== 'completed'">
                     <el-tag type="warning" v-if="video.status === 'pending'">等待处理</el-tag>
                     <el-tag type="info" v-if="video.status === 'processing'">处理中</el-tag>
@@ -20,13 +34,19 @@
                 </div>
             </div>
             <div class="video-info">
-                <h3>${ video.title }</h3>
-                <p class="video-date">${ formatDate(video.created_at) }</p>
-                <p class="video-style">风格: ${ video.style }</p>
+                <h3>${ video.title || '未命名视频' }</h3>
+                <p class="video-date">${ formatDate(video.created_at || '') }</p>
+                <p class="video-style">风格: ${ video.style || '默认' }</p>
                 <div class="video-actions">
-                    <el-button size="mini" type="primary" @click="playVideo(video)" :disabled="video.status !== 'completed'">播放</el-button>
-                    <el-button size="mini" type="success" @click="downloadVideo(video)" :disabled="video.status !== 'completed'">下载</el-button>
-                    <el-button size="mini" type="danger" @click="deleteVideo(video)">删除</el-button>
+                    <el-button type="primary" size="mini" @click="playVideo(video)" :disabled="!video || video.status !== 'completed'">
+                        <i class="el-icon-video-play"> 播放</i>
+                    </el-button>
+                    <el-button type="success" size="mini" @click="downloadVideo(video)" :disabled="!video || video.status !== 'completed'">
+                        <i class="el-icon-download"> 下载</i>
+                    </el-button>
+                    <el-button type="danger" size="mini" @click="confirmDelete(video)" :disabled="!video">
+                        <i class="el-icon-delete"> 删除</i>
+                    </el-button>
                 </div>
             </div>
         </div>
@@ -39,77 +59,263 @@
     
     <!-- 视频播放对话框 -->
     <el-dialog
-        :title="currentVideo.title"
+        :title="currentVideo.title || '未命名视频'"
         :visible.sync="videoDialogVisible"
         width="70%"
         center>
         <div class="video-player-container">
-            <video controls :src="'/video/' + currentVideo.video_path" class="full-width-video"></video>
+            <video controls :src="getVideoUrl(currentVideo.video_path)" class="full-width-video" v-if="videoDialogVisible"></video>
         </div>
     </el-dialog>
 </div>
 {% endblock %}
 
 {% block scripts %}
+{{ super() }}
 <script>
-    new Vue({
-        el: '#app',
-        data() {
-            return {
-                videos: [],
-                videoDialogVisible: false,
-                currentVideo: {}
-            }
-        },
-        mounted() {
-            this.loadVideos();
-        },
-        methods: {
-            loadVideos() {
-                // 从后端获取视频列表
-                // 使用后端渲染的数据初始化
-                this.videos = JSON.parse('{{ videos|tojson|safe }}');
+document.addEventListener('DOMContentLoaded', function() {
+    try {
+        // 从隐藏元素获取数据
+        const videosData = JSON.parse(document.getElementById('videos-data').textContent || '[]');
+        const errorMessage = document.getElementById('error-message').textContent || '';
+        
+        console.log('Loaded videos data:', videosData);
+        
+        // 初始化 Vue 实例
+        new Vue({
+            el: '#app',
+            delimiters: ['${', '}'],
+            data() {
+                return {
+                    videos: [],
+                    loading: false,
+                    videoDialogVisible: false,
+                    currentVideo: {
+                        id: null,
+                        title: '未命名视频',
+                        video_path: '',
+                        status: '',
+                        created_at: '',
+                        style: '默认'
+                    },
+                    deleteDialogVisible: false,
+                    videoToDelete: null,
+                    error: null
+                };
             },
-            formatDate(dateString) {
-                const date = new Date(dateString);
-                return date.toLocaleString();
-            },
-            playVideo(video) {
-                if (video.status === 'completed') {
-                    this.currentVideo = video;
-                    this.videoDialogVisible = true;
+            mounted() {
+                // 初始化视频数据
+                if (Array.isArray(videosData)) {
+                    this.videos = videosData.map(video => ({
+                        id: video.id || null,
+                        title: video.title || '未命名视频',
+                        video_path: video.video_path || '',
+                        cover_path: video.cover_path || '',
+                        status: video.status || 'unknown',
+                        created_at: video.created_at || new Date().toISOString(),
+                        style: video.style || '默认'
+                    }));
+                } else if (videosData) {
+                    // 如果 videosData 不是数组但是有值，包装成数组
+                    this.videos = [{
+                        id: videosData.id || null,
+                        title: videosData.title || '未命名视频',
+                        video_path: videosData.video_path || '',
+                        cover_path: videosData.cover_path || '',
+                        status: videosData.status || 'unknown',
+                        created_at: videosData.created_at || new Date().toISOString(),
+                        style: videosData.style || '默认'
+                    }];
+                }
+                
+                console.log('Vue mounted with videos:', this.videos);
+                
+                // 显示错误信息（如果有）
+                if (this.error) {
+                    this.$message.error(this.error);
+                } else if (this.videos.length === 0) {
+                    this.$message.info('没有找到视频记录');
                 }
             },
-            downloadVideo(video) {
-                if (video.status === 'completed') {
-                    window.open('/video/' + video.video_path, '_blank');
-                }
-            },
-            deleteVideo(video) {
-                this.$confirm('确定要删除这个视频吗?', '提示', {
-                    confirmButtonText: '确定',
-                    cancelButtonText: '取消',
-                    type: 'warning'
-                }).then(() => {
-                    axios.post(`/api/delete-video/${video.id}`)
-                    .then(response => {
-                        if (response.data.success) {
-                            this.$message.success('视频已删除');
-                            // 从列表中移除
-                            this.videos = this.videos.filter(v => v.id !== video.id);
-                        } else {
-                            this.$message.error(response.data.message);
+            methods: {
+                loadVideos() {
+                    this.loading = true;
+                    fetch('/api/my-videos')
+                        .then(response => response.json())
+                        .then(data => {
+                            this.videos = data.videos || [];
+                            this.loading = false;
+                        })
+                        .catch(error => {
+                            console.error('加载视频失败:', error);
+                            this.error = '加载视频列表失败，请刷新页面重试';
+                            this.loading = false;
+                        });
+                },
+                formatDate(dateString) {
+                    if (!dateString) return '';
+                    const date = new Date(dateString);
+                    return isNaN(date.getTime()) ? dateString : date.toLocaleString();
+                },
+                getCoverUrl(coverPath) {
+                    if (!coverPath) return '/static/img/default-cover.png';
+                    // 如果已经是完整URL，直接返回
+                    if (coverPath.startsWith('http') || coverPath.startsWith('/')) {
+                        return coverPath;
+                    }
+                    // 否则添加根路径
+                    return `/${coverPath}`;
+                },
+                getVideoUrl(videoPath) {
+                    if (!videoPath) return '';
+                    
+                    // 如果已经是完整URL，直接返回
+                    if (videoPath.startsWith('http://') || videoPath.startsWith('https://')) {
+                        return videoPath;
+                    }
+                    
+                    // 处理路径中的重复部分
+                    let path = videoPath;
+                    
+                    // 移除所有重复的 workstore/1/ 前缀
+                    while (path.includes('workstore/1/')) {
+                        path = path.replace('workstore/1/', '');
+                    }
+                    
+                    // 构建最终路径
+                    const finalPath = `workstore/1/${path}`.replace(/\/+/g, '/');
+                    const fullPath = finalPath.endsWith('.mp4') ? finalPath : `${finalPath}/output.mp4`;
+                    
+                    // 记录调试信息
+                    console.log('Generated video URL:', `/${fullPath}`);
+                    
+                    // 直接返回完整路径
+                    return `/${fullPath}`;
+                },
+                playVideo(video) {
+                    if (!video || video.status !== 'completed') {
+                        this.$message.warning('视频尚未准备好播放');
+                        return;
+                    }
+                    
+                    try {
+                        // 获取视频路径
+                        let videoPath = video.video_path || '';
+                        if (!videoPath) {
+                            throw new Error('视频路径不存在');
                         }
-                    })
-                    .catch(error => {
-                        this.$message.error('删除失败: ' + (error.response?.data?.message || '未知错误'));
+                        
+                        // 处理路径中的重复部分
+                        while (videoPath.includes('workstore/1/')) {
+                            videoPath = videoPath.replace('workstore/1/', '');
+                        }
+                        
+                        // 构建最终路径
+                        const finalPath = `workstore/1/${videoPath}`.replace(/\/+/g, '/');
+                        const fullPath = finalPath.endsWith('.mp4') ? finalPath : `${finalPath}/output.mp4`;
+                        
+                        // 设置当前视频
+                        this.currentVideo = {
+                            ...video,
+                            video_path: `/${fullPath}`
+                        };
+                        this.videoDialogVisible = true;
+                        
+                        console.log('Playing video from:', `/${fullPath}`);
+                    } catch (e) {
+                        console.error('播放视频时出错:', e);
+                        this.$message.error('播放视频失败: ' + (e.message || '未知错误'));
+                    }
+                },
+                downloadVideo(video) {
+                    if (!video || video.status !== 'completed') {
+                        this.$message.warning('视频尚未准备好下载');
+                        return;
+                    }
+                    
+                    try {
+                        // 获取视频路径
+                        let videoPath = video.video_path || '';
+                        if (!videoPath) {
+                            throw new Error('视频路径不存在');
+                        }
+                        
+                        // 处理路径中的重复部分
+                        while (videoPath.includes('workstore/1/')) {
+                            videoPath = videoPath.replace('workstore/1/', '');
+                        }
+                        
+                        // 构建最终路径
+                        const finalPath = `workstore/1/${videoPath}`.replace(/\/+/g, '/');
+                        const fullPath = finalPath.endsWith('.mp4') ? finalPath : `${finalPath}/output.mp4`;
+                        
+                        // 创建下载链接
+                        const link = document.createElement('a');
+                        link.href = `/${fullPath}`;
+                        link.download = (video.title || 'video') + '.mp4';
+                        link.target = '_blank';
+                        
+                        // 触发下载
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                        
+                        console.log('Downloading video from:', `/${fullPath}`);
+                    } catch (e) {
+                        console.error('下载视频时出错:', e);
+                        this.$message.error('下载视频失败: ' + (e.message || '未知错误'));
+                    }
+                },
+                confirmDelete(video) {
+                    if (!video || !video.id) {
+                        this.$message.error('无效的视频数据');
+                        return;
+                    }
+                    
+                    this.$confirm('确定要删除这个视频吗？', '提示', {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning'
+                    }).then(() => {
+                        this.deleteVideo(video);
+                    }).catch(() => {
+                        // 用户取消删除
                     });
-                }).catch(() => {});
-            },
-            goToHome() {
-                window.location.href = '{{ url_for("index") }}';
+                },
+                deleteVideo(video) {
+                    if (!video || !video.id) {
+                        this.$message.error('无效的视频数据');
+                        return;
+                    }
+                    
+                    this.$confirm('确定要删除这个视频吗？', '提示', {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning'
+                    }).then(() => {
+                        axios.post(`/api/delete-video/${video.id}`)
+                        .then(response => {
+                            if (response.data.success) {
+                                this.$message.success('视频已删除');
+                                // 从列表中移除
+                                this.videos = this.videos.filter(v => v.id !== video.id);
+                            } else {
+                                this.$message.error(response.data.message);
+                            }
+                        })
+                        .catch(error => {
+                            this.$message.error('删除失败: ' + (error.response?.data?.message || '未知错误'));
+                        });
+                    }).catch(() => {});
+                },
+                goToHome() {
+                    window.location.href = '{{ url_for("index") }}';
+                }
             }
-        }
-    });
+        });
+    } catch (e) {
+        console.error('初始化失败:', e);
+    }
+});
 </script>
 {% endblock %}

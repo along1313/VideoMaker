@@ -1,0 +1,258 @@
+{% extends "admin/base.html" %}
+
+{% block title %}管理后台 - 仪表盘{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">仪表盘</h1>
+    <div class="btn-toolbar mb-2 mb-md-0">
+        <div class="btn-group me-2">
+            <button type="button" class="btn btn-sm btn-outline-secondary">分享</button>
+            <button type="button" class="btn btn-sm btn-outline-secondary">导出</button>
+        </div>
+        <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle">
+            <i class="bi bi-calendar"></i> 本周
+        </button>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-3 mb-4">
+        <div class="card text-white bg-primary">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="card-title text-white-50">总用户数</h6>
+                        <h2 class="mb-0">{{ user_count }}</h2>
+                    </div>
+                    <i class="bi bi-people fs-1 opacity-50"></i>
+                </div>
+            </div>
+            <div class="card-footer d-flex align-items-center justify-content-between">
+                <a class="small text-white stretched-link" href="{{ url_for('admin_users') }}">查看详情</a>
+                <div class="small text-white"><i class="bi bi-chevron-right"></i></div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3 mb-4">
+        <div class="card text-white bg-success">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="card-title text-white-50">今日新增用户</h6>
+                        <h2 class="mb-0">{{ new_users_today }}</h2>
+                    </div>
+                    <i class="bi bi-person-plus fs-1 opacity-50"></i>
+                </div>
+            </div>
+            <div class="card-footer d-flex align-items-center justify-content-between">
+                <a class="small text-white stretched-link" href="#">查看详情</a>
+                <div class="small text-white"><i class="bi bi-chevron-right"></i></div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3 mb-4">
+        <div class="card text-white bg-warning">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="card-title text-white-50">视频总数</h6>
+                        <h2 class="mb-0">{{ video_count }}</h2>
+                    </div>
+                    <i class="bi bi-film fs-1 opacity-50"></i>
+                </div>
+            </div>
+            <div class="card-footer d-flex align-items-center justify-content-between">
+                <a class="small text-white stretched-link" href="#">查看详情</a>
+                <div class="small text-white"><i class="bi bi-chevron-right"></i></div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3 mb-4">
+        <div class="card text-white bg-danger">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="card-title text-white-50">总收入</h6>
+                        <h2 class="mb-0">¥{{ total_income }}</h2>
+                    </div>
+                    <i class="bi bi-currency-yen fs-1 opacity-50"></i>
+                </div>
+            </div>
+            <div class="card-footer d-flex align-items-center justify-content-between">
+                <a class="small text-white stretched-link" href="#">查看详情</a>
+                <div class="small text-white"><i class="bi bi-chevron-right"></i></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8 mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h6 class="mb-0">用户增长趋势</h6>
+            </div>
+            <div class="card-body">
+                <canvas id="userGrowthChart" height="300"></canvas>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4 mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h6 class="mb-0">用户分布</h6>
+            </div>
+            <div class="card-body">
+                <canvas id="userDistributionChart" height="300"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card mb-4">
+    <div class="card-header">
+        <h6 class="mb-0">最近登录用户</h6>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>用户名</th>
+                        <th>邮箱</th>
+                        <th>最后登录IP</th>
+                        <th>最后登录时间</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in recent_users %}
+                    <tr>
+                        <td>
+                            {% if user.is_admin %}
+                                <span class="badge bg-primary me-1">管理员</span>
+                            {% endif %}
+                            {{ user.username }}
+                        </td>
+                        <td>{{ user.email }}</td>
+                        <td>{{ user.last_login_ip or 'N/A' }}</td>
+                        <td>{{ user.last_login_at.strftime('%Y-%m-%d %H:%M') if user.last_login_at else 'N/A' }}</td>
+                        <td>
+                            <a href="{{ url_for('admin_edit_user', user_id=user.id) }}" class="btn btn-sm btn-outline-primary">
+                                <i class="bi bi-pencil"></i> 编辑
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="card-footer text-end">
+        <a href="{{ url_for('admin_users') }}" class="btn btn-sm btn-outline-secondary">
+            查看全部用户 <i class="bi bi-arrow-right"></i>
+        </a>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(function() {
+    'use strict';
+    
+    // 等待DOM加载完成
+    document.addEventListener('DOMContentLoaded', function() {
+        // 用户增长趋势图
+        const userGrowthCtx = document.getElementById('userGrowthChart');
+        if (userGrowthCtx) {
+            try {
+                const growthChart = new Chart(
+                    userGrowthCtx.getContext('2d'),
+                    {
+                        type: 'line',
+                        data: {
+                            labels: JSON.parse('{{ growth_dates|tojson|safe }}'),
+                            datasets: [{
+                                label: '用户增长',
+                                data: JSON.parse('{{ growth_counts|tojson|safe }}'),
+                                borderColor: '#4e73df',
+                                backgroundColor: 'rgba(78, 115, 223, 0.05)',
+                                fill: true,
+                                tension: 0.3
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    display: false
+                                }
+                            },
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    ticks: {
+                                        precision: 0
+                                    }
+                                }
+                            }
+                        }
+                    }
+                );
+            } catch (error) {
+                console.error('初始化增长趋势图失败:', error);
+            }
+        }
+
+        // 用户分布图
+        const userDistCtx = document.getElementById('userDistributionChart');
+        if (userDistCtx) {
+            try {
+                const distChart = new Chart(
+                    userDistCtx.getContext('2d'),
+                    {
+                        type: 'doughnut',
+                        data: {
+                            labels: ['普通用户', '管理员'],
+                            datasets: [{
+                                data: [
+                                    {{ user_distribution.regular }},
+                                    {{ user_distribution.admin }}
+                                ],
+                                backgroundColor: [
+                                    'rgba(78, 115, 223, 0.85)',
+                                    'rgba(28, 200, 138, 0.85)'
+                                ],
+                                hoverBackgroundColor: [
+                                    'rgba(78, 115, 223, 1)',
+                                    'rgba(28, 200, 138, 1)'
+                                ],
+                                hoverBorderColor: 'rgba(234, 236, 244, 1)'
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    position: 'bottom'
+                                }
+                            }
+                        }
+                    }
+                );
+            } catch (error) {
+                console.error('初始化用户分布图失败:', error);
+            }
+        }
+    });
+})();
+</script>
+{% endblock %}

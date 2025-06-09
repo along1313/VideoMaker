@@ -2,6 +2,9 @@ import os
 import json
 import uuid
 import traceback
+import io
+import zipfile
+from datetime import datetime, timedelta
 from flask import Flask, request, jsonify, render_template, session, redirect, url_for, send_from_directory, flash, send_file, abort
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
@@ -20,6 +23,9 @@ from sqlalchemy import or_
 import socket
 import json
 from flask_migrate import Migrate
+import humanize
+from babel.dates import format_timedelta
+from datetime import datetime, timedelta
 
 # 导入日志模块
 from logger import log_info, log_error, log_warning, log_video_task
@@ -775,7 +781,8 @@ def admin_users():
 @admin_required
 def admin_edit_user(user_id):
     """编辑用户信息"""
-    user = User.query.get_or_404(user_id)
+    from sqlalchemy.orm import joinedload
+    user = User.query.options(joinedload(User.login_logs)).get_or_404(user_id)
     
     if request.method == 'POST':
         # 更新用户信息
@@ -888,7 +895,8 @@ def admin_reset_password(user_id):
 @admin_required
 def admin_user_logs(user_id):
     """查看用户登录日志"""
-    user = User.query.get_or_404(user_id)
+    from sqlalchemy.orm import joinedload
+    user = User.query.options(joinedload(User.login_logs)).get_or_404(user_id)
     page = request.args.get('page', 1, type=int)
     per_page = 20
     
@@ -967,46 +975,98 @@ def serve_video(filepath):
         
         # 安全检查：确保路径在 workstore 目录下
         if not filepath.startswith('workstore/'):
-            app.logger.error(f"拒绝访问非workstore路径: {filepath}")
+            app.logger.error(f"非法路径访问: {filepath}")
             return 'Access denied', 403
         
         # 构建完整路径
-        base_dir = os.path.join(os.getcwd(), 'workstore')
-        rel_path = filepath[len('workstore/'):]  # 移除开头的 'workstore/'
-        full_path = os.path.join(base_dir, rel_path)
+        full_path = os.path.join(os.getcwd(), filepath)
+        full_path = os.path.normpath(full_path)  # 标准化路径，处理 '..' 和 '.'
         
-        # 标准化路径，处理 '..' 和 '.'
-        full_path = os.path.normpath(full_path)
-        
-        # 再次检查路径是否仍在 workstore 目录下
-        if not full_path.startswith(os.path.abspath(base_dir) + os.sep):
-            app.logger.error(f"尝试访问workstore之外的路径: {full_path}")
+        # 再次检查路径是否在 workstore 目录下
+        workstore_dir = os.path.join(os.getcwd(), 'workstore')
+        if not os.path.abspath(full_path).startswith(os.path.abspath(workstore_dir)):
+            app.logger.error(f"尝试访问 workstore 之外的路径: {full_path}")
             return 'Access denied', 403
         
         # 检查文件是否存在
         if not os.path.exists(full_path):
-            # 如果路径是目录，尝试查找 output.mp4
+            # 如果是目录，尝试查找 output.mp4
             if os.path.isdir(full_path):
                 full_path = os.path.join(full_path, 'output.mp4')
                 if not os.path.exists(full_path):
-                    app.logger.error(f"视频文件不存在: {full_path}")
-                    return 'Video not found', 404
+                    app.logger.error(f"文件不存在: {full_path}")
+                    return 'File not found', 404
             else:
-                app.logger.error(f"视频路径不存在: {full_path}")
-                return 'Video not found', 404
-        
-        app.logger.info(f"正在提供视频文件: {full_path}")
+                app.logger.error(f"文件不存在: {full_path}")
+                return 'File not found', 404
         
         # 发送文件
         response = send_file(full_path, conditional=True)
-        response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+        
+        # 设置缓存控制头，防止浏览器缓存视频文件
+        response.headers['Cache-Control'] = 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0, max-age=0'
         response.headers['Pragma'] = 'no-cache'
-        response.headers['Expires'] = '0'
+        response.headers['Expires'] = '-1'
+        
         return response
         
     except Exception as e:
         app.logger.error(f"提供视频文件时出错: {str(e)}", exc_info=True)
         return str(e), 500
+
+
+@app.route('/download-video/<int:video_id>')
+@login_required
+def download_video(video_id):
+    """下载视频及其封面"""
+    try:
+        # 获取视频信息
+        video = Video.query.filter_by(id=video_id, user_id=current_user.id).first()
+        if not video:
+            return jsonify({'error': '视频不存在或无权访问'}), 404
+
+        # 获取视频目录
+        video_path = video.video_path or ''
+        if 'workstore/1/' in video_path:
+            video_path = video_path.split('workstore/1/')[-1]
+        
+        # 获取基础目录
+        base_dir = os.path.join('workstore', '1', video_path.split('/')[0])
+        
+        # 检查目录是否存在
+        if not os.path.exists(base_dir):
+            return jsonify({'error': '视频文件不存在'}), 404
+
+        # 创建内存中的ZIP文件
+        memory_file = io.BytesIO()
+        with zipfile.ZipFile(memory_file, 'w', zipfile.ZIP_DEFLATED) as zf:
+            # 添加output.mp4
+            output_file = os.path.join(base_dir, 'output.mp4')
+            if os.path.exists(output_file):
+                zf.write(output_file, 'output.mp4')
+            
+            # 添加covers目录
+            covers_dir = os.path.join(base_dir, 'covers')
+            if os.path.exists(covers_dir):
+                for root, dirs, files in os.walk(covers_dir):
+                    for file in files:
+                        file_path = os.path.join(root, file)
+                        arcname = os.path.join('covers', os.path.relpath(file_path, covers_dir))
+                        zf.write(file_path, arcname)
+
+        # 准备下载
+        memory_file.seek(0)
+        timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
+        return send_file(
+            memory_file,
+            as_attachment=True,
+            download_name=f'video_{video.id}_{timestamp}.zip',
+            mimetype='application/zip'
+        )
+
+    except Exception as e:
+        app.logger.error(f"下载视频时出错: {str(e)}", exc_info=True)
+        return jsonify({'error': '下载失败'}), 500
 
 # 处理 workstore 目录下的静态文件
 @app.route('/workstore/<path:filename>')
@@ -1079,6 +1139,26 @@ def serve_cover(filename):
         os.makedirs(covers_dir, exist_ok=True)
     
     return send_from_directory(covers_dir, filename, as_attachment=False)
+
+# 添加模板过滤器
+@app.template_filter('humanize')
+def humanize_time(dt):
+    now = datetime.utcnow()
+    diff = now - dt
+    
+    if diff < timedelta(minutes=1):
+        return '刚刚'
+    elif diff < timedelta(hours=1):
+        minutes = int(diff.seconds / 60)
+        return f'{minutes}分钟前'
+    elif diff < timedelta(days=1):
+        hours = int(diff.seconds / 3600)
+        return f'{hours}小时前'
+    elif diff < timedelta(weeks=1):
+        days = diff.days
+        return f'{days}天前'
+    else:
+        return dt.strftime('%Y-%m-%d')
 
 # 上下文处理器：添加模板全局变量
 @app.context_processor

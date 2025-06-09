@@ -41,7 +41,12 @@
                     <el-button type="primary" size="mini" @click="playVideo(video)" :disabled="!video || video.status !== 'completed'">
                         <i class="el-icon-video-play"> 播放</i>
                     </el-button>
-                    <el-button type="success" size="mini" @click="downloadVideo(video)" :disabled="!video || video.status !== 'completed'">
+                    <el-button 
+                        type="success" 
+                        size="mini" 
+                        @click="downloadVideo(video)" 
+                        :disabled="!video || video.status !== 'completed'"
+                        :loading="downloadingVideoId === video.id">
                         <i class="el-icon-download"> 下载</i>
                     </el-button>
                     <el-button type="danger" size="mini" @click="confirmDelete(video)" :disabled="!video">
@@ -100,7 +105,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     },
                     deleteDialogVisible: false,
                     videoToDelete: null,
-                    error: null
+                    error: null,
+                    downloadingVideoId: null  // 正在下载的视频ID
                 };
             },
             mounted() {
@@ -227,43 +233,56 @@ document.addEventListener('DOMContentLoaded', function() {
                         this.$message.error('播放视频失败: ' + (e.message || '未知错误'));
                     }
                 },
-                downloadVideo(video) {
+                async downloadVideo(video) {
                     if (!video || video.status !== 'completed') {
                         this.$message.warning('视频尚未准备好下载');
                         return;
                     }
-                    
+
+                    this.downloadingVideoId = video.id;
+                    const loading = this.$loading({
+                        lock: true,
+                        text: '正在准备下载，请稍候...',
+                        spinner: 'el-icon-loading',
+                        background: 'rgba(0, 0, 0, 0.7)'
+                    });
+
                     try {
-                        // 获取视频路径
-                        let videoPath = video.video_path || '';
-                        if (!videoPath) {
-                            throw new Error('视频路径不存在');
+                        // 调用下载API
+                        const response = await fetch(`/download-video/${video.id}`, {
+                            method: 'GET',
+                            headers: {
+                                'Accept': 'application/zip'
+                            }
+                        });
+
+                        if (!response.ok) {
+                            const errorData = await response.json().catch(() => ({}));
+                            throw new Error(errorData.error || '下载失败');
                         }
-                        
-                        // 处理路径中的重复部分
-                        while (videoPath.includes('workstore/1/')) {
-                            videoPath = videoPath.replace('workstore/1/', '');
-                        }
-                        
-                        // 构建最终路径
-                        const finalPath = `workstore/1/${videoPath}`.replace(/\/+/g, '/');
-                        const fullPath = finalPath.endsWith('.mp4') ? finalPath : `${finalPath}/output.mp4`;
+
+                        // 获取blob数据
+                        const blob = await response.blob();
                         
                         // 创建下载链接
+                        const url = window.URL.createObjectURL(blob);
                         const link = document.createElement('a');
-                        link.href = `/${fullPath}`;
-                        link.download = (video.title || 'video') + '.mp4';
-                        link.target = '_blank';
-                        
-                        // 触发下载
+                        link.href = url;
+                        link.download = `video_${video.id}_${new Date().getTime()}.zip`;
                         document.body.appendChild(link);
                         link.click();
+                        
+                        // 清理
+                        window.URL.revokeObjectURL(url);
                         document.body.removeChild(link);
                         
-                        console.log('Downloading video from:', `/${fullPath}`);
+                        this.$message.success('下载准备完成');
                     } catch (e) {
                         console.error('下载视频时出错:', e);
-                        this.$message.error('下载视频失败: ' + (e.message || '未知错误'));
+                        this.$message.error('下载失败: ' + (e.message || '未知错误'));
+                    } finally {
+                        this.downloadingVideoId = null;
+                        loading.close();
                     }
                 },
                 confirmDelete(video) {

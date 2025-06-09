@@ -31,6 +31,9 @@
                     {% if current_user.is_authenticated %}
                         <a href="{{ url_for('my_videos') }}">我的视频</a>
                         <a href="{{ url_for('profile') }}">个人中心</a>
+                        {% if current_user.is_admin %}
+                            <a href="{{ url_for('admin_dashboard') }}">管理后台</a>
+                        {% endif %}
                         <a href="{{ url_for('logout') }}">退出登录</a>
                         <span class="credits">剩余额度: {{ current_user.credits }}条</span>
                     {% else %}

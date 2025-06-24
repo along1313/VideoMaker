@@ -112,7 +112,7 @@
                 </a>
             </div>
             <div class="list-group list-group-flush">
-                {% for log in user.login_logs|sort(attribute='created_at', reverse=true)|slice(5) %}
+                {% for log in recent_logs %}
                 <div class="list-group-item">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>

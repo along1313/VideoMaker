@@ -74,12 +74,12 @@
                         <li class="nav-item">
                             <a class="nav-link {% if request.endpoint == 'admin_users' %}active{% endif %}" 
                                href="{{ url_for('admin_users') }}">
-                                <i class="bi bi-people"></i> 用户管理
+                                <i class="bi bi-people me-2"></i>用户管理
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">
-                                <i class="bi bi-film"></i> 视频管理
+                            <a class="nav-link {% if request.endpoint == 'admin_videos' %}active{% endif %}" href="{{ url_for('admin_videos') }}">
+                                <i class="bi bi-film me-2"></i>视频管理
                             </a>
                         </li>
                         <li class="nav-item">

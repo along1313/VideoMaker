@@ -562,3 +562,158 @@ Traceback (most recent call last):
   File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/jinja2/environment.py", line 490, in getattr
     return getattr(obj, attribute)
 jinja2.exceptions.UndefinedError: 'list object' has no attribute 'created_at'
+[2025-06-09 14:55:20,261] [INFO] [logger:55] - 百速一键AI视频生成应用正在启动... 时间: 2025-06-09 14:55:20
+[2025-06-09 14:55:20,262] [INFO] [logger:55] - 正在初始化数据库...
+[2025-06-09 14:55:21,448] [INFO] [logger:55] - 数据库初始化完成
+[2025-06-09 14:55:21,448] [INFO] [logger:55] - 百速一键AI视频生成应用服务器已启动，监听端口: 5002
+[2025-06-09 14:55:21,545] [INFO] [logger:55] - 百速一键AI视频生成应用正在启动... 时间: 2025-06-09 14:55:21
+[2025-06-09 14:55:21,545] [INFO] [logger:55] - 正在初始化数据库...
+[2025-06-09 14:55:22,020] [INFO] [logger:55] - 数据库初始化完成
+[2025-06-09 14:55:22,020] [INFO] [logger:55] - 百速一键AI视频生成应用服务器已启动，监听端口: 5002
+[2025-06-09 15:00:04,024] [INFO] [logger:55] - 百速一键AI视频生成应用正在启动... 时间: 2025-06-09 15:00:04
+[2025-06-09 15:00:04,024] [INFO] [logger:55] - 正在初始化数据库...
+[2025-06-09 15:00:05,033] [INFO] [logger:55] - 数据库初始化完成
+[2025-06-09 15:00:05,034] [INFO] [logger:55] - 百速一键AI视频生成应用服务器已启动，监听端口: 5002
+[2025-06-09 15:02:01,303] [INFO] [logger:55] - 百速一键AI视频生成应用正在启动... 时间: 2025-06-09 15:02:01
+[2025-06-09 15:02:01,304] [INFO] [logger:55] - 正在初始化数据库...
+[2025-06-09 15:02:02,034] [INFO] [logger:55] - 数据库初始化完成
+[2025-06-09 15:02:02,035] [INFO] [logger:55] - 百速一键AI视频生成应用服务器已启动，监听端口: 5002
+[2025-06-09 15:04:34,979] [INFO] [logger:55] - 百速一键AI视频生成应用正在启动... 时间: 2025-06-09 15:04:34
+[2025-06-09 15:04:34,979] [INFO] [logger:55] - 正在初始化数据库...
+[2025-06-09 15:04:35,916] [INFO] [logger:55] - 数据库初始化完成
+[2025-06-09 15:04:35,916] [INFO] [logger:55] - 百速一键AI视频生成应用服务器已启动，监听端口: 5002
+[2025-06-09 15:04:46,669] [INFO] [logger:55] - 百速一键AI视频生成应用正在启动... 时间: 2025-06-09 15:04:46
+[2025-06-09 15:04:46,669] [INFO] [logger:55] - 正在初始化数据库...
+[2025-06-09 15:04:47,574] [INFO] [logger:55] - 数据库初始化完成
+[2025-06-09 15:04:47,574] [INFO] [logger:55] - 百速一键AI视频生成应用服务器已启动，监听端口: 5002
+[2025-06-09 15:04:49,880] [INFO] [logger:55] - 百速一键AI视频生成应用正在启动... 时间: 2025-06-09 15:04:49
+[2025-06-09 15:04:49,880] [INFO] [logger:55] - 正在初始化数据库...
+[2025-06-09 15:04:50,604] [INFO] [logger:55] - 数据库初始化完成
+[2025-06-09 15:04:50,604] [INFO] [logger:55] - 百速一键AI视频生成应用服务器已启动，监听端口: 5002
+[2025-06-09 16:02:08,740] [ERROR] [app:875] - Exception on /admin/users [GET]
+Traceback (most recent call last):
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/flask/app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/flask/app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/flask/app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/flask/app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/flask_login/utils.py", line 290, in decorated_view
+    return current_app.ensure_sync(func)(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/app.py", line 65, in decorated_function
+    return f(*args, **kwargs)
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/app.py", line 799, in admin_users
+    return render_template('admin/users.html',
+                         users=users,
+                         pagination=pagination,
+                         total_users=query.count())
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/flask/templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/flask/templating.py", line 131, in _render
+    rv = template.render(context)
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/jinja2/environment.py", line 1295, in render
+    self.environment.handle_exception()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/jinja2/environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/templates/admin/users.html", line 1, in top-level template code
+    {% extends "admin/base.html" %}
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/templates/admin/base.html", line 112, in top-level template code
+    {% block content %}{% endblock %}
+    ^^^^^^^^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/templates/admin/users.html", line 129, in block 'content'
+    {% for page_num in pagination.pages %}
+    ^^^^^^^^^
+TypeError: 'int' object is not iterable
+[2025-06-09 16:02:35,695] [ERROR] [app:875] - Exception on /admin/users [GET]
+Traceback (most recent call last):
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/flask/app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/flask/app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/flask/app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/flask/app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/flask_login/utils.py", line 290, in decorated_view
+    return current_app.ensure_sync(func)(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/app.py", line 65, in decorated_function
+    return f(*args, **kwargs)
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/app.py", line 799, in admin_users
+    return render_template('admin/users.html',
+                         users=users,
+                         pagination=pagination,
+                         total_users=query.count())
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/flask/templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/flask/templating.py", line 131, in _render
+    rv = template.render(context)
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/jinja2/environment.py", line 1295, in render
+    self.environment.handle_exception()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/jinja2/environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/templates/admin/users.html", line 1, in top-level template code
+    {% extends "admin/base.html" %}
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/templates/admin/base.html", line 112, in top-level template code
+    {% block content %}{% endblock %}
+    ^^^^^^^^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/templates/admin/users.html", line 129, in block 'content'
+    {% for page_num in pagination.pages %}
+    ^^^^^^^^^
+TypeError: 'int' object is not iterable
+[2025-06-09 16:05:30,667] [ERROR] [app:875] - Exception on /admin/users [GET]
+Traceback (most recent call last):
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/flask/app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/flask/app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/flask/app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/flask/app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/flask_login/utils.py", line 290, in decorated_view
+    return current_app.ensure_sync(func)(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/app.py", line 65, in decorated_function
+    return f(*args, **kwargs)
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/app.py", line 799, in admin_users
+    return render_template('admin/users.html',
+                         users=users,
+                         pagination=pagination,
+                         total_users=query.count())
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/flask/templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/flask/templating.py", line 131, in _render
+    rv = template.render(context)
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/jinja2/environment.py", line 1295, in render
+    self.environment.handle_exception()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/jinja2/environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/templates/admin/users.html", line 1, in top-level template code
+    {% extends "admin/base.html" %}
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/templates/admin/base.html", line 112, in top-level template code
+    {% block content %}{% endblock %}
+    ^^^^^^^^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/templates/admin/users.html", line 129, in block 'content'
+    {% for page_num in range(1, pagination.pages + 1) %}
+    ^^^^^^^^^
+TypeError: 'int' object is not iterable
+[2025-06-09 16:08:57,138] [INFO] [app:1110] - 请求 workstore 文件: 1/三只小猪/covers/cover_4:3.png
+[2025-06-09 16:08:57,150] [INFO] [app:1110] - 请求 workstore 文件: 1/认知显微镜/covers/cover_4:3.png
+[2025-06-09 16:16:15,379] [INFO] [logger:55] - [任务 3822561f-5174-49b2-b210-71aba7ecb2c0] 使用文案模式生成视频
+[2025-06-09 16:21:11,310] [INFO] [app:1110] - 请求 workstore 文件: 1/丑小鸭变形记/covers/cover_4:3.png
+[2025-06-09 16:21:52,095] [INFO] [app:1110] - 请求 workstore 文件: 1/workstore/2/丑小鸭变形记/output.mp4
+[2025-06-09 16:21:52,098] [ERROR] [app:1147] - 文件不存在: /Users/zhusisi/CascadeProjects/VideoMaker/workstore/1/workstore/2/丑小鸭变形记/output.mp4
+[2025-06-09 16:31:28,953] [INFO] [app:1110] - 请求 workstore 文件: 2/丑小鸭变形记/covers/cover_4:3.png

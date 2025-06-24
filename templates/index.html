@@ -69,7 +69,7 @@
     <div class="result-section" v-if="videoCompleted">
         <h3>生成结果</h3>
         <div class="video-player">
-            <video controls :src="videoUrl" poster="coverUrl"></video>
+            <video controls :src="videoUrl" :poster="coverUrl || '/static/img/default-cover.png'"></video>
             <div class="video-info">
                 <h4>${ videoTitle }</h4>
                 <div class="video-actions">
@@ -224,12 +224,13 @@
                 .then(response => {
                     if (response.data.success) {
                         this.videoUrl = response.data.video_url;
-                        this.coverUrl = response.data.cover_url;
+                        this.coverUrl = response.data.cover_url || '/static/img/default-cover.png';
                         this.videoTitle = response.data.title;
                     }
                 })
                 .catch(error => {
                     console.error('获取视频信息失败', error);
+                    this.coverUrl = '/static/img/default-cover.png';
                 });
             },
             

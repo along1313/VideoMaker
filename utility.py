@@ -1,6 +1,7 @@
-
 import re
-from moviepy import ImageSequenceClip, AudioFileClip
+from moviepy import ImageSequenceClip, AudioFileClip, ImageClip
+from moviepy.audio.AudioClip import AudioClip
+import numpy as np
 import os
 import json
 from PIL import Image, ImageDraw, ImageFont
@@ -98,7 +99,10 @@ def get_audios_duration(audio_dir):
     # 之后再处理 title.mp3
     if "title.mp3" in os.listdir(audio_dir):
         audio_files.insert(0, "title.mp3")
+    else:
+        durations.append(0)
     audio_paths = [os.path.join(audio_dir, f) for f in audio_files]
+
     
     for audio_path in audio_paths:
         audio = AudioFileClip(audio_path)
@@ -162,13 +166,21 @@ def extract_srt(subtitle_text):
         print("No srt blocks found in the input text.")
         return ""
 
-def generate_text_image(text, output_file, font_path = "lib/font/STHeiti Medium.ttc", font_size = 60, screan_size = (1280, 720)):
+def generate_text_image(text, 
+                        output_path, 
+                        font_path = "lib/font/AlibabaPuHuiTi-3-65-Medium.ttf", 
+                        font_size_to_width = 0.05, 
+                        img_size = (1280, 720),
+                        background_color=(255, 255, 255, 0),
+                        fill_color='black',
+                        ):
     """
     生成文字图片
     :param text: 文字内容
     :param output_file: 输出文件路径
     """
-    img = Image.new('RGBA', screan_size, color=(255, 255, 255, 0))
+    font_size = int(img_size[0] * font_size_to_width)
+    img = Image.new('RGBA', img_size, color=background_color)
     draw = ImageDraw.Draw(img)
     font = ImageFont.truetype(font_path, font_size, index=1)
 
@@ -177,14 +189,14 @@ def generate_text_image(text, output_file, font_path = "lib/font/STHeiti Medium.
     text_width = bbox[2] - bbox[0]
     text_height = bbox[3] - bbox[1]
     draw.text(
-        ((1280 - text_width) // 2, (720 - text_height) // 2),  # 居中
+        ((img_size[0] - text_width) // 2, (img_size[1] - text_height) // 2),  # 居中
         text,
-        fill='black',
+        fill=fill_color,
         font=font
     )
 
     # 保存图片
-    img.save(output_file)
+    img.save(output_path)
 
 def crop_image(image, target_ratio):
     """
@@ -213,7 +225,7 @@ def crop_image(image, target_ratio):
 
     return image.crop((left, top, right, bottom))
 
-def draw_text_on_image(image, text, font_path=None, font_size=128, fill_color="yellow", outline_color="black", stroke_width=2, margin=20):
+def draw_text_on_image(image, text, font_path=None, font_size_to_width=0.2, fill_color="yellow", outline_color="black", stroke_width=2, margin=20):
     """
     在图片上绘制带描边的文字，并自动换行
     :param image: PIL Image 对象
@@ -227,6 +239,7 @@ def draw_text_on_image(image, text, font_path=None, font_size=128, fill_color="y
     :return: 修改后的图像
     """
 
+    font_size = int(image.size[0] * font_size_to_width)
     draw = ImageDraw.Draw(image)
 
     try:
@@ -380,3 +393,119 @@ def count_text_chars(text_array):
     
     return total_chars
     
+async def func_and_retry_parse_json(text, func, n_retry = 3, **kwargs):
+    """
+    尝试解析JSON，如果失败则重试
+    :param text: 将被解析的文本
+    :param func: 尝试处理文本为json格式的函数
+    :param n_retry: 重试次数
+    :param **kwargs: 传递给func的其他参数
+    :return: 解析后的JSON
+    """
+    # 第一次调用时传入所有参数
+    work_flow_record = func(text, **kwargs)
+    for i in range(n_retry):
+        try:          
+            return parse_json(work_flow_record)
+        except Exception as e:
+            print(f'结构化失败: {str(e)}, retry {i+1} times')
+            # 重试时使用上一次生成的结果作为输入
+            work_flow_record = func(work_flow_record, **kwargs)
+    return None
+
+def make_blank_audio(duration, output_path, fps=44100):
+    """
+    生成指定时长的静音音频文件
+    
+    :param duration: 音频时长（秒）
+    :param output_path: 输出文件路径
+    :param fps: 采样率，默认为44100Hz（CD音质）
+    :return: 生成的音频文件路径，如果失败则返回None
+    """
+    try:
+        # 创建一个静音音频片段
+        silent_audio = AudioClip(
+            make_frame=lambda t: np.zeros((1,)),  # 单声道静音
+            duration=duration,
+            fps=fps
+        )
+        
+        # 确保输出目录存在
+        os.makedirs(os.path.dirname(os.path.abspath(output_path)), exist_ok=True)
+        
+        # 保存为MP3文件
+        silent_audio.write_audiofile(
+            output_path,
+            codec='libmp3lame',
+            bitrate='192k',
+            logger=None  # 禁用进度条输出
+        )
+        
+        return output_path
+    except Exception as e:
+        print(f"生成静音音频失败: {str(e)}")
+        return None
+    
+def img_y_slide(image_clip, screen_size, pan_speed, int_direction = "up"):
+    """
+    图片剪辑垂直平移
+    :param image_clip: 图片剪辑
+    :param screen_size: 屏幕大小
+    :param pan_speed: 平移速度
+    :param int_direction: 初始运动方向，"up"表示初始镜头向上（图片向下），"down"表示初始镜头向下（图片向上）
+    :return: 平移后的图片剪辑
+    """
+    image_clip = image_clip.resized(width=screen_size[0])
+    image_width, image_height = image_clip.size
+    panable_height = image_height - screen_size[1]
+    
+    # 计算时间节点
+    t1 = panable_height / 2 / pan_speed
+    t2 = t1 + panable_height / pan_speed
+    t3 = t2 + panable_height / 2 / pan_speed
+    
+    # 根据方向设置初始位置
+    if int_direction == "up":
+        # 初始镜头向上（图片向下）：从图片顶部开始
+        initial_y = 0
+    elif int_direction == "down":
+        # 初始镜头向下（图片向上）：从图片底部开始
+        initial_y = -panable_height
+    else:
+        # 默认使用原来的逻辑（中间开始）
+        initial_y = -panable_height / 2
+    
+    def get_y_position(t):
+        if int_direction == "up":
+            # 镜头向上运动：图片向下移动
+            if t < t1:
+                return initial_y - pan_speed * t
+            elif t < t2:
+                return -panable_height / 2 + pan_speed * (t - t1)
+            elif t < t3:
+                return 0 - pan_speed * (t - t2)
+            else:
+                return -panable_height / 2
+        elif int_direction == "down":
+            # 镜头向下运动：图片向上移动
+            if t < t1:
+                return initial_y + pan_speed * t
+            elif t < t2:
+                return -panable_height / 2 - pan_speed * (t - t1)
+            elif t < t3:
+                return 0 + pan_speed * (t - t2)
+            else:
+                return -panable_height / 2
+        else:
+            # 原来的逻辑（从中间开始）
+            if t < t1:
+                return initial_y + pan_speed * t
+            elif t < t2:
+                return 0 - pan_speed * (t - t1)
+            elif t < t3:
+                return -panable_height + pan_speed * (t - t2)
+            else:
+                return -panable_height / 2
+    
+    image_clip = image_clip.with_position(lambda t: (0, get_y_position(t)))
+    return image_clip

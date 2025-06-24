@@ -183,13 +183,13 @@ document.addEventListener('DOMContentLoaded', function() {
                     // 处理路径中的重复部分
                     let path = videoPath;
                     
-                    // 移除所有重复的 workstore/1/ 前缀
-                    while (path.includes('workstore/1/')) {
-                        path = path.replace('workstore/1/', '');
+                    // 移除所有重复的 workstore 前缀
+                    while (path.includes('workstore/')) {
+                        path = path.replace('workstore/', '');
                     }
                     
                     // 构建最终路径
-                    const finalPath = `workstore/1/${path}`.replace(/\/+/g, '/');
+                    const finalPath = `workstore/${path}`.replace(/\/+/g, '/');
                     const fullPath = finalPath.endsWith('.mp4') ? finalPath : `${finalPath}/output.mp4`;
                     
                     // 记录调试信息
@@ -212,12 +212,12 @@ document.addEventListener('DOMContentLoaded', function() {
                         }
                         
                         // 处理路径中的重复部分
-                        while (videoPath.includes('workstore/1/')) {
-                            videoPath = videoPath.replace('workstore/1/', '');
+                        while (videoPath.includes('workstore/')) {
+                            videoPath = videoPath.replace('workstore/', '');
                         }
                         
                         // 构建最终路径
-                        const finalPath = `workstore/1/${videoPath}`.replace(/\/+/g, '/');
+                        const finalPath = `workstore/${videoPath}`.replace(/\/+/g, '/');
                         const fullPath = finalPath.endsWith('.mp4') ? finalPath : `${finalPath}/output.mp4`;
                         
                         // 设置当前视频

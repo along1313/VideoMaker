@@ -40,6 +40,9 @@ app = Flask(__name__, static_folder='static', template_folder='templates')
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'dev_key_for_baisu_ai_video')
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///baisu_video.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['SESSION_COOKIE_SECURE'] = False  # 开发环境设为False，生产环境设为True
+app.config['SESSION_COOKIE_HTTPONLY'] = True
+app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=7)  # 会话有效期7天
 
 # 初始化数据库
 db = SQLAlchemy(app)
@@ -71,6 +74,7 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String(100), unique=True, nullable=False)
     credits = db.Column(db.Integer, default=3)  # 新用户赠送3条视频额度
     is_admin = db.Column(db.Boolean, default=False)  # 是否为管理员
+    is_active = db.Column(db.Boolean, default=True)  # 账户是否启用
     last_login_ip = db.Column(db.String(50))  # 最后登录IP
     last_login_at = db.Column(db.DateTime)  # 最后登录时间
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
@@ -306,9 +310,31 @@ def login():
         
         user = User.query.filter_by(username=username).first()
         if user and user.check_password(password):
-            login_user(user)
+            if not user.is_active:
+                return render_template('login.html', error='账户已被禁用')
+            
+            # 记录登录日志
+            login_log = UserLoginLog(
+                user_id=user.id,
+                login_ip=request.remote_addr,
+                user_agent=request.user_agent.string
+            )
+            db.session.add(login_log)
+            
+            # 更新用户最后登录信息
+            user.last_login_ip = request.remote_addr
+            user.last_login_at = datetime.utcnow()
+            db.session.commit()
+            
+            # 登录用户
+            login_user(user, remember=True)
+            
+            # 获取下一个页面
             next_page = request.args.get('next')
-            return redirect(next_page or url_for('index'))
+            if not next_page or not next_page.startswith('/'):
+                next_page = url_for('index')
+            
+            return redirect(next_page)
         
         return render_template('login.html', error='用户名或密码错误')
     
@@ -373,20 +399,20 @@ def my_videos():
             # 处理视频路径
             video_path = video.video_path or ''
             # 移除可能存在的重复前缀
-            if video_path.startswith('workstore/1/workstore/'):
-                video_path = video_path.replace('workstore/1/workstore/', 'workstore/1/')
+            if 'workstore/' in video_path:
+                video_path = video_path.split('workstore/')[-1]
             
             # 确保视频路径格式正确
             if video_path and not video_path.startswith('workstore/'):
-                video_path = f'workstore/1/{video_path}'
+                video_path = f'workstore/{current_user.id}/{video_path}'
             
             # 处理封面路径
             cover_path = video.cover_path or ''
             if not cover_path:
                 # 如果没有封面路径，尝试使用默认封面
-                cover_path = f'/workstore/1/{video.title}/covers/cover_4:3.png' if video.title else ''
+                cover_path = f'/workstore/{current_user.id}/{video.title}/covers/cover_4:3.png' if video.title else ''
             elif not cover_path.startswith(('http://', 'https://', '/static/', '/workstore/')):
-                cover_path = f'/workstore/1/{video.title}/{cover_path}' if video.title else f'/static/{cover_path}'
+                cover_path = f'/workstore/{current_user.id}/{video.title}/{cover_path}' if video.title else f'/static/{cover_path}'
             
             videos.append({
                 'id': video.id,
@@ -782,7 +808,13 @@ def admin_users():
 def admin_edit_user(user_id):
     """编辑用户信息"""
     from sqlalchemy.orm import joinedload
-    user = User.query.options(joinedload(User.login_logs)).get_or_404(user_id)
+    from sqlalchemy import desc
+    
+    # 获取用户信息
+    user = User.query.get_or_404(user_id)
+    
+    # 获取最近的登录日志
+    recent_logs = UserLoginLog.query.filter_by(user_id=user_id).order_by(desc(UserLoginLog.created_at)).limit(5).all()
     
     if request.method == 'POST':
         # 更新用户信息
@@ -801,7 +833,7 @@ def admin_edit_user(user_id):
         flash('用户信息已更新', 'success')
         return redirect(url_for('admin_edit_user', user_id=user.id))
     
-    return render_template('admin/edit_user.html', user=user)
+    return render_template('admin/edit_user.html', user=user, recent_logs=recent_logs)
 
 # 添加用户
 @app.route('/admin/user/add', methods=['POST'])
@@ -1027,11 +1059,11 @@ def download_video(video_id):
 
         # 获取视频目录
         video_path = video.video_path or ''
-        if 'workstore/1/' in video_path:
-            video_path = video_path.split('workstore/1/')[-1]
+        if 'workstore/' in video_path:
+            video_path = video_path.split('workstore/')[-1]
         
         # 获取基础目录
-        base_dir = os.path.join('workstore', '1', video_path.split('/')[0])
+        base_dir = os.path.join('workstore', str(current_user.id), video_path.split('/')[0])
         
         # 检查目录是否存在
         if not os.path.exists(base_dir):
@@ -1184,6 +1216,66 @@ def create_tables():
         db.session.add(admin)
         db.session.commit()
         print("已创建默认管理员账户: admin / admin123")
+
+@app.route('/admin/videos')
+@login_required
+@admin_required
+def admin_videos():
+    """视频管理页面"""
+    page = request.args.get('page', 1, type=int)
+    per_page = 20
+    query = request.args.get('q', '').strip()
+    
+    # 构建查询
+    video_query = Video.query
+    
+    # 搜索
+    if query:
+        video_query = video_query.filter(
+            db.or_(
+                Video.title.ilike(f'%{query}%'),
+                Video.prompt.ilike(f'%{query}%')
+            )
+        )
+    
+    # 排序
+    video_query = video_query.order_by(Video.created_at.desc())
+    
+    # 分页
+    pagination = video_query.paginate(page=page, per_page=per_page, error_out=False)
+    videos = pagination.items
+    
+    return render_template('admin/videos.html',
+                         videos=videos,
+                         pagination=pagination,
+                         total_videos=video_query.count())
+
+@app.route('/admin/video/<int:video_id>/delete', methods=['POST'])
+@login_required
+@admin_required
+def admin_delete_video(video_id):
+    """删除视频"""
+    video = Video.query.get_or_404(video_id)
+    
+    try:
+        # 删除视频文件
+        if video.video_path and os.path.exists(video.video_path):
+            os.remove(video.video_path)
+        
+        # 删除封面文件
+        if video.cover_path and os.path.exists(video.cover_path):
+            os.remove(video.cover_path)
+        
+        # 删除数据库记录
+        db.session.delete(video)
+        db.session.commit()
+        
+        flash('视频已删除', 'success')
+    except Exception as e:
+        db.session.rollback()
+        flash(f'删除视频失败: {str(e)}', 'danger')
+    
+    return redirect(url_for('admin_videos'))
 
 if __name__ == '__main__':
     # 确保数据库表存在

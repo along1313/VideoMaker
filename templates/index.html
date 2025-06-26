@@ -7,76 +7,157 @@
     <!-- 标题区域 -->
     <div class="hero-section">
         <h1 class="main-title">百速一键AI视频生成</h1>
-        <p class="subtitle">输入提示词，选择风格，一键生成精美AI视频</p>
+        <p class="subtitle">选择模板，输入内容，一键生成精美AI视频</p>
     </div>
 
-    <!-- 输入区域 -->
-    <div class="input-section">
-        <div class="mode-switch">
-            <span class="mode-label" :class="{ 'active': inputMode === 'prompt' }">提示词</span>
-            <el-switch
-                v-model="inputMode"
-                active-value="script"
-                inactive-value="prompt"
-                @change="onModeChange"
-                class="mode-toggle">
-            </el-switch>
-            <span class="mode-label" :class="{ 'active': inputMode === 'script' }">文案</span>
-        </div>
-        
-        <el-input
-            type="textarea"
-            :rows="inputMode === 'prompt' ? 4 : 8"
-            :placeholder="inputMode === 'prompt' ? '请输入视频内容提示词，例如：以很多人都有的心理困扰问题，选择一个主题，做一个分析和如何解决的视频' : '请输入完整文案内容，将根据文案自动生成视频'"
-            v-model="prompt"
-            class="prompt-input">
-        </el-input>
-    </div>
-
-    <!-- 风格选择区域 -->
-    <div class="style-section">
-        <h3>选择视频风格</h3>
-        <div class="style-grid">
-            {% for style_name, style_img in styles.items() %}
-            <div class="style-card" :class="{ 'active': selectedStyle === '{{ style_name|safe }}' }" @click="selectStyle('{{ style_name|safe }}')">
-                <img src="{{ style_img }}" alt="{{ style_name }}">
-                <p>{{ style_name }}</p>
-            </div>
-            {% endfor %}
-        </div>
-    </div>
-
-    <!-- 生成按钮 -->
-    <div class="action-section">
-        <el-button type="primary" size="large" @click="generateVideo" :loading="isGenerating" :disabled="!prompt || isGenerating">
-            ${ isGenerating ? '生成中...' : '一键生成视频' }
-        </el-button>
-    </div>
-
-    <!-- 生成状态区域 -->
-    <div class="status-section" v-if="showStatus">
-        <h3>生成状态</h3>
-        <el-progress :percentage="generationProgress" :status="generationStatus === 'failed' ? 'exception' : ''"></el-progress>
-        <p class="status-message">${ statusMessage }</p>
-        
-        <!-- 状态日志 -->
-        <div class="status-logs" ref="statusLogs">
-            <p v-for="(log, index) in statusLogs" :key="index">${ log }</p>
-        </div>
-    </div>
-
-    <!-- 生成结果区域 -->
-    <div class="result-section" v-if="videoCompleted">
-        <h3>生成结果</h3>
-        <div class="video-player">
-            <video controls :src="videoUrl" :poster="coverUrl || '/static/img/default-cover.png'"></video>
-            <div class="video-info">
-                <h4>${ videoTitle }</h4>
-                <div class="video-actions">
-                    <el-button type="success" size="small" @click="downloadVideo">下载视频</el-button>
-                    <el-button type="danger" size="small" @click="deleteVideo">删除视频</el-button>
+    <!-- 主要内容区域 - 使用外框包装 -->
+    <div class="main-content-wrapper">
+        <!-- 输入区域 - 移到最上面 -->
+        <div class="input-section">
+            <div class="input-header">
+                <h3>输入内容</h3>
+                <!-- 提示词/文案选择 - 仅在非读一本书模板时显示 -->
+                <div v-if="selectedTemplate !== '读一本书'" class="mode-switch">
+                    <span class="mode-label" :class="{ 'active': inputMode === 'prompt' }">提示词</span>
+                    <el-switch
+                        v-model="inputMode"
+                        active-value="script"
+                        inactive-value="prompt"
+                        @change="onModeChange"
+                        class="mode-toggle">
+                    </el-switch>
+                    <span class="mode-label" :class="{ 'active': inputMode === 'script' }">文案</span>
+                </div>
+                <!-- 读一本书模板时显示锁定状态 -->
+                <div v-else class="mode-locked">
+                    <span class="mode-label active">文案模式</span>
+                    <i class="el-icon-lock"></i>
                 </div>
             </div>
+            
+            <!-- 文本输入框 -->
+            <el-input
+                type="textarea"
+                :rows="inputMode === 'prompt' ? 4 : 8"
+                :placeholder="inputMode === 'prompt' ? '请输入视频内容提示词，例如：以很多人都有的心理困扰问题，选择一个主题，做一个分析和如何解决的视频' : '请输入完整文案内容，将根据文案自动生成视频'"
+                v-model="prompt"
+                class="prompt-input">
+            </el-input>
+
+            <!-- 读一本书模板的额外输入区域 -->
+            <div v-if="selectedTemplate === '读一本书'" class="book-extra-inputs">
+                <div class="book-input-row">
+                    <div class="book-upload-section">
+                        <label>上传书本封面</label>
+                        <el-upload
+                            class="book-cover-uploader"
+                            action="#"
+                            :auto-upload="false"
+                            :on-change="handleBookCoverChange"
+                            :show-file-list="false"
+                            accept="image/*">
+                            <img v-if="bookCoverUrl" :src="bookCoverUrl" class="book-cover">
+                            <i v-else class="el-icon-plus book-cover-uploader-icon"></i>
+                        </el-upload>
+                    </div>
+                    
+                    <div class="book-title-section">
+                        <label>书本名称</label>
+                        <el-input
+                            v-model="bookTitle"
+                            placeholder="请输入书本名称"
+                            class="book-title-input">
+                        </el-input>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 通用设置 -->
+            <div class="common-settings">
+                <div class="setting-row">
+                    <el-checkbox v-model="isDisplayTitle">在右上角显示视频标题</el-checkbox>
+                </div>
+                
+                <div class="setting-row">
+                    <label>用户名（可选）：</label>
+                    <el-input
+                        v-model="userName"
+                        placeholder="请输入用户名，将在视频左上角显示"
+                        :disabled="!isVipUser"
+                        class="username-input">
+                    </el-input>
+                    <span v-if="!isVipUser" class="vip-notice">* 仅会员可自定义用户名</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 模板选择区域 -->
+        <div class="template-section">
+            <h3>选择视频模板</h3>
+            <div class="template-grid">
+                <div class="template-card" 
+                     :class="{ 'active': selectedTemplate === '通用' }" 
+                     @click="selectTemplate('通用')"
+                     @mouseenter="playVideo('通用')"
+                     @mouseleave="pauseVideo('通用')">
+                    <video ref="video通用" muted loop>
+                        <source src="/static/video/通用.mp4" type="video/mp4">
+                    </video>
+                    <div class="template-info">
+                        <h4>通用</h4>
+                        <p>可以生成心理学科普，教育，解说等普通视频</p>
+                    </div>
+                </div>
+                
+                <div class="template-card" 
+                     :class="{ 'active': selectedTemplate === '读一本书' }" 
+                     @click="selectTemplate('读一本书')"
+                     @mouseenter="playVideo('读一本书')"
+                     @mouseleave="pauseVideo('读一本书')">
+                    <video ref="video读一本书" muted loop>
+                        <source src="/static/video/读一本书.mp4" type="video/mp4">
+                    </video>
+                    <div class="template-info">
+                        <h4>读一本书</h4>
+                        <p>用于生成读一本书视频，需要上传书本封面图片和给出书名，并且给出视频文案，仅支持文案模式</p>
+                    </div>
+                </div>
+                
+                <div class="template-card" 
+                     :class="{ 'active': selectedTemplate === '故事' }" 
+                     @click="selectTemplate('故事')"
+                     @mouseenter="playVideo('故事')"
+                     @mouseleave="pauseVideo('故事')">
+                    <video ref="video故事" muted loop>
+                        <source src="/static/video/故事.mp4" type="video/mp4">
+                    </video>
+                    <div class="template-info">
+                        <h4>故事</h4>
+                        <p>用于生成故事类视频</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 风格选择区域 -->
+        <div class="style-section">
+            <h3>选择视频风格</h3>
+            <div class="style-grid">
+                {% for style_name, style_img in styles.items() %}
+                <div class="style-card" :class="{ 'active': selectedStyle === '{{ style_name|safe }}' }" @click="selectStyle('{{ style_name|safe }}')">
+                    <img src="{{ style_img }}" alt="{{ style_name }}">
+                    <p>{{ style_name }}</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- 生成按钮 -->
+        <div class="action-section">
+            <el-button type="primary" size="large" @click="generateVideo" :loading="isGenerating" :disabled="!canGenerate || isGenerating">
+                <span v-if="isGenerating">生成中...</span>
+                <span v-else>开始生成视频</span>
+            </el-button>
         </div>
     </div>
 
@@ -100,25 +181,45 @@
         el: '#app',
         data() {
             return {
-                prompt: '',
-                inputMode: 'prompt', // 默认为提示词模式
+                selectedTemplate: '通用', // 默认选择通用模板
                 selectedStyle: '3D景深', // 默认风格
+                inputMode: 'prompt', // 默认为提示词模式
+                prompt: '',
+                bookCoverUrl: '',
+                bookCoverFile: null,
+                bookTitle: '',
+                isDisplayTitle: true, // 默认显示标题
+                userName: '',
                 isGenerating: false,
-                showStatus: false,
-                generationProgress: 0,
-                generationStatus: '',
-                statusMessage: '',
-                statusLogs: [],
-                videoId: null,
-                videoCompleted: false,
-                videoUrl: '',
-                coverUrl: '',
-                videoTitle: '',
                 showLoginDialog: false,
-                statusInterval: null
+                isVipUser: {% if current_user.is_authenticated %}{{ 'true' if current_user.is_vip else 'false' }}{% else %}false{% endif %}
+            }
+        },
+        computed: {
+            canGenerate() {
+                if (this.selectedTemplate === '读一本书') {
+                    return this.prompt && this.bookTitle && this.bookCoverFile;
+                } else {
+                    return this.prompt;
+                }
             }
         },
         methods: {
+            // 选择模板
+            selectTemplate(template) {
+                this.selectedTemplate = template;
+                // 重置输入内容
+                this.prompt = '';
+                this.bookCoverUrl = '';
+                this.bookCoverFile = null;
+                this.bookTitle = '';
+                
+                // 读一本书模板强制使用文案模式
+                if (template === '读一本书') {
+                    this.inputMode = 'script';
+                }
+            },
+            
             // 选择风格
             selectStyle(style) {
                 this.selectedStyle = style;
@@ -126,8 +227,30 @@
             
             // 切换输入模式
             onModeChange() {
-                // 当切换模式时清空提示词
                 this.prompt = '';
+            },
+            
+            // 处理书本封面上传
+            handleBookCoverChange(file) {
+                this.bookCoverFile = file.raw;
+                this.bookCoverUrl = URL.createObjectURL(file.raw);
+            },
+            
+            // 播放视频
+            playVideo(template) {
+                const video = this.$refs[`video${template}`];
+                if (video) {
+                    video.play();
+                }
+            },
+            
+            // 暂停视频
+            pauseVideo(template) {
+                const video = this.$refs[`video${template}`];
+                if (video) {
+                    video.pause();
+                    video.currentTime = 0;
+                }
             },
             
             // 生成视频
@@ -142,145 +265,55 @@
             
             // 开始生成视频
             startGeneration() {
-                if (!this.prompt) {
-                    const message = this.inputMode === 'prompt' ? '请输入提示词' : '请输入文案内容';
-                    this.$message.error(message);
+                if (!this.canGenerate) {
+                    this.$message.error('请完善所有必填信息');
                     return;
                 }
                 
+                // 准备表单数据
+                const formData = new FormData();
+                formData.append('prompt', this.prompt);
+                formData.append('style', this.selectedStyle);
+                formData.append('template', this.selectedTemplate);
+                formData.append('mode', this.inputMode);
+                formData.append('is_display_title', this.isDisplayTitle);
+                formData.append('user_name', this.userName || null);
+                
+                // 如果是读一本书模板，添加额外数据
+                if (this.selectedTemplate === '读一本书') {
+                    formData.append('book_title', this.bookTitle);
+                    if (this.bookCoverFile) {
+                        formData.append('book_cover', this.bookCoverFile);
+                    }
+                }
+                
                 this.isGenerating = true;
-                this.showStatus = true;
-                this.generationProgress = 0;
-                this.statusMessage = '正在提交生成任务...';
-                this.statusLogs = ['开始生成视频...'];
-                this.videoCompleted = false;
                 
                 // 发送生成请求
-                axios.post('/api/generate-video', {
-                    prompt: this.prompt,
-                    style: this.selectedStyle,
-                    mode: this.inputMode  // 增加模式参数
+                axios.post('/api/generate-video-v3', formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
                 })
                 .then(response => {
                     if (response.data.success) {
-                        this.videoId = response.data.video_id;
-                        this.statusMessage = response.data.message;
-                        this.statusLogs.push(response.data.message);
-                        
-                        // 开始轮询状态
-                        this.pollStatus();
+                        // 跳转到生成页面
+                        window.location.href = `/generate/${response.data.video_id}`;
                     } else {
                         this.handleError(response.data.message);
                     }
                 })
                 .catch(error => {
                     this.handleError(error.response?.data?.message || '生成请求失败');
-                });
-            },
-            
-            // 轮询生成状态
-            pollStatus() {
-                if (this.statusInterval) {
-                    clearInterval(this.statusInterval);
-                }
-                
-                this.statusInterval = setInterval(() => {
-                    if (!this.videoId) return;
-                    
-                    axios.get(`/api/video-status/${this.videoId}`)
-                    .then(response => {
-                        if (response.data.success) {
-                            this.generationStatus = response.data.status;
-                            this.generationProgress = response.data.progress;
-                            this.statusMessage = response.data.message;
-                            
-                            // 更新日志
-                            if (response.data.logs && response.data.logs.length > this.statusLogs.length) {
-                                this.statusLogs = response.data.logs;
-                                this.scrollToBottom();
-                            }
-                            
-                            // 检查是否完成
-                            if (response.data.status === 'completed') {
-                                this.videoCompleted = true;
-                                this.isGenerating = false;
-                                clearInterval(this.statusInterval);
-                                this.loadVideoInfo();
-                            } else if (response.data.status === 'failed') {
-                                this.handleError('视频生成失败: ' + response.data.message);
-                                clearInterval(this.statusInterval);
-                            }
-                        }
-                    })
-                    .catch(error => {
-                        console.error('获取状态失败', error);
-                    });
-                }, 2000); // 每2秒轮询一次
-            },
-            
-            // 加载视频信息
-            loadVideoInfo() {
-                axios.get(`/api/video-info/${this.videoId}`)
-                .then(response => {
-                    if (response.data.success) {
-                        this.videoUrl = response.data.video_url;
-                        this.coverUrl = response.data.cover_url || '/static/img/default-cover.png';
-                        this.videoTitle = response.data.title;
-                    }
                 })
-                .catch(error => {
-                    console.error('获取视频信息失败', error);
-                    this.coverUrl = '/static/img/default-cover.png';
+                .finally(() => {
+                    this.isGenerating = false;
                 });
-            },
-            
-            // 下载视频
-            downloadVideo() {
-                if (this.videoUrl) {
-                    window.open(this.videoUrl, '_blank');
-                }
-            },
-            
-            // 删除视频
-            deleteVideo() {
-                this.$confirm('确定要删除这个视频吗?', '提示', {
-                    confirmButtonText: '确定',
-                    cancelButtonText: '取消',
-                    type: 'warning'
-                }).then(() => {
-                    axios.post(`/api/delete-video/${this.videoId}`)
-                    .then(response => {
-                        if (response.data.success) {
-                            this.$message.success('视频已删除');
-                            this.videoCompleted = false;
-                            this.videoId = null;
-                        } else {
-                            this.$message.error(response.data.message);
-                        }
-                    })
-                    .catch(error => {
-                        this.$message.error('删除失败: ' + (error.response?.data?.message || '未知错误'));
-                    });
-                }).catch(() => {});
             },
             
             // 处理错误
             handleError(message) {
-                this.isGenerating = false;
-                this.generationStatus = 'failed';
-                this.statusMessage = message;
-                this.statusLogs.push('错误: ' + message);
-                this.scrollToBottom();
                 this.$message.error(message);
-            },
-            
-            // 滚动到日志底部
-            scrollToBottom() {
-                this.$nextTick(() => {
-                    if (this.$refs.statusLogs) {
-                        this.$refs.statusLogs.scrollTop = this.$refs.statusLogs.scrollHeight;
-                    }
-                });
             },
             
             // 跳转到登录页
@@ -290,4 +323,4 @@
         }
     });
 </script>
-{% endblock %}
+{% endblock %} 

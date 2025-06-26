@@ -1,6 +1,27 @@
 TEMPLATE_CONFIG = {
     "通用": {
-
+        "description": "可以生成心理学科普，教育，解说等普通视频",
+        "config": {
+            "is_generate_title_picture": False,
+            "is_generate_title_audio": False,
+            "title_picture_resize": 1.0
+        }
+    },
+    "读一本书": {
+        "description": "用于生成读一本书视频，需要上传书本封面图片和给出书名，并且给出视频文案，仅支持文案模式",
+        "config": {
+            "is_generate_title_picture": False,
+            "is_generate_title_audio": True,
+            "title_picture_resize": 0.4
+        }
+    },
+    "故事": {
+        "description": "用于生成故事类视频",
+        "config": {
+            "is_generate_title_picture": True,
+            "is_generate_title_audio": True,
+            "title_picture_resize": 1.0
+        }
     }
 
 }
@@ -69,7 +90,7 @@ STYLE_CONFIG = {
             "total_count": n # 总条数
         }
         """,
-        "img_generate_system_prompt": "生成水彩绘本风格的图片, 柔和的水彩质感，明亮温暖的色调, 童话般的场景, 细腻的笔触细节, 动态元素点缀, 整体保持90%饱和度+70%亮度值, 色彩搭配参考莫兰迪色系调整，不要出现拍照相片风格.",
+        "img_generate_system_prompt": "生成水彩绘本风格的图片, 柔和的水彩质感，明亮温暖的色调, 童话般的场景, 细腻的笔触细节, 动态元素点缀, 整体保持90%饱和度+70%亮度值, 色彩搭配参考莫兰迪色系调整，不要出现现实的相片风格.",
         "img_size": "1024x1024",
         "img_resize": 1.0,
         "text_color": "white",

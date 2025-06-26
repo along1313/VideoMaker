@@ -1,3 +1,4 @@
+import json
 from service.ai_service import ImageModelService
 from static.style_config import STYLE_CONFIG
 
@@ -24,15 +25,16 @@ class PictureGenerateService:
 
         return await self.image_model.generate(prompt, size)
     
-    async def generate_picture_from_json(self, json_text: str, style: str = None, index_number: int = None):
+    async def generate_picture_from_json(self, work_flow_record: dict, style: str = None, index_number: int = None):
         """
-        异构生成图片
-        :param json_text: 分镜信息JSON文本
+        从工作流记录生成图片
+        :param work_flow_record: 工作流记录字典
         :param style: 图片风格
+        :param index_number: 内容索引
         :return: 生成的图片URL
         """
         system_prompt_part1 = """
-        请根据以下表示分镜信息的JSON文本中对应的"index"的"voice_text"内容生成与voice_text内容协调的图片，尽量出现剧情人物形象，而不仅仅是景物图片。
+        请根据以下表示分镜信息的JSON文本中对应的"index"的"voice_text"内容生成与voice_text内容协调的图片。
         """
         system_prompt_part2 = """
         你现在要生成index:{index_number}对应的voice_text内容。JSON文本为：
@@ -46,7 +48,11 @@ class PictureGenerateService:
         else:
             self.system_prompt = style_config['img_generate_system_prompt']
             size = style_config['img_size']
-        prompt = system_prompt_part1 + self.system_prompt + system_prompt_part2 + json_text
+        
+        # 将工作流记录转换为JSON字符串
+        json_text_str = json.dumps(work_flow_record, ensure_ascii=False, indent=2)
+        
+        prompt = system_prompt_part1 + self.system_prompt + system_prompt_part2 + json_text_str
 
         return await self.image_model.generate(prompt, size)
     

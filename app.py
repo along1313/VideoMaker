@@ -26,13 +26,14 @@ from flask_migrate import Migrate
 import humanize
 from babel.dates import format_timedelta
 from datetime import datetime, timedelta
+import asyncio
 
 # 导入日志模块
 from logger import log_info, log_error, log_warning, log_video_task
 
 # 导入核心服务
 from service.ai_service import LLMService, ImageModelService, TTSModelService
-from service.work_flow_service import run_work_flow, run_work_flow_with_script
+from service.work_flow_service import run_work_flow_v1, run_work_flow_with_script, run_work_flow_v3
 from static.style_config import STYLE_CONFIG
 
 # 初始化Flask应用
@@ -75,6 +76,7 @@ class User(UserMixin, db.Model):
     credits = db.Column(db.Integer, default=3)  # 新用户赠送3条视频额度
     is_admin = db.Column(db.Boolean, default=False)  # 是否为管理员
     is_active = db.Column(db.Boolean, default=True)  # 账户是否启用
+    is_vip = db.Column(db.Boolean, default=False)  # 是否为会员
     last_login_ip = db.Column(db.String(50))  # 最后登录IP
     last_login_at = db.Column(db.DateTime)  # 最后登录时间
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
@@ -217,7 +219,7 @@ def generate_video_task(prompt, style, user_id, video_id, mode='prompt'):
         else:
             # 使用提示词模式
             log_info(f"[任务 {task_id}] 使用提示词模式生成视频")
-            run_work_flow(
+            run_work_flow_v1(
                 text=prompt,
                 result_dir=result_dir,
                 user_id=str(user_id),
@@ -390,49 +392,24 @@ def profile():
 @app.route('/my-videos')
 @login_required
 def my_videos():
-    try:
-        video_objects = Video.query.filter_by(user_id=current_user.id).order_by(Video.created_at.desc()).limit(20).all()
-        videos = []
-        for video in video_objects:
-            created_at = video.created_at.strftime('%Y-%m-%d %H:%M:%S') if video.created_at else None
-            
-            # 处理视频路径
-            video_path = video.video_path or ''
-            # 移除可能存在的重复前缀
-            if 'workstore/' in video_path:
-                video_path = video_path.split('workstore/')[-1]
-            
-            # 确保视频路径格式正确
-            if video_path and not video_path.startswith('workstore/'):
-                video_path = f'workstore/{current_user.id}/{video_path}'
-            
-            # 处理封面路径
-            cover_path = video.cover_path or ''
-            if not cover_path:
-                # 如果没有封面路径，尝试使用默认封面
-                cover_path = f'/workstore/{current_user.id}/{video.title}/covers/cover_4:3.png' if video.title else ''
-            elif not cover_path.startswith(('http://', 'https://', '/static/', '/workstore/')):
-                cover_path = f'/workstore/{current_user.id}/{video.title}/{cover_path}' if video.title else f'/static/{cover_path}'
-            
-            videos.append({
-                'id': video.id,
-                'title': video.title or '未命名视频',
-                'style': video.style or '默认风格',
-                'prompt': video.prompt or '',
-                'status': video.status or 'unknown',
-                'created_at': created_at,
-                'video_path': video_path,
-                'cover_path': cover_path
-            })
-        
-        return render_template('my_videos.html', 
-                             videos_json=json.dumps(videos, ensure_ascii=False),
-                             error=None)
-    except Exception as e:
-        app.logger.error(f"Error in my_videos: {str(e)}", exc_info=True)
-        return render_template('my_videos.html', 
-                             videos_json=json.dumps([], ensure_ascii=False),
-                             error=f'加载视频列表失败: {str(e)}')
+    """我的视频页面"""
+    page = request.args.get('page', 1, type=int)
+    per_page = 10
+    
+    videos = Video.query.filter_by(user_id=current_user.id)\
+        .order_by(Video.created_at.desc())\
+        .paginate(page=page, per_page=per_page, error_out=False)
+    
+    return render_template('my_videos.html', videos=videos)
+
+@app.route('/generate/<int:video_id>')
+@login_required
+def generate_page(video_id):
+    """视频生成进度页面"""
+    video = Video.query.get_or_404(video_id)
+    if video.user_id != current_user.id:
+        abort(403)
+    return render_template('generate.html', video=video)
 
 # 路由：充值
 @app.route('/recharge', methods=['GET', 'POST'])
@@ -465,77 +442,164 @@ def recharge():
 def generate_video_api():
     """生成视频API"""
     try:
-        # 记录API调用
-        log_info(f"用户 {current_user.username} (ID: {current_user.id}) 请求生成视频", "video")
-        
-        # 检查用户额度
-        if current_user.credits <= 0:
-            log_warning(f"用户 {current_user.username} 视频额度不足 (当前额度: {current_user.credits})")
-            return jsonify({
-                'success': False,
-                'message': '视频生成额度不足，请充值'
-            }), 400
-        
-        # 获取请求参数
         data = request.get_json()
-        prompt = data.get('prompt', '')
-        style = data.get('style', '3D景深')
-        mode = data.get('mode', 'prompt')  # 默认为提示词模式
+        prompt = data.get('prompt')
+        style = data.get('style')
+        mode = data.get('mode', 'prompt')
         
-        if not prompt:
-            error_msg = '请输入提示词' if mode == 'prompt' else '请输入文案内容'
-            log_warning(f"用户 {current_user.username} 提交了空{'提示词' if mode == 'prompt' else '文案'}")
-            return jsonify({
-                'success': False,
-                'message': error_msg
-            }), 400
+        if not prompt or not style:
+            return jsonify({'success': False, 'message': '请提供提示词和风格'})
         
-        log_info(f"创建视频记录 - 用户: {current_user.username}, 风格: {style}, 模式: {mode}", "video")
+        # 检查用户积分
+        if current_user.credits <= 0:
+            return jsonify({'success': False, 'message': '积分不足，请充值'})
         
         # 创建视频记录
         video = Video(
+            title=prompt[:30] if prompt else 'AI视频',
             user_id=current_user.id,
-            title=f"视频_{datetime.now().strftime('%Y%m%d%H%M%S')}",
             style=style,
             prompt=prompt,
             status='pending',
-            mode=mode  # 保存生成模式
+            mode=mode
         )
         db.session.add(video)
         db.session.commit()
         
-        log_info(f"视频记录创建成功 - 视频ID: {video.id}", "video")
-    except Exception as e:
-        log_error(f"创建视频记录失败: {str(e)}", exc_info=True)
-        return jsonify({
-            'success': False,
-            'message': f'创建视频记录失败: {str(e)}'
-        }), 500
-    
-    try:
-        # 扣除用户额度
+        # 扣除积分
         current_user.credits -= 1
         db.session.commit()
-        log_info(f"用户 {current_user.username} 额度已扣除 (剩余: {current_user.credits})", "video")
         
-        # 启动视频生成后台任务
-        thread = threading.Thread(target=generate_video_task, args=(prompt, style, current_user.id, video.id, mode))
+        # 启动后台任务
+        thread = threading.Thread(
+            target=generate_video_task,
+            args=(prompt, style, current_user.id, video.id, mode)
+        )
         thread.daemon = True
         thread.start()
         
-        log_info(f"视频生成任务已启动 - 视频ID: {video.id}", "video")
-        
         return jsonify({
             'success': True,
-            'message': '视频生成任务已提交',
-            'video_id': video.id
+            'video_id': video.id,
+            'message': '视频生成任务已启动'
         })
+        
     except Exception as e:
-        log_error(f"启动视频生成任务失败: {str(e)}", exc_info=True)
-        return jsonify({
-            'success': False,
-            'message': f'启动视频生成任务失败: {str(e)}'
-        }), 500
+        log_error(f'生成视频API错误: {str(e)}', 'api')
+        return jsonify({'success': False, 'message': '生成失败，请重试'})
+
+@app.route('/api/generate-video-v3', methods=['POST'])
+@login_required
+def generate_video_v3():
+    """新版视频生成API - 支持模板、会员等功能"""
+    try:
+        prompt = request.form.get('prompt')
+        style = request.form.get('style')
+        template = request.form.get('template')
+        mode = request.form.get('mode')
+        is_display_title = request.form.get('is_display_title') == 'true' or request.form.get('is_display_title') == 'True'
+        user_name = request.form.get('user_name') or None
+
+        if not prompt or not style or not template:
+            return jsonify({'success': False, 'message': '请提供完整信息'})
+        
+        # 检查用户积分
+        if current_user.credits <= 0:
+            return jsonify({'success': False, 'message': '积分不足，请充值'})
+
+        # 会员逻辑
+        is_vip = current_user.is_vip
+        if not is_vip:
+            user_name = '百速AI'
+            is_need_ad_end = True
+        else:
+            is_need_ad_end = False
+
+        # 读一本书模板特殊处理
+        uploaded_title_picture_path = None
+        input_title_voice_text = None
+        if template == '读一本书':
+            book_title = request.form.get('book_title')
+            input_title_voice_text = book_title
+            book_cover = request.files.get('book_cover')
+            if book_cover:
+                save_dir = os.path.join('workstore', 'covers')
+                os.makedirs(save_dir, exist_ok=True)
+                save_path = os.path.join(save_dir, f'{current_user.id}_{int(time.time())}.png')
+                book_cover.save(save_path)
+                uploaded_title_picture_path = save_path
+
+        # 创建视频记录
+        video = Video(
+            title=prompt[:30] if prompt else 'AI视频',
+            user_id=current_user.id,
+            style=style,
+            prompt=prompt,
+            status='pending',
+            mode=mode
+        )
+        db.session.add(video)
+        db.session.commit()
+        video_id = video.id
+
+        # 扣除积分
+        current_user.credits -= 1
+        db.session.commit()
+
+        # 启动后台任务
+        def task():
+            try:
+                result_dir = 'workstore'
+                user_id = f'user{current_user.id}'
+                
+                # 创建事件循环
+                loop = asyncio.new_event_loop()
+                asyncio.set_event_loop(loop)
+                
+                # 调用run_work_flow_v3
+                loop.run_until_complete(run_work_flow_v3(
+                    text=prompt,
+                    result_dir=result_dir,
+                    user_id=user_id,
+                    style=style,
+                    template=template,
+                    is_prompt_mode=(mode == 'prompt'),
+                    uploaded_title_picture_path=uploaded_title_picture_path,
+                    input_title_voice_text=input_title_voice_text,
+                    user_name=user_name,
+                    is_display_title=is_display_title,
+                    is_need_ad_end=is_need_ad_end
+                ))
+                
+                # 更新视频状态
+                with app.app_context():
+                    video = Video.query.get(video_id)
+                    if video:
+                        video.status = 'completed'
+                        # 设置视频路径（这里需要根据实际生成路径调整）
+                        project_dir = os.path.join(result_dir, user_id, video.title)
+                        video.video_path = os.path.join(project_dir, 'output.mp4')
+                        video.cover_path = os.path.join(project_dir, 'covers', '0.png')
+                        db.session.commit()
+                        
+            except Exception as e:
+                log_error(f'视频生成任务失败: {str(e)}', 'video')
+                with app.app_context():
+                    video = Video.query.get(video_id)
+                    if video:
+                        video.status = 'failed'
+                        db.session.commit()
+
+        import threading
+        thread = threading.Thread(target=task)
+        thread.daemon = True
+        thread.start()
+
+        return jsonify({'success': True, 'video_id': video_id})
+        
+    except Exception as e:
+        log_error(f'生成视频V3 API错误: {str(e)}', 'api')
+        return jsonify({'success': False, 'message': '生成失败，请重试'})
 
 @app.route('/api/video-status/<int:video_id>')
 @login_required

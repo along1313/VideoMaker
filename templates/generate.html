@@ -1,0 +1,200 @@
+{% extends 'base.html' %}
+
+{% block title %}视频生成进度 - {{ video.title }}{% endblock %}
+
+{% block content %}
+<div class="generate-container">
+    <!-- 进度条区域 -->
+    <div class="progress-section">
+        <h2>视频生成进度</h2>
+        <div class="progress-steps">
+            <div class="step" :class="{ 'active': currentStep >= 1, 'completed': currentStep > 1 }">
+                <div class="step-number">1</div>
+                <div class="step-label">脚本完成</div>
+            </div>
+            <div class="step-line" :class="{ 'active': currentStep >= 2 }"></div>
+            <div class="step" :class="{ 'active': currentStep >= 2, 'completed': currentStep > 2 }">
+                <div class="step-number">2</div>
+                <div class="step-label">图片完成</div>
+            </div>
+            <div class="step-line" :class="{ 'active': currentStep >= 3 }"></div>
+            <div class="step" :class="{ 'active': currentStep >= 3, 'completed': currentStep > 3 }">
+                <div class="step-number">3</div>
+                <div class="step-label">语音完成</div>
+            </div>
+            <div class="step-line" :class="{ 'active': currentStep >= 4 }"></div>
+            <div class="step" :class="{ 'active': currentStep >= 4, 'completed': currentStep > 4 }">
+                <div class="step-number">4</div>
+                <div class="step-label">视频完成</div>
+            </div>
+        </div>
+        
+        <div class="progress-bar">
+            <div class="progress-fill" :style="{ width: progressPercentage + '%' }"></div>
+        </div>
+        
+        <div class="status-message">
+            <p>{{ statusMessage }}</p>
+        </div>
+    </div>
+
+    <!-- 视频结果区域 -->
+    <div class="result-section" v-if="videoCompleted">
+        <h3>生成完成</h3>
+        <div class="video-player">
+            <video controls :src="videoUrl" :poster="coverUrl || '/static/img/default-cover.png'"></video>
+            <div class="video-info">
+                <h4>{{ videoTitle }}</h4>
+                <div class="video-actions">
+                    <el-button type="success" size="small" @click="downloadVideo">下载视频</el-button>
+                    <el-button type="danger" size="small" @click="deleteVideo">删除视频</el-button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 错误提示 -->
+    <div class="error-section" v-if="hasError">
+        <el-alert
+            title="生成失败"
+            :description="errorMessage"
+            type="error"
+            show-icon>
+        </el-alert>
+        <div class="error-actions">
+            <el-button type="primary" @click="retryGeneration">重新生成</el-button>
+            <el-button @click="goBack">返回首页</el-button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    new Vue({
+        el: '#app',
+        data() {
+            return {
+                videoId: {{ video.id }},
+                currentStep: 0,
+                progressPercentage: 0,
+                statusMessage: '正在初始化...',
+                videoCompleted: false,
+                videoUrl: '',
+                coverUrl: '',
+                videoTitle: '{{ video.title }}',
+                hasError: false,
+                errorMessage: '',
+                statusInterval: null
+            }
+        },
+        mounted() {
+            this.startPolling();
+        },
+        beforeDestroy() {
+            if (this.statusInterval) {
+                clearInterval(this.statusInterval);
+            }
+        },
+        methods: {
+            startPolling() {
+                this.statusInterval = setInterval(() => {
+                    this.checkStatus();
+                }, 2000);
+            },
+            
+            checkStatus() {
+                axios.get(`/api/video-status/${this.videoId}`)
+                .then(response => {
+                    if (response.data.success) {
+                        const status = response.data.status;
+                        const progress = response.data.progress;
+                        const message = response.data.message;
+                        
+                        this.updateProgress(status, progress, message);
+                        
+                        if (status === 'completed') {
+                            this.videoCompleted = true;
+                            this.loadVideoInfo();
+                            clearInterval(this.statusInterval);
+                        } else if (status === 'failed') {
+                            this.hasError = true;
+                            this.errorMessage = message || '视频生成失败';
+                            clearInterval(this.statusInterval);
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.error('获取状态失败', error);
+                });
+            },
+            
+            updateProgress(status, progress, message) {
+                this.progressPercentage = progress;
+                this.statusMessage = message;
+                
+                // 根据进度更新步骤
+                if (progress >= 25) this.currentStep = 1;
+                if (progress >= 50) this.currentStep = 2;
+                if (progress >= 75) this.currentStep = 3;
+                if (progress >= 100) this.currentStep = 4;
+            },
+            
+            loadVideoInfo() {
+                axios.get(`/api/video-info/${this.videoId}`)
+                .then(response => {
+                    if (response.data.success) {
+                        this.videoUrl = response.data.video_url;
+                        this.coverUrl = response.data.cover_url || '/static/img/default-cover.png';
+                        this.videoTitle = response.data.title;
+                    }
+                })
+                .catch(error => {
+                    console.error('获取视频信息失败', error);
+                    this.coverUrl = '/static/img/default-cover.png';
+                });
+            },
+            
+            downloadVideo() {
+                if (this.videoUrl) {
+                    window.open(this.videoUrl, '_blank');
+                }
+            },
+            
+            deleteVideo() {
+                this.$confirm('确定要删除这个视频吗?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    axios.post(`/api/delete-video/${this.videoId}`)
+                    .then(response => {
+                        if (response.data.success) {
+                            this.$message.success('视频已删除');
+                            this.goBack();
+                        } else {
+                            this.$message.error(response.data.message);
+                        }
+                    })
+                    .catch(error => {
+                        this.$message.error('删除失败: ' + (error.response?.data?.message || '未知错误'));
+                    });
+                }).catch(() => {});
+            },
+            
+            retryGeneration() {
+                this.hasError = false;
+                this.errorMessage = '';
+                this.currentStep = 0;
+                this.progressPercentage = 0;
+                this.statusMessage = '正在重新生成...';
+                this.startPolling();
+            },
+            
+            goBack() {
+                window.location.href = '{{ url_for("index") }}';
+            }
+        }
+    });
+</script>
+{% endblock %} 

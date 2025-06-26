@@ -225,9 +225,9 @@ def crop_image(image, target_ratio):
 
     return image.crop((left, top, right, bottom))
 
-def draw_text_on_image(image, text, font_path=None, font_size_to_width=0.2, fill_color="yellow", outline_color="black", stroke_width=2, margin=20):
+def draw_text_on_image(image, text, font_path=None, font_size_to_width=0.15, fill_color="yellow", outline_color="black", stroke_width=2, margin=20):
     """
-    在图片上绘制带描边的文字，并自动换行
+    在图片上绘制带描边的文字，并自动换行，保证所有文字都在图片内
     :param image: PIL Image 对象
     :param text: 要绘制的文字
     :param font_path: 字体文件路径
@@ -252,27 +252,19 @@ def draw_text_on_image(image, text, font_path=None, font_size_to_width=0.2, fill
 
     width, height = image.size
 
-    # 自动换行 - 改进版本，考虑中文字符宽度
-    # 检测文本中是否包含中文字符
-    has_chinese = any('\u4e00' <= char <= '\u9fff' for char in text)
-    
-    if has_chinese:
-        # 中文字符宽度计算 - 使用实际文本中的字符计算平均宽度
-        # 取样本字符计算平均宽度，包括中文和英文
-        sample_chars = text[:min(20, len(text))]  # 使用前20个字符作为样本
-        if sample_chars:
-            sample_widths = [font.getlength(char) for char in sample_chars]
-            avg_char_width = sum(sample_widths) / len(sample_widths)
+    # 动态测量宽度，超宽即换行
+    lines = []
+    current_line = ""
+    for char in text:
+        test_line = current_line + char
+        line_width = draw.textlength(test_line, font=font)
+        if line_width > (width - 2 * margin) and current_line:
+            lines.append(current_line)
+            current_line = char
         else:
-            # 如果没有足够的样本，使用一个中文字符的宽度作为参考
-            avg_char_width = font.getlength('中')
-    else:
-        # 英文字符宽度计算 - 使用英文字母的平均宽度
-        avg_char_width = sum(font.getlength(chr(i)) for i in range(65, 91)) / 26
-    
-    # 计算每行最大字符数，考虑边距
-    max_char_per_line = max(1, int((width - 2 * margin) / avg_char_width))
-    lines = textwrap.wrap(text, width=max_char_per_line)
+            current_line = test_line
+    if current_line:
+        lines.append(current_line)
 
     # 计算总文本高度
     line_heights = [draw.textbbox((0, 0), line, font=font)[3] - draw.textbbox((0, 0), line, font=font)[1] for line in lines]
@@ -326,54 +318,62 @@ def generate_covers(input_path, output_dir, text, **keywords):
  
 
 
-def split_text(text, min_length = 10, max_length = 25):
+def split_text(text, min_length=8, max_length=25):
     """
-    将文本合理的截断为指定长度区间的文本，然后输出为数组
-    :param text: 输入的文本
-    :param min_length: 最小长度
-    :param max_length: 最大长度
-    :return: 截断后的文本数组
+    优先按句号/问号/感叹号切分字幕，尽量不在句号中间断开
     """
-    # 预处理文本：去除换行符并替换为空格，然后去除多余空格
+    # 预处理
     text = ' '.join(text.replace('\n', ' ').split())
-    marks = '，。！？——,!?-'
-    # 初始化结果数组
+    # 1. 先按"。！？!?切句
+    sentences = re.split(r'([。！？!?])', text)
+    # 合并标点
+    chunks = []
+    for i in range(0, len(sentences)-1, 2):
+        chunk = sentences[i] + sentences[i+1]
+        chunks.append(chunk)
+    if len(sentences) % 2 == 1:
+        chunks.append(sentences[-1])
+
+    # 2. 对每个句子做二次切分
     result = []
-    
-    # 如果文本长度小于最大长度，直接返回
-    if len(text) <= max_length:
-        # 去掉末尾的标点符号
-        text = text.strip(marks)
-        return [text]
-    
-    # 当文本还未处理完时，继续处理
-    while text:
-        # 从最小长度开始尝试查找标点符号
-        found_punctuation = False
-        for i in range(min_length, min(len(text), max_length + 1)):
-            # 检查当前位置是否是标点符号
-            if text[i - 1] in marks:
-                # 截取不包含标点符号的部分
-                result.append(text[:i - 1].strip(marks))
-                text = text[i:].strip()
-                found_punctuation = True
-                break
-        
-        # 如果没有找到标点符号，强制截断
-        if not found_punctuation:
-            cut_length = min(max_length, len(text))
-            result.append(text[:cut_length].strip())
-            text = text[cut_length:].strip(marks)
-        
-        # 如果剩余文本长度小于最小长度，直接添加到最后一段
-        if len(text) < min_length:
-            if result:
-                result[-1] = result[-1] + ' ' + text.strip(marks)
-            else:
-                result.append(text.strip(marks))
-            break
-    
-    return [item for item in result if item]  # 过滤掉空字符串
+    for chunk in chunks:
+        chunk = chunk.strip()
+        if not chunk:
+            continue
+        if len(chunk) <= max_length:
+            result.append(chunk)
+        else:
+            # 优先按逗号、顿号、分号等切分
+            subs = re.split(r'([，,、；;])', chunk)
+            temp = ''
+            for sub in subs:
+                if not sub:
+                    continue
+                if len(temp) + len(sub) <= max_length:
+                    temp += sub
+                else:
+                    if temp:
+                        result.append(temp)
+                    temp = sub
+            if temp:
+                result.append(temp)
+            # 最后还超长就强制截断
+            i = 0
+            while i < len(result):
+                seg = result[i]
+                while len(seg) > max_length:
+                    result.insert(i+1, seg[max_length:])
+                    seg = seg[:max_length]
+                result[i] = seg
+                i += 1
+    # 合并过短的
+    merged = []
+    for seg in result:
+        if merged and len(merged[-1]) < min_length:
+            merged[-1] += seg
+        else:
+            merged.append(seg)
+    return [s.strip() for s in merged if s.strip()]
     
 
 def count_text_chars(text_array):

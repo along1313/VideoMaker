@@ -5,13 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}百速一键AI视频生成{% endblock %}</title>
     <!-- 引入Vue.js -->
-    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.min.js"></script>
+    <script src="{{ url_for('static', filename='vendor/vue/vue.min.js') }}"></script>
     <!-- 引入Element UI -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/element-ui@2.15.10/lib/theme-chalk/index.css">
-    <script src="https://cdn.jsdelivr.net/npm/element-ui@2.15.10/lib/index.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='vendor/element-ui/index.css') }}">
+    <script src="{{ url_for('static', filename='vendor/element-ui/index.js') }}"></script>
     <!-- 我们将在Vue实例初始化时设置自定义分隔符 -->
     <!-- 引入Axios -->
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="{{ url_for('static', filename='vendor/axios/axios.min.js') }}"></script>
     <!-- 自定义样式 -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     {% block head %}{% endblock %}

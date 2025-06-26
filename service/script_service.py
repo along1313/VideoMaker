@@ -113,6 +113,9 @@ class ScriptService:
         return content
     
     def generate_json_script_from_prompt(self, user_prompt: str, **config) -> str:
+        """
+        根据用户提示词生成视频脚本json
+        """
         system_prompt = """
         你是一个专业的文案写手，擅长根据用户需求创作优质的视频文案。视频形式为人声朗读配上播放静态插图，配以字幕。
         1. 如果用户没有特别指定，人声朗读文本总字数在2000字左右。
@@ -128,7 +131,7 @@ class ScriptService:
                 "title": "...", # 视频标题，不要超过10个字
                 "main_character_description": [
                     "...",
-                ], # 主要角色描述，包括人物，卡通角色等的外形、外貌、衣着等描写，请用具体的词汇详细描述，锁定外观，用于保持前后一致性，如果是非故事视频，可以为空[]
+                ], # 主要角色视觉描述，包括人物，卡通角色等。进行外形、外貌、衣着、颜色等描写，请用具体的词汇描述，锁定外观，用于保持视觉前后一致性，描述要合理，符合大众一般认知。注意如果是非故事视频，可以为空[]
                 "content":[
                     {{
                         "index": "...", # 分镜编号，从0开始
@@ -149,6 +152,9 @@ class ScriptService:
         return content
     
     def generate_json_script_from_text(self, user_prompt: str, **config) -> str:
+        """
+        根据用户文案生成视频脚本json
+        """
         system_prompt = """
             请根据用户的文案，转换为完整的视频分镜文本供后续流程制作使用，不要大幅修改或者省略表达。视频形式为人声朗读配上播放静态插图，配以字幕。要求如下：
             1. 每个项目内容都要完整，不要有省略，尽量完整使用原文案人声朗读部分，如果文案有缺失或者不完整的部分请补充完整。

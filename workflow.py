@@ -7,7 +7,7 @@ from service.ai_service import TTSModelService
 from service.script_service import ScriptService
 from service.picture_generate_service import PictureGenerateService
 from dotenv import load_dotenv
-from static.style_config import STYLE_CONFIG
+from static.style_config import STYLE_CONFIG, TEMPLATE_CONFIG
 from moviepy import concatenate_audioclips
 import asyncio
 import aiohttp
@@ -19,6 +19,97 @@ import textwrap
 load_dotenv()
 # 字体路径
 FONT_PAHT = "lib/font"
+
+async def generate_picture_from_json(work_flow_record: dict, 
+                         picture_generate_service: PictureGenerateService, 
+                         result_dir: str, 
+                         title_font_path: str, 
+                         style: str = "黑白矢量图",
+                         is_generate_title_picture: bool = False,
+                         screen_size: tuple = (1280, 720),
+                         **kwargs
+                        ):
+    """
+    从JSON异步生成图片
+    :param work_flow_record: 工作流记录
+    :param picture_generate_service: 图片生成服务
+    :param result_dir: 结果目录
+    :param title_font_path: 标题字体路径
+    :param style: 图片风格
+    :param is_generate_title_picture: 是否需要标题图片
+    :return: 新的工作流记录
+    """
+    new_work_flow_record = work_flow_record.copy()
+    # 在new_work_flow_record中增加style字段
+    new_work_flow_record['style'] = style
+
+    # 在new_work_flow_record中content数组每个元素中增加picture_path字段
+    new_work_flow_record['content'] = [
+        {
+            **item,
+            "picture_path": []
+        }
+        for item in work_flow_record['content']
+    ]
+
+    # 准备所有需要生成的图片任务
+    image_tasks = []
+    content = work_flow_record['content']
+    
+    # 创建异步会话
+    async with aiohttp.ClientSession() as session:
+        # 收集所有图片生成任务
+        for index, item in enumerate(content):
+            # 直接使用work_flow_record和index生成图片，不需要picture_prompt
+            image_url = await picture_generate_service.generate_picture_from_json(
+                work_flow_record, 
+                style=style, 
+                index_number=index
+            )
+            image_path = os.path.join(result_dir, f"{index}_0.png")
+            # 创建下载任务
+            task = download_and_save_image(session, image_url, image_path)
+            # 保存任务信息，用于后续更新work_flow_record
+            image_tasks.append((index, task))
+
+        # 并发执行所有下载任务
+        results = await asyncio.gather(*[task for _, task in image_tasks])
+        
+        # 更新work_flow_record中的picture_path
+        for (index, _), image_path in zip(image_tasks, results):
+            if image_path:  # 只添加成功下载的图片路径
+                new_work_flow_record['content'][index]['picture_path'].append(image_path)
+
+    # 在所有正文图片生成完毕后，如果需要生成标题图片，使用第一张正文图片作为背景
+    if is_generate_title_picture == True:
+        title_text = work_flow_record['title']
+        title_image_path = os.path.join(result_dir, "title.png")
+        
+        # 检查是否有正文图片可用
+        if (new_work_flow_record['content'] and 
+            new_work_flow_record['content'][0]['picture_path'] and 
+            len(new_work_flow_record['content'][0]['picture_path']) > 0):
+            
+            # 使用第一张正文图片作为背景
+            background_image_path = new_work_flow_record['content'][0]['picture_path'][0]
+            await generate_title_image_with_background(
+                title_text, 
+                background_image_path, 
+                title_image_path, 
+                title_font_path,
+                screen_size=screen_size
+            )
+        else:
+            # 如果没有正文图片，使用原来的纯文字生成方式
+            await generate_text_image_async(title_text, 
+                                            title_image_path, 
+                                            title_font_path,
+                                            img_size=screen_size,
+                                            **kwargs)
+        
+        new_work_flow_record['title_picture_path'] = title_image_path
+
+    return new_work_flow_record
 
 async def generate_text_image_async(text: str, 
                                     save_path: str, 
@@ -81,14 +172,89 @@ async def download_and_save_image(session: aiohttp.ClientSession, image_url: str
         print(f'下载图片出错：{image_url}, 错误：{str(e)}')
         return None
 
+async def generate_title_image_with_background(title_text: str, 
+                                              background_image_path: str, 
+                                              output_path: str, 
+                                              font_path: str,
+                                              screen_size: tuple = (1280, 720)) -> str:
+    """
+    在背景图片上添加标题文字
+    :param title_text: 标题文字
+    :param background_image_path: 背景图片路径
+    :param output_path: 输出图片路径
+    :param font_path: 字体路径
+    :param screen_size: 屏幕尺寸
+    :return: 输出图片路径
+    """
+    try:
+        # 使用线程池执行同步的图片处理操作
+        loop = asyncio.get_event_loop()
+        await loop.run_in_executor(
+            ThreadPoolExecutor(),
+            _generate_title_image_with_background_sync,
+            title_text,
+            background_image_path,
+            output_path,
+            font_path,
+            screen_size
+        )
+        print(f'生成标题图片：{output_path}')
+        return output_path
+    except Exception as e:
+        print(f'生成标题图片失败：{str(e)}')
+        return None
+
+def _generate_title_image_with_background_sync(title_text: str, 
+                                              background_image_path: str, 
+                                              output_path: str, 
+                                              font_path: str,
+                                              screen_size: tuple = (1280, 720)):
+    """
+    同步版本：在背景图片上添加标题文字
+    """
+    try:
+        # 打开背景图片
+        background_image = Image.open(background_image_path).convert("RGBA")
+        
+        # 计算目标比例
+        target_ratio = screen_size[0] / screen_size[1]  # width / height
+        
+        # 使用utility.py中的crop_image函数进行智能裁剪
+        from utility import crop_image, draw_text_on_image
+        
+        # 智能裁剪：最大化裁剪出与目标比例一致的图片
+        cropped_image = crop_image(background_image, target_ratio)
+        
+        # 等比例缩放到目标尺寸，避免变形
+        resized_image = cropped_image.resize(screen_size, Image.Resampling.LANCZOS)
+        
+        # 在调整后的背景上添加文字
+        result_image = draw_text_on_image(
+            resized_image,
+            title_text,
+            font_path=font_path,
+            font_size_to_width=0.2,  # 屏幕高度的0.2
+            fill_color="yellow",     # 黄色字体
+            outline_color="black",   # 黑色描边
+            stroke_width=2,          # 描边粗细
+            margin=20
+        )
+        
+        # 保存结果
+        result_image.save(output_path)
+        return output_path
+        
+    except Exception as e:
+        print(f'生成标题图片失败：{str(e)}')
+        return None
+
 async def generate_picture(work_flow_record: dict, 
                          picture_generate_service: PictureGenerateService, 
                          result_dir: str, 
                          title_font_path: str, 
                          style: str = "黑白矢量图",
                          is_generate_title_picture: bool = False,
-                         img_size: tuple = (1280, 720),
-                         title_picture_path: str = None,
+                         screen_size: tuple = (1280, 720),
                          **kwargs
                         ):
     """
@@ -115,23 +281,6 @@ async def generate_picture(work_flow_record: dict,
         for item in work_flow_record['content']
     ]
 
-    # 为new_work_flow_record增加一个"title_picture_path"字段
-    new_work_flow_record['title_picture_path'] = []
-
-    # 生成标题图片
-    if is_generate_title_picture == True:
-        title_text = work_flow_record['title']
-        title_image_path = os.path.join(result_dir, "title.png")
-        await generate_text_image_async(title_text, 
-                                        title_image_path, 
-                                        title_font_path,
-                                        img_size=img_size,
-                                        **kwargs)
-        new_work_flow_record['title_picture_path'] = title_image_path
-
-    # 如果给定了标题图片，则直接使用
-    if is_generate_title_picture == False and title_picture_path is not None:
-        new_work_flow_record['title_picture_path'] = title_picture_path
 
     # 准备所有需要生成的图片任务
     image_tasks = []
@@ -159,6 +308,35 @@ async def generate_picture(work_flow_record: dict,
             if image_path:  # 只添加成功下载的图片路径
                 new_work_flow_record['content'][index]['picture_path'].append(image_path)
 
+    # 在所有正文图片生成完毕后，如果需要生成标题图片，使用第一张正文图片作为背景
+    if is_generate_title_picture == True:
+        title_text = work_flow_record['title']
+        title_image_path = os.path.join(result_dir, "title.png")
+        
+        # 检查是否有正文图片可用
+        if (new_work_flow_record['content'] and 
+            new_work_flow_record['content'][0]['picture_path'] and 
+            len(new_work_flow_record['content'][0]['picture_path']) > 0):
+            
+            # 使用第一张正文图片作为背景
+            background_image_path = new_work_flow_record['content'][0]['picture_path'][0]
+            await generate_title_image_with_background(
+                title_text, 
+                background_image_path, 
+                title_image_path, 
+                title_font_path,
+                screen_size=screen_size
+            )
+        else:
+            # 如果没有正文图片，使用原来的纯文字生成方式
+            await generate_text_image_async(title_text, 
+                                            title_image_path, 
+                                            title_font_path,
+                                            img_size=screen_size,
+                                            **kwargs)
+        
+        new_work_flow_record['title_picture_path'] = title_image_path
+
     return new_work_flow_record
 
 def generate_audio(
@@ -169,7 +347,7 @@ def generate_audio(
         voice: str="longmiao", 
         pitch_rate: float=1.0,
         is_generate_title_audio: bool=False,
-        title_audio_text: str=None
+        **kwargs
         ):
     """
     生成音频
@@ -179,7 +357,8 @@ def generate_audio(
     :param model_str: TTS模型名称
     :param voice: 语音名称
     :param pitch_rate: 语调
-    :param is_required_title_audio: 是否需要标题音频
+    :param is_generate_title_audio: 是否需要标题音频
+    :param **kwargs: 其他参数（会被忽略）
     :return: 新的工作流记录
     """
     new_work_flow_record = work_flow_record.copy()
@@ -191,15 +370,10 @@ def generate_audio(
         }
         for item in work_flow_record['content']
     ]
-    # 为new_work_flow_record增加一个"title_audio_path"字段
-    if is_generate_title_audio == True:
-        new_work_flow_record['title_audio_path'] = ""
-        if title_audio_text is None:
-            # 生成标题音频
-            title_text = work_flow_record['title']
-        else:
-            title_text = title_audio_text
-            new_work_flow_record['title_voice_text'] = title_text
+
+    if is_generate_title_audio == True and work_flow_record.get('title_voice_text') is not None:
+        # 生成标题音频
+        title_text = work_flow_record['title_voice_text']
         title_audio_path = os.path.join(result_dir, "title.mp3")
         audio = tts_model.generate(title_text, model_str=model_str, voice=voice, pitch_rate=pitch_rate)
         with open(title_audio_path, "wb") as f:
@@ -246,6 +420,7 @@ def add_time(work_flow_record: dict, audios_dir: str, gap = 1.0):
 
     # 获取音频时长列表
     time_list = get_audios_duration(audios_dir)
+
     start_time = 0
 
     # 设置标题时间
@@ -279,6 +454,7 @@ def add_time(work_flow_record: dict, audios_dir: str, gap = 1.0):
 def generate_video(
     work_flow_record, 
     style, 
+    template,
     result_dir, 
     font_path, 
     user_name = None, 
@@ -305,6 +481,11 @@ def generate_video(
     if config is None:
         config = STYLE_CONFIG['绘本']
         print(f'没有找到{style}风格，使用绘本风格')
+
+    template_config = TEMPLATE_CONFIG.get(template)
+    if template_config is None:
+        template_config = TEMPLATE_CONFIG['通用']
+        print(f'没有找到{template}模板，使用通用模板')
     
     video_duration = work_flow_record['content'][-1]['voice_time'][0]+work_flow_record['content'][-1]['voice_time'][1]
 
@@ -320,7 +501,7 @@ def generate_video(
         #先单独处理标题图片
         if work_flow_record['title_picture_path'] is not None:
             title_img_path = work_flow_record['title_picture_path']
-            title_img_clip = ImageClip(title_img_path).with_start(work_flow_record['title_time'][0]).with_duration(work_flow_record['title_time'][1])
+            title_img_clip = ImageClip(title_img_path).with_start(work_flow_record['title_time'][0]).with_duration(work_flow_record['title_time'][1]+1).resized(template_config['config']['title_picture_resize']).with_position(('center', 'center'))
             img_clips.append(title_img_clip)
 
     # 生成图片剪辑
@@ -424,7 +605,7 @@ def generate_video(
     # 生成音频剪辑
     audio_clips = []
     # 单独处理标题音频
-    if work_flow_record.get('title_audio_path') is not None:
+    if work_flow_record.get('title_audio_path') != "":
         title_audio_path = work_flow_record['title_audio_path']
         title_audio_clip = AudioFileClip(title_audio_path).with_start(work_flow_record['title_time'][0]).with_duration(work_flow_record['title_time'][1])
         audio_clips.append(title_audio_clip)
@@ -475,21 +656,24 @@ def generate_cover(work_flow_record, project_dir, **kwargs):
     generate_covers(cover_image_path, cover_dir, text, **kwargs)
 
 if __name__ == "__main__":
-    with open("workstore/user1/羽翼之下/work_flow_record.json", "r") as f:
+    with open("workstore/user1/三只小猪的智慧/work_flow_record.json", "r") as f:
         work_flow_record = json.load(f)
     style = "绘本"
-    result_dir = "workstore/user1/羽翼之下"
+    template = "故事"
+    result_dir = "workstore/user1/三只小猪的智慧"
     font_path = "lib/font/STHeiti Medium.ttc"
     user_name = "百速AI"
     screan_size = (1280, 720)
     bg_pic_path = None
     bgm_path = "lib/music/bgm.wav"
     is_display_title = True
-    is_need_ad_end = True
+    is_need_ad_end = False
  
     generate_video(
         work_flow_record, 
-        style, result_dir, 
+        style, 
+        template,
+        result_dir, 
         font_path, 
         user_name, 
         screan_size, 

@@ -532,11 +532,11 @@ def generate_video(
         user_name_clip = TextClip(
             font=font_path, 
             text = user_name_text, 
-            font_size=screan_size[1]*0.05, 
+            font_size=int(screan_size[1]*0.05),  # 修复：转换为整数
             color=config["text_color"], 
             stroke_color = config['stroke_color'], 
             stroke_width = 1,
-            ).with_position((screan_size[0]*0.025, screan_size[1]*0.05)).with_duration(video_duration)
+            ).with_position((int(screan_size[0]*0.025), int(screan_size[1]*0.05))).with_duration(video_duration)  # 修复：位置转换为整数
         caption_clips.append(user_name_clip)
     #生成标题文字
     if is_display_title == True:
@@ -546,7 +546,7 @@ def generate_video(
         title_clip = TextClip(
             font=font_path, 
             text=title_text, 
-            font_size=screan_size[1]*0.05, 
+            font_size=int(screan_size[1]*0.05),  # 修复：转换为整数
             color=config["text_color"], 
             stroke_color=config['stroke_color'], 
             stroke_width=1,
@@ -558,7 +558,7 @@ def generate_video(
         
         # 计算合适的X坐标位置
         # 确保文字不会超出屏幕右边界，留出一定边距
-        margin_x = screan_size[0] * 0.025  # 右边距
+        margin_x = int(screan_size[0] * 0.025)  # 修复：转换为整数
         max_x = screan_size[0] - margin_x - text_width
         
         # 如果文字太长，调整字体大小
@@ -578,11 +578,11 @@ def generate_video(
             max_x = screan_size[0] - margin_x - text_width
         
         # 设置Y坐标位置（顶部留出边距）
-        margin_y = screan_size[1] * 0.05
+        margin_y = int(screan_size[1] * 0.05)  # 修复：转换为整数
         y_position = margin_y
         
         # 设置最终位置
-        title_clip = title_clip.with_position((max_x, y_position))
+        title_clip = title_clip.with_position((int(max_x), int(y_position)))  # 修复：位置转换为整数
         caption_clips.append(title_clip)
     # 生成字幕剪辑
     TEXT_STYLE = {
@@ -599,12 +599,12 @@ def generate_video(
             caption_clip = TextClip(
                 font_path, 
                 caption_text, 
-                font_size=screan_size[1]*0.05, 
+                font_size=int(screan_size[1]*0.05),  # 修复：转换为整数
                 bg_color= (100, 100, 100, 128),
                 stroke_width = 0, 
                 **TEXT_STYLE
                 ).with_start(caption_start_time).with_duration(caption_duration_time)
-            caption_clip = caption_clip.with_position(('center', screan_size[1]-100))
+            caption_clip = caption_clip.with_position(('center', int(screan_size[1]-100)))  # 修复：Y位置转换为整数
             caption_clips.append(caption_clip)
 
     # 生成音频剪辑

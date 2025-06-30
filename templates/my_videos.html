@@ -10,6 +10,12 @@
 <div class="videos-container" id="app">
     <h2>我的视频</h2>
     
+    <!-- 视频存储限制提示 -->
+    <div class="storage-notice">
+        <i class="fas fa-info-circle"></i>
+        <span>您最多可保存 25 个视频，超出时将自动删除最早的视频</span>
+    </div>
+    
     <!-- 错误提示 -->
     <el-alert
         v-if="error"
@@ -34,22 +40,44 @@
                 </div>
             </div>
             <div class="video-info">
-                <h3>${ video.title || '未命名视频' }</h3>
-                <p class="video-date">${ formatDate(video.created_at || '') }</p>
-                <p class="video-style">风格: ${ video.style || '默认' }</p>
+                <h3 v-text="video.title || '未命名视频'"></h3>
+                <p class="video-date" v-text="formatDate(video.created_at || '')"></p>
+                <p class="video-style" v-text="'风格: ' + (video.style || '默认')"></p>
                 <div class="video-actions">
-                    <el-button type="primary" size="mini" @click="playVideo(video)" :disabled="!video || video.status !== 'completed'">
+                    <!-- 对于未完成的视频显示查看任务按钮 -->
+                    <el-button 
+                        v-if="video.status === 'processing' || video.status === 'pending'" 
+                        type="info" 
+                        size="mini" 
+                        @click="viewTask(video)">
+                        <i class="el-icon-view"> 查看任务</i>
+                    </el-button>
+                    
+                    <!-- 对于已完成的视频显示播放按钮 -->
+                    <el-button 
+                        v-if="video.status === 'completed'" 
+                        type="primary" 
+                        size="mini" 
+                        @click="playVideo(video)">
                         <i class="el-icon-video-play"> 播放</i>
                     </el-button>
+                    
+                    <!-- 下载按钮：只对已完成的视频启用 -->
                     <el-button 
                         type="success" 
                         size="mini" 
                         @click="downloadVideo(video)" 
-                        :disabled="!video || video.status !== 'completed'"
+                        :disabled="video.status !== 'completed'"
                         :loading="downloadingVideoId === video.id">
                         <i class="el-icon-download"> 下载</i>
                     </el-button>
-                    <el-button type="danger" size="mini" @click="confirmDelete(video)" :disabled="!video">
+                    
+                    <!-- 删除按钮：只对已完成或失败的视频启用 -->
+                    <el-button 
+                        type="danger" 
+                        size="mini" 
+                        @click="confirmDelete(video)" 
+                        :disabled="video.status === 'processing' || video.status === 'pending'">
                         <i class="el-icon-delete"> 删除</i>
                     </el-button>
                 </div>
@@ -86,10 +114,9 @@ document.addEventListener('DOMContentLoaded', function() {
         
         console.log('Loaded videos data:', videosData);
         
-        // 初始化 Vue 实例
-        new Vue({
+        // 使用现代化的Vue实例创建方式
+        window.AppConfig.createVue({
             el: '#app',
-            delimiters: ['${', '}'],
             data() {
                 return {
                     videos: [],
@@ -110,6 +137,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 };
             },
             mounted() {
+                console.log('Vue mounted, videosData:', videosData);
+                console.log('errorMessage:', errorMessage);
+                
+                // 初始化错误信息
+                if (errorMessage && errorMessage !== 'None') {
+                    this.error = errorMessage;
+                }
+                
                 // 初始化视频数据
                 if (Array.isArray(videosData)) {
                     this.videos = videosData.map(video => ({
@@ -135,12 +170,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
                 
                 console.log('Vue mounted with videos:', this.videos);
+                console.log('Videos count:', this.videos.length);
                 
                 // 显示错误信息（如果有）
                 if (this.error) {
                     this.$message.error(this.error);
                 } else if (this.videos.length === 0) {
+                    console.log('No videos found, showing info message');
                     this.$message.info('没有找到视频记录');
+                } else {
+                    console.log('Videos loaded successfully');
                 }
             },
             methods: {
@@ -327,8 +366,16 @@ document.addEventListener('DOMContentLoaded', function() {
                         });
                     }).catch(() => {});
                 },
+                viewTask(video) {
+                    if (!video || !video.id) {
+                        this.$message.error('无效的视频数据');
+                        return;
+                    }
+                    // 跳转到生成进度页面
+                    window.location.href = `/generate/${video.id}`;
+                },
                 goToHome() {
-                    window.location.href = '{{ url_for("index") }}';
+                    window.location.href = this.$global.urls.index;
                 }
             }
         });

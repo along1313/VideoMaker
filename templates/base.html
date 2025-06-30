@@ -3,17 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}百速一键AI视频生成{% endblock %}</title>
+    <title>{% block title %}百速AI一键生成短视频{% endblock %}</title>
     <!-- 引入Vue.js -->
     <script src="{{ url_for('static', filename='vendor/vue/vue.min.js') }}"></script>
     <!-- 引入Element UI -->
     <link rel="stylesheet" href="{{ url_for('static', filename='vendor/element-ui/index.css') }}">
     <script src="{{ url_for('static', filename='vendor/element-ui/index.js') }}"></script>
-    <!-- 我们将在Vue实例初始化时设置自定义分隔符 -->
+    <!-- 引入Font Awesome -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='vendor/font-awesome/css/all.min.css') }}">
     <!-- 引入Axios -->
     <script src="{{ url_for('static', filename='vendor/axios/axios.min.js') }}"></script>
     <!-- 自定义样式 -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    
+    <!-- Favicon设置 -->
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/icon.png') }}">
+    <link rel="shortcut icon" type="image/png" href="{{ url_for('static', filename='img/icon.png') }}">
+    
+    <!-- 全局数据配置 - 现代化方式传递服务器端数据 -->
+    <script type="application/json" id="global-config">
+    {
+        "user": {
+            "isAuthenticated": {% if current_user.is_authenticated %}true{% else %}false{% endif %},
+            "isVip": {% if current_user.is_authenticated %}{{ 'true' if current_user.is_current_vip else 'false' }}{% else %}false{% endif %},
+            "isAdmin": {% if current_user.is_authenticated %}{{ 'true' if current_user.is_admin else 'false' }}{% else %}false{% endif %},
+            "credits": {% if current_user.is_authenticated %}{{ current_user.credits }}{% else %}0{% endif %},
+            "username": {% if current_user.is_authenticated %}"{{ current_user.username|safe }}"{% else %}null{% endif %}
+        },
+        "urls": {
+            "index": "{{ url_for('index') }}",
+            "login": "{{ url_for('login') }}",
+            "register": "{{ url_for('register') }}",
+            "logout": "{{ url_for('logout') }}",
+            "profile": "{{ url_for('profile') }}",
+            "myVideos": "{{ url_for('my_videos') }}"
+            {% if current_user.is_authenticated and current_user.is_admin %},
+            "adminDashboard": "{{ url_for('admin_dashboard') }}"
+            {% endif %}
+        }
+    }
+    </script>
+    
     {% block head %}{% endblock %}
 </head>
 <body>
@@ -23,7 +53,7 @@
             <nav class="navbar">
                 <div class="logo">
                     <a href="{{ url_for('index') }}">
-                        <h1>百速一键AI视频生成</h1>
+                        <img src="{{ url_for('static', filename='img/logo.png') }}" alt="百速AI" class="logo-img">
                     </a>
                 </div>
                 <div class="nav-links">
@@ -52,34 +82,87 @@
         <!-- 页脚 -->
         <el-footer height="60px">
             <div class="footer">
-                <p>&copy; 2023 百速一键AI视频生成 - 让创意更简单</p>
+                <p>&copy; 2025 百速AI一键生成短视频 - 让创意更简单</p>
             </div>
         </el-footer>
     </div>
 
-    <!-- 全局Vue配置，更改分隔符避免与Jinja2冲突 -->
+    <!-- 全局Vue配置 - 现代化方式 -->
     <script>
-        // 在创建Vue实例前设置全局配置
-        Vue.config.devtools = true;
-        
-        // 定义Vue的构造函数，覆盖原始的Vue
-        const OriginalVue = Vue;
-        Vue = function(options) {
-            // 在每个实例中设置分隔符
-            if (!options.delimiters) {
-                options.delimiters = ['${', '}'];
+        // 全局配置对象
+        window.AppConfig = {
+            // Vue配置
+            vueConfig: {
+                delimiters: ['${', '}'], // 避免与Jinja2冲突
+                devtools: true
+            },
+            // 全局数据
+            globalData: null,
+            // 初始化函数
+            init: function() {
+                try {
+                    const configElement = document.getElementById('global-config');
+                    this.globalData = JSON.parse(configElement.textContent);
+                    console.log('Global config loaded:', this.globalData);
+                } catch (e) {
+                    console.error('Failed to load global config:', e);
+                    this.globalData = { user: {}, urls: {} };
+                }
+            },
+            // 创建Vue实例的辅助函数
+            createVue: function(options) {
+                // 确保全局数据已初始化
+                if (!this.globalData) {
+                    this.init();
+                }
+                
+                // 确保使用统一的分隔符
+                if (!options.delimiters) {
+                    options.delimiters = this.vueConfig.delimiters;
+                }
+                
+                // 保存全局数据的引用
+                const globalDataRef = JSON.parse(JSON.stringify(this.globalData));
+                
+                // 自动注入全局数据 - 使用更可靠的方式
+                if (options.data && typeof options.data === 'function') {
+                    const originalData = options.data;
+                    options.data = function() {
+                        const data = originalData.call(this);
+                        // 直接设置全局数据，不依赖外部变量
+                        data.$global = globalDataRef;
+                        return data;
+                    };
+                } else if (options.data && typeof options.data === 'object') {
+                    options.data.$global = globalDataRef;
+                }
+                
+                // 添加beforeCreate钩子确保数据正确注入
+                const originalBeforeCreate = options.beforeCreate;
+                options.beforeCreate = function() {
+                    if (originalBeforeCreate) {
+                        originalBeforeCreate.call(this);
+                    }
+                    // 确保$global数据存在
+                    if (!this.$data.$global) {
+                        this.$data.$global = globalDataRef;
+                    }
+                };
+                
+                console.log('Creating Vue instance with global data:', globalDataRef);
+                return new Vue(options);
             }
-            return new OriginalVue(options);
-        }
+        };
         
-        // 复制原始 Vue 的属性和方法
-        for (const key in OriginalVue) {
-            if (OriginalVue.hasOwnProperty(key)) {
-                Vue[key] = OriginalVue[key];
-            }
-        }
+        // 初始化全局配置
+        window.AppConfig.init();
+        
+        // 设置Vue全局配置
+        Vue.config.devtools = window.AppConfig.vueConfig.devtools;
     </script>
     
+    <!-- Vue工具库 -->
+    <script src="{{ url_for('static', filename='js/vue-utils.js') }}"></script>
     <!-- 自定义脚本 -->
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
     {% block scripts %}{% endblock %}

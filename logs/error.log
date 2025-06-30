@@ -603,3 +603,196 @@ Traceback (most recent call last):
   File "/Users/zhusisi/CascadeProjects/VideoMaker/service/ai_service.py", line 6, in <module>
     from alipay import AliPay
 ImportError: cannot import name 'AliPay' from 'alipay' (unknown location)
+[2025-06-26 15:33:42,001] [ERROR] [logger:61] - 视频生成任务失败: 'NoneType' object has no attribute 'id'
+Traceback (most recent call last):
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/app.py", line 553, in task
+    user_id = f'user{current_user.id}'
+                     ^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'id'
+[2025-06-26 15:35:00,381] [ERROR] [logger:61] - 视频生成任务失败: 'NoneType' object has no attribute 'id'
+Traceback (most recent call last):
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/app.py", line 553, in task
+    user_id = f'user{current_user.id}'
+                     ^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'id'
+[2025-06-26 15:41:14,219] [ERROR] [logger:61] - 视频生成任务失败: generate_video() missing 1 required positional argument: 'template'
+Traceback (most recent call last):
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/app.py", line 563, in task
+    loop.run_until_complete(run_work_flow_v3(
+    ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+        text=prompt,
+        ^^^^^^^^^^^^
+    ...<9 lines>...
+        is_need_ad_end=is_need_ad_end
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ))
+    ^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.3/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py", line 719, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/service/work_flow_service.py", line 142, in run_work_flow_v3
+    generate_video(work_flow_record=work_flow_record,
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                   style=style,
+                   ^^^^^^^^^^^^
+    ...<6 lines>...
+                   is_display_title=is_display_title,
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                   is_need_ad_end=is_need_ad_end)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: generate_video() missing 1 required positional argument: 'template'
+[2025-06-27 09:58:48,967] [ERROR] [logger:61] - 视频生成任务失败: [Errno 2] No such file or directory: 'workstore/user3/work_flow_record.json'
+Traceback (most recent call last):
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/app.py", line 598, in task
+    loop.run_until_complete(run_work_flow_v3(
+    ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+        text=prompt,
+        ^^^^^^^^^^^^
+    ...<10 lines>...
+        is_need_ad_end=is_need_ad_end
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ))
+    ^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.3/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py", line 719, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/service/work_flow_service.py", line 61, in run_work_flow_v3
+    with open(os.path.join(result_dir, user_id, "work_flow_record.json"), "w") as f:
+         ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'workstore/user3/work_flow_record.json'
+[2025-06-27 14:25:21,435] [ERROR] [logger:61] - 查询视频状态出错 - 视频ID: 19, 错误: (sqlite3.OperationalError) no such column: video.credits_used
+[SQL: SELECT video.id AS video_id, video.title AS video_title, video.user_id AS video_user_id, video.style AS video_style, video.prompt AS video_prompt, video.video_path AS video_video_path, video.cover_path AS video_cover_path, video.status AS video_status, video.mode AS video_mode, video.credits_used AS video_credits_used, video.created_at AS video_created_at 
+FROM video 
+WHERE video.id = ?]
+[parameters: (19,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+[2025-06-27 14:27:41,423] [ERROR] [logger:61] - 查询视频状态出错 - 视频ID: 19, 错误: (sqlite3.OperationalError) no such column: video.credits_used
+[SQL: SELECT video.id AS video_id, video.title AS video_title, video.user_id AS video_user_id, video.style AS video_style, video.prompt AS video_prompt, video.video_path AS video_video_path, video.cover_path AS video_cover_path, video.status AS video_status, video.mode AS video_mode, video.credits_used AS video_credits_used, video.created_at AS video_created_at 
+FROM video 
+WHERE video.id = ?]
+[parameters: (19,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+[2025-06-29 11:16:25,387] [ERROR] [logger:61] - 视频生成任务失败: 'ScriptService' object has no attribute 'generate_from_script'
+Traceback (most recent call last):
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/app.py", line 675, in task
+    loop.run_until_complete(run_work_flow_v3_with_progress(
+    ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        text=prompt,
+        ^^^^^^^^^^^^
+    ...<12 lines>...
+        generation_status=generation_status
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ))
+    ^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.3/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py", line 719, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/service/work_flow_service.py", line 354, in run_work_flow_v3_with_progress
+    raise e
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/service/work_flow_service.py", line 227, in run_work_flow_v3_with_progress
+    work_flow_record = script_service.generate_from_script(text, template)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'ScriptService' object has no attribute 'generate_from_script'
+[2025-06-29 11:25:00,705] [ERROR] [logger:61] - 视频生成任务失败: 脚本结构化失败，重试3次后仍然失败
+Traceback (most recent call last):
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/service/work_flow_service.py", line 233, in run_work_flow_v3_with_progress
+    parsed_record = func_and_retry_parse_json(work_flow_record)
+TypeError: func_and_retry_parse_json() missing 1 required positional argument: 'func'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/app.py", line 675, in task
+    loop.run_until_complete(run_work_flow_v3_with_progress(
+    ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        text=prompt,
+        ^^^^^^^^^^^^
+    ...<12 lines>...
+        generation_status=generation_status
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ))
+    ^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.3/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py", line 719, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/service/work_flow_service.py", line 354, in run_work_flow_v3_with_progress
+    raise e
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/service/work_flow_service.py", line 242, in run_work_flow_v3_with_progress
+    raise Exception(f'脚本结构化失败，重试{json_retry_times}次后仍然失败')
+Exception: 脚本结构化失败，重试3次后仍然失败
+[2025-06-29 12:08:42,655] [ERROR] [logger:61] - 视频生成任务失败: 智谱AI图片生成失败: Error code: 400, with error text {"contentFilter":[{"level":2,"role":"user"}],"error":{"code":"1301","message":"系统检测到输入或生成内容可能包含不安全或敏感内容，请您避免输入易产生敏感内容的提示语，感谢您的配合。"}}
+Traceback (most recent call last):
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/service/ai_service.py", line 91, in generate
+    response = await asyncio.to_thread(
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<5 lines>...
+    )
+    ^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.3/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/threads.py", line 25, in to_thread
+    return await loop.run_in_executor(None, func_call)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.3/Frameworks/Python.framework/Versions/3.13/lib/python3.13/concurrent/futures/thread.py", line 59, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/zhipuai/api_resource/images.py", line 43, in generations
+    return self._post(
+           ~~~~~~~~~~^
+        "/images/generations",
+        ^^^^^^^^^^^^^^^^^^^^^^
+    ...<17 lines>...
+        stream=False,
+        ^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/zhipuai/core/_http_client.py", line 809, in post
+    return cast(ResponseT, self.request(cast_type, opts, stream=stream, stream_cls=stream_cls))
+                           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/zhipuai/core/_http_client.py", line 495, in request
+    return self._request(
+           ~~~~~~~~~~~~~^
+        cast_type=cast_type,
+        ^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+        remaining_retries=remaining_retries,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/zhipuai/core/_http_client.py", line 582, in _request
+    raise self._make_status_error(err.response) from None
+zhipuai.core._errors.APIRequestFailedError: Error code: 400, with error text {"contentFilter":[{"level":2,"role":"user"}],"error":{"code":"1301","message":"系统检测到输入或生成内容可能包含不安全或敏感内容，请您避免输入易产生敏感内容的提示语，感谢您的配合。"}}
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/app.py", line 717, in task
+    loop.run_until_complete(run_work_flow_v3_with_progress(
+    ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        text=prompt,
+        ^^^^^^^^^^^^
+    ...<12 lines>...
+        generation_status=generation_status
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ))
+    ^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.3/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py", line 719, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/service/work_flow_service.py", line 374, in run_work_flow_v3_with_progress
+    raise e
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/service/work_flow_service.py", line 299, in run_work_flow_v3_with_progress
+    work_flow_record = await generate_picture_from_json(
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<8 lines>...
+    )
+    ^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/workflow.py", line 64, in generate_picture_from_json
+    image_url = await picture_generate_service.generate_picture_from_json(
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/service/picture_generate_service.py", line 57, in generate_picture_from_json
+    return await self.image_model.generate(prompt, size)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/service/ai_service.py", line 101, in generate
+    raise ValueError(f"智谱AI图片生成失败: {str(e)}")
+ValueError: 智谱AI图片生成失败: Error code: 400, with error text {"contentFilter":[{"level":2,"role":"user"}],"error":{"code":"1301","message":"系统检测到输入或生成内容可能包含不安全或敏感内容，请您避免输入易产生敏感内容的提示语，感谢您的配合。"}}

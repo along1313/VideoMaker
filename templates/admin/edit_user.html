@@ -50,6 +50,19 @@
                             <label class="form-label">视频额度</label>
                             <input type="number" class="form-control" name="credits" value="{{ user.credits }}" min="0" required>
                         </div>
+                        <div class="col-md-8">
+                            <label class="form-label">
+                                VIP到期时间
+                                {% if user.is_current_vip %}
+                                    <span class="badge bg-success ms-1">当前VIP</span>
+                                {% else %}
+                                    <span class="badge bg-secondary ms-1">非VIP</span>
+                                {% endif %}
+                            </label>
+                            <input type="datetime-local" class="form-control" name="vip_expires_at" 
+                                   value="{% if user.vip_expires_at %}{{ user.vip_expires_at.strftime('%Y-%m-%dT%H:%M') }}{% endif %}">
+                            <div class="form-text">留空表示非VIP用户，设置未来时间表示VIP到期日</div>
+                        </div>
                         <div class="col-12">
                             <div class="form-check form-switch">
                                 <input class="form-check-input" type="checkbox" id="isActive" name="is_active" {% if user.is_active %}checked{% endif %}>

@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}个人中心 - 百速一键AI视频生成{% endblock %}
+{% block title %}个人中心 - 百速AI一键生成短视频{% endblock %}
 
 {% block content %}
 <div class="profile-container">
@@ -18,7 +18,23 @@
             </div>
             <div class="info-item">
                 <span class="label">剩余视频额度：</span>
-                <span class="value credits">{{ current_user.credits }}条</span>
+                <span class="value credits">{{ current_user.credits }} 条</span>
+            </div>
+            <div class="info-item">
+                <span class="label">会员状态：</span>
+                <span class="value">
+                    {% if current_user.is_current_vip %}
+                        <span class="vip-badge">VIP会员</span>
+                        {% if current_user.vip_expires_at %}
+                            <span class="vip-expire-info">到期时间：{{ current_user.vip_expires_at.strftime('%Y-%m-%d %H:%M') }}</span>
+                        {% endif %}
+                    {% else %}
+                        <span class="normal-badge">普通用户</span>
+                        {% if current_user.vip_expires_at %}
+                            <span class="vip-expired-info">VIP已于 {{ current_user.vip_expires_at.strftime('%Y-%m-%d') }} 过期</span>
+                        {% endif %}
+                    {% endif %}
+                </span>
             </div>
             <div class="info-item">
                 <span class="label">注册时间：</span>
@@ -32,41 +48,99 @@
         </div>
     </div>
     
-    <!-- 充值记录 -->
-    <div class="payment-history">
-        <h3>充值记录</h3>
-        
-        <el-table
-            :data="payments"
-            style="width: 100%"
-            v-if="payments.length > 0">
-            <el-table-column
-                prop="created_at"
-                label="充值时间"
-                width="180">
-            </el-table-column>
-            <el-table-column
-                prop="amount"
-                label="充值金额(元)"
-                width="120">
-            </el-table-column>
-            <el-table-column
-                prop="credits"
-                label="获得额度(条)">
-            </el-table-column>
-            <el-table-column
-                prop="status"
-                label="状态">
-                <template slot-scope="scope">
-                    <el-tag type="success" v-if="scope.row.status === 'completed'">成功</el-tag>
-                    <el-tag type="warning" v-else>处理中</el-tag>
-                </template>
-            </el-table-column>
-        </el-table>
-        
-        <div class="empty-data" v-else>
-            <p>暂无充值记录</p>
-        </div>
+    <!-- 标签页 -->
+    <div class="profile-tabs">
+        <el-tabs v-model="activeTab" @tab-click="handleTabClick">
+            <el-tab-pane label="充值记录" name="recharge">
+                <div class="tab-content">
+                    <el-table
+                        :data="payments"
+                        style="width: 100%"
+                        v-if="payments.length > 0"
+                        :loading="paymentsLoading">
+                        <el-table-column
+                            prop="created_at"
+                            label="充值时间"
+                            width="180">
+                        </el-table-column>
+                        <el-table-column
+                            prop="amount"
+                            label="充值金额(元)"
+                            width="120">
+                        </el-table-column>
+                        <el-table-column
+                            prop="credits"
+                            label="获得额度(条)">
+                        </el-table-column>
+                        <el-table-column
+                            prop="status"
+                            label="状态">
+                            <template slot-scope="scope">
+                                <el-tag type="success" v-if="scope.row.status === 'completed'">成功</el-tag>
+                                <el-tag type="warning" v-else>处理中</el-tag>
+                            </template>
+                        </el-table-column>
+                    </el-table>
+                    
+                    <div class="empty-data" v-else-if="!paymentsLoading">
+                        <p>暂无充值记录</p>
+                    </div>
+                </div>
+            </el-tab-pane>
+            
+            <el-tab-pane label="使用记录" name="usage">
+                <div class="tab-content">
+                    <el-table
+                        :data="usageRecords"
+                        style="width: 100%"
+                        v-if="usageRecords.length > 0"
+                        :loading="usageLoading">
+                        <el-table-column
+                            prop="created_at"
+                            label="使用时间"
+                            width="180">
+                        </el-table-column>
+                        <el-table-column
+                            prop="video_title"
+                            label="视频标题"
+                            min-width="200">
+                        </el-table-column>
+                        <el-table-column
+                            prop="template"
+                            label="模板"
+                            width="100">
+                        </el-table-column>
+                        <el-table-column
+                            prop="style"
+                            label="风格"
+                            width="120">
+                        </el-table-column>
+                        <el-table-column
+                            prop="credits_used"
+                            label="消耗额度"
+                            width="100">
+                            <template slot-scope="scope">
+                                <span class="credits-used">-<span v-text="scope.row.credits_used"></span> 条</span>
+                            </template>
+                        </el-table-column>
+                        <el-table-column
+                            prop="status"
+                            label="生成状态"
+                            width="100">
+                            <template slot-scope="scope">
+                                <el-tag type="success" v-if="scope.row.status === 'completed'">完成</el-tag>
+                                <el-tag type="info" v-else-if="scope.row.status === 'pending'">生成中</el-tag>
+                                <el-tag type="danger" v-else>失败</el-tag>
+                            </template>
+                        </el-table-column>
+                    </el-table>
+                    
+                    <div class="empty-data" v-else-if="!usageLoading">
+                        <p>暂无使用记录</p>
+                    </div>
+                </div>
+            </el-tab-pane>
+        </el-tabs>
     </div>
 </div>
 {% endblock %}
@@ -77,15 +151,26 @@
         el: '#app',
         data() {
             return {
-                payments: []
+                activeTab: 'recharge',
+                payments: [],
+                usageRecords: [],
+                paymentsLoading: false,
+                usageLoading: false
             }
         },
         mounted() {
             this.loadPayments();
         },
         methods: {
+            handleTabClick(tab) {
+                if (tab.name === 'recharge' && this.payments.length === 0) {
+                    this.loadPayments();
+                } else if (tab.name === 'usage' && this.usageRecords.length === 0) {
+                    this.loadUsageRecords();
+                }
+            },
             loadPayments() {
-                // 加载充值记录
+                this.paymentsLoading = true;
                 axios.get('/api/payment-history')
                 .then(response => {
                     if (response.data.success) {
@@ -99,15 +184,99 @@
                 })
                 .catch(error => {
                     console.error('获取充值记录失败', error);
+                    this.$message.error('获取充值记录失败');
+                })
+                .finally(() => {
+                    this.paymentsLoading = false;
                 });
             },
-            goToRecharge() {
-                window.location.href = '{{ url_for("recharge") }}';
-            },
-            goToVideos() {
-                window.location.href = '{{ url_for("my_videos") }}';
+            loadUsageRecords() {
+                this.usageLoading = true;
+                axios.get('/api/usage-history')
+                .then(response => {
+                    if (response.data.success) {
+                        this.usageRecords = response.data.records.map(record => {
+                            return {
+                                ...record,
+                                created_at: new Date(record.created_at).toLocaleString()
+                            };
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('获取使用记录失败', error);
+                    this.$message.error('获取使用记录失败');
+                })
+                .finally(() => {
+                    this.usageLoading = false;
+                });
             }
         }
     });
 </script>
+
+<style>
+.profile-tabs {
+    background-color: #fff;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    padding: 20px;
+    margin-top: 20px;
+}
+
+.tab-content {
+    margin-top: 20px;
+}
+
+.vip-badge {
+    background: linear-gradient(45deg, #ff6b6b, #feca57);
+    color: white;
+    padding: 4px 12px;
+    border-radius: 15px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+}
+
+.normal-badge {
+    background: #95a5a6;
+    color: white;
+    padding: 4px 12px;
+    border-radius: 15px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.credits-used {
+    color: #e74c3c;
+    font-weight: 600;
+}
+
+.empty-data {
+    text-align: center;
+    padding: 60px 20px;
+    color: #999;
+    background: #f8f9fa;
+    border-radius: 8px;
+}
+
+.empty-data p {
+    margin: 0;
+    font-size: 16px;
+}
+
+.vip-expire-info {
+    display: block;
+    font-size: 0.8rem;
+    color: #666;
+    margin-top: 4px;
+}
+
+.vip-expired-info {
+    display: block;
+    font-size: 0.8rem;
+    color: #e74c3c;
+    margin-top: 4px;
+}
+</style>
 {% endblock %}

@@ -6,6 +6,7 @@
 <div class="auth-container">
     <div class="auth-card">
         <h2>用户注册</h2>
+        <p class="register-subtitle">创建账号，立即开始AI视频创作</p>
         
         {% if error %}
         <div class="error-message">
@@ -38,6 +39,10 @@
                     placeholder="请输入邮箱" 
                     required
                     class="el-input__inner">
+                <div class="email-hint">
+                    <i class="fas fa-info-circle"></i>
+                    请正确输入邮箱，否则无法使用找回密码功能
+                </div>
             </div>
             
             <div class="form-group">
@@ -58,6 +63,46 @@
         </form>
     </div>
 </div>
+<style>
+.register-subtitle {
+    color: #6c757d;
+    font-size: 14px;
+    text-align: center;
+    margin: 0 0 24px 0;
+}
+
+.email-hint {
+    margin-top: 8px;
+    padding: 8px 12px;
+    background-color: #e3f2fd;
+    border: 1px solid #bbdefb;
+    border-radius: 4px;
+    color: #1976d2;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.email-hint i {
+    font-size: 14px;
+    color: #1976d2;
+}
+
+.login-link {
+    display: block;
+    text-align: center;
+    margin-top: 15px;
+    color: #6750a4;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.login-link:hover {
+    color: #5a45a0;
+    text-decoration: underline;
+}
+</style>
 {% endblock %}
 
 {% block scripts %}

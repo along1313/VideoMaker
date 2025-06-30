@@ -765,3 +765,392 @@ TypeError: 'int' object is not iterable
 [2025-06-26 10:53:14,139] [INFO] [logger:55] - 正在初始化数据库...
 [2025-06-26 10:53:15,021] [INFO] [logger:55] - 数据库初始化完成
 [2025-06-26 10:53:15,021] [INFO] [logger:55] - 百速一键AI视频生成应用服务器已启动，监听端口: 5002
+[2025-06-26 15:33:42,006] [ERROR] [logger:62] - 视频生成任务失败: 'NoneType' object has no attribute 'id'
+[2025-06-26 15:35:00,382] [ERROR] [logger:62] - 视频生成任务失败: 'NoneType' object has no attribute 'id'
+[2025-06-26 15:41:14,225] [ERROR] [logger:62] - 视频生成任务失败: generate_video() missing 1 required positional argument: 'template'
+[2025-06-26 16:56:26,131] [INFO] [logger:55] - 视频生成完成 - 项目: 白雪公主的童话, 视频: workstore/user1/白雪公主的童话/output.mp4
+[2025-06-27 09:19:04,253] [INFO] [logger:55] - 用户 admin 查看我的视频页面，共 8 个视频
+[2025-06-27 09:19:54,140] [INFO] [logger:55] - 用户 admin 查看我的视频页面，共 8 个视频
+[2025-06-27 09:20:01,282] [INFO] [app:1255] - 请求 workstore 文件: user1/白雪公主的童话/output.mp4
+[2025-06-27 09:20:08,651] [INFO] [app:1255] - 请求 workstore 文件: user1/白雪公主的童话/covers/cover_4:3.png
+[2025-06-27 09:20:25,403] [INFO] [logger:55] - 用户 admin 查看我的视频页面，共 8 个视频
+[2025-06-27 09:20:48,678] [INFO] [logger:55] - 用户 admin 查看我的视频页面，共 8 个视频
+[2025-06-27 09:24:28,145] [INFO] [logger:55] - 用户 admin 查看我的视频页面，共 8 个视频
+[2025-06-27 09:24:28,741] [INFO] [app:1255] - 请求 workstore 文件: user1/白雪公主的童话/covers/cover_4:3.png
+[2025-06-27 09:24:28,744] [INFO] [app:1255] - 请求 workstore 文件: user1/纳什均衡解析/covers/cover_4:3.png
+[2025-06-27 09:24:51,715] [INFO] [app:1255] - 请求 workstore 文件: user1/纳什均衡解析/output.mp4
+[2025-06-27 09:24:51,729] [INFO] [app:1255] - 请求 workstore 文件: user1/纳什均衡解析/output.mp4
+[2025-06-27 09:24:51,828] [INFO] [app:1255] - 请求 workstore 文件: user1/纳什均衡解析/output.mp4
+[2025-06-27 09:24:51,830] [INFO] [app:1255] - 请求 workstore 文件: user1/纳什均衡解析/output.mp4
+[2025-06-27 09:24:56,037] [INFO] [app:1255] - 请求 workstore 文件: user1/纳什均衡解析/output.mp4
+[2025-06-27 09:29:19,539] [INFO] [logger:55] - 用户 test2 查看我的视频页面，共 0 个视频
+[2025-06-27 09:58:48,975] [ERROR] [logger:62] - 视频生成任务失败: [Errno 2] No such file or directory: 'workstore/user3/work_flow_record.json'
+[2025-06-27 10:24:43,137] [INFO] [logger:55] - 用户 admin 查看我的视频页面，共 8 个视频
+[2025-06-27 10:24:43,357] [INFO] [app:1255] - 请求 workstore 文件: user1/白雪公主的童话/covers/cover_4:3.png
+[2025-06-27 10:24:43,360] [INFO] [app:1255] - 请求 workstore 文件: user1/纳什均衡解析/covers/cover_4:3.png
+[2025-06-27 10:29:46,554] [INFO] [logger:55] - 视频生成完成 - 项目: 坚持的力量, 视频: workstore/user3/坚持的力量/output.mp4
+[2025-06-27 14:06:38,151] [INFO] [logger:55] - 用户 test3 查看我的视频页面，共 2 个视频
+[2025-06-27 14:25:21,437] [ERROR] [logger:62] - 查询视频状态出错 - 视频ID: 19, 错误: (sqlite3.OperationalError) no such column: video.credits_used
+[SQL: SELECT video.id AS video_id, video.title AS video_title, video.user_id AS video_user_id, video.style AS video_style, video.prompt AS video_prompt, video.video_path AS video_video_path, video.cover_path AS video_cover_path, video.status AS video_status, video.mode AS video_mode, video.credits_used AS video_credits_used, video.created_at AS video_created_at 
+FROM video 
+WHERE video.id = ?]
+[parameters: (19,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+[2025-06-27 14:27:41,427] [ERROR] [logger:62] - 查询视频状态出错 - 视频ID: 19, 错误: (sqlite3.OperationalError) no such column: video.credits_used
+[SQL: SELECT video.id AS video_id, video.title AS video_title, video.user_id AS video_user_id, video.style AS video_style, video.prompt AS video_prompt, video.video_path AS video_video_path, video.cover_path AS video_cover_path, video.status AS video_status, video.mode AS video_mode, video.credits_used AS video_credits_used, video.created_at AS video_created_at 
+FROM video 
+WHERE video.id = ?]
+[parameters: (19,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+[2025-06-27 14:51:49,168] [INFO] [logger:55] - 用户 test3 查看我的视频页面，共 2 个视频
+[2025-06-27 14:59:58,107] [INFO] [logger:55] - 用户 test3 查看我的视频页面，共 2 个视频
+[2025-06-27 16:01:46,479] [INFO] [logger:55] - 用户 admin 查看我的视频页面，共 4 个视频
+[2025-06-27 16:01:46,686] [INFO] [app:1311] - 请求 workstore 文件: user1/白雪公主的童话/covers/cover_4:3.png
+[2025-06-27 16:01:46,689] [INFO] [app:1311] - 请求 workstore 文件: user1/纳什均衡解析/covers/cover_4:3.png
+[2025-06-27 16:01:55,674] [INFO] [app:1311] - 请求 workstore 文件: user1/白雪公主的童话/output.mp4
+[2025-06-27 16:01:55,717] [INFO] [app:1311] - 请求 workstore 文件: user1/白雪公主的童话/output.mp4
+[2025-06-27 16:01:58,734] [INFO] [app:1311] - 请求 workstore 文件: user1/白雪公主的童话/output.mp4
+[2025-06-27 16:01:58,737] [INFO] [app:1311] - 请求 workstore 文件: user1/白雪公主的童话/output.mp4
+[2025-06-27 16:10:57,941] [INFO] [app:1311] - 请求 workstore 文件: 1/认知显微镜/output.mp4
+[2025-06-27 16:10:57,968] [INFO] [app:1311] - 请求 workstore 文件: 1/认知显微镜/output.mp4
+[2025-06-27 16:10:58,070] [INFO] [app:1311] - 请求 workstore 文件: 1/认知显微镜/output.mp4
+[2025-06-27 16:10:58,073] [INFO] [app:1311] - 请求 workstore 文件: 1/认知显微镜/output.mp4
+[2025-06-27 16:11:02,152] [INFO] [app:1311] - 请求 workstore 文件: 1/认知显微镜/output.mp4
+[2025-06-27 16:11:08,275] [INFO] [app:1311] - 请求 workstore 文件: user1/纳什均衡解析/output.mp4
+[2025-06-27 16:11:08,320] [INFO] [app:1311] - 请求 workstore 文件: user1/纳什均衡解析/output.mp4
+[2025-06-27 16:11:08,364] [INFO] [app:1311] - 请求 workstore 文件: user1/纳什均衡解析/output.mp4
+[2025-06-27 16:11:08,366] [INFO] [app:1311] - 请求 workstore 文件: user1/纳什均衡解析/output.mp4
+[2025-06-27 16:11:10,972] [INFO] [app:1311] - 请求 workstore 文件: user1/纳什均衡解析/output.mp4
+[2025-06-27 16:21:46,832] [INFO] [app:1311] - 请求 workstore 文件: 1/三只小猪/output.mp4
+[2025-06-27 16:21:46,861] [INFO] [app:1311] - 请求 workstore 文件: 1/三只小猪/output.mp4
+[2025-06-27 16:21:47,127] [INFO] [app:1311] - 请求 workstore 文件: 1/三只小猪/output.mp4
+[2025-06-27 16:21:47,130] [INFO] [app:1311] - 请求 workstore 文件: 1/三只小猪/output.mp4
+[2025-06-27 16:21:50,390] [INFO] [app:1311] - 请求 workstore 文件: 1/三只小猪/output.mp4
+[2025-06-27 16:29:17,979] [INFO] [app:1344] - 请求 workstore 文件: user1/白雪公主的童话/output.mp4
+[2025-06-27 16:29:18,025] [INFO] [app:1344] - 请求 workstore 文件: user1/白雪公主的童话/output.mp4
+[2025-06-27 16:29:18,047] [INFO] [app:1344] - 请求 workstore 文件: user1/白雪公主的童话/output.mp4
+[2025-06-27 16:29:18,049] [INFO] [app:1344] - 请求 workstore 文件: user1/白雪公主的童话/output.mp4
+[2025-06-27 16:29:20,417] [INFO] [app:1344] - 请求 workstore 文件: user1/白雪公主的童话/output.mp4
+[2025-06-27 16:29:20,440] [INFO] [app:1344] - 请求 workstore 文件: user1/白雪公主的童话/output.mp4
+[2025-06-27 16:29:20,442] [INFO] [app:1344] - 请求 workstore 文件: user1/白雪公主的童话/output.mp4
+[2025-06-27 16:29:20,444] [INFO] [app:1344] - 请求 workstore 文件: user1/白雪公主的童话/output.mp4
+[2025-06-27 16:29:20,446] [INFO] [app:1344] - 请求 workstore 文件: user1/白雪公主的童话/output.mp4
+[2025-06-27 16:29:20,448] [INFO] [app:1344] - 请求 workstore 文件: user1/白雪公主的童话/output.mp4
+[2025-06-27 16:29:20,451] [INFO] [app:1344] - 请求 workstore 文件: user1/白雪公主的童话/output.mp4
+[2025-06-27 16:29:20,465] [INFO] [app:1344] - 请求 workstore 文件: user1/白雪公主的童话/output.mp4
+[2025-06-27 16:29:20,468] [INFO] [app:1344] - 请求 workstore 文件: user1/白雪公主的童话/output.mp4
+[2025-06-27 16:29:20,473] [INFO] [app:1344] - 请求 workstore 文件: user1/白雪公主的童话/output.mp4
+[2025-06-27 16:29:20,475] [INFO] [app:1344] - 请求 workstore 文件: user1/白雪公主的童话/output.mp4
+[2025-06-27 16:29:20,477] [INFO] [app:1344] - 请求 workstore 文件: user1/白雪公主的童话/output.mp4
+[2025-06-27 16:29:20,479] [INFO] [app:1344] - 请求 workstore 文件: user1/白雪公主的童话/output.mp4
+[2025-06-27 16:29:20,482] [INFO] [app:1344] - 请求 workstore 文件: user1/白雪公主的童话/output.mp4
+[2025-06-27 16:29:20,486] [INFO] [app:1344] - 请求 workstore 文件: user1/白雪公主的童话/output.mp4
+[2025-06-27 16:29:20,497] [INFO] [app:1344] - 请求 workstore 文件: user1/白雪公主的童话/output.mp4
+[2025-06-27 16:29:20,502] [INFO] [app:1344] - 请求 workstore 文件: user1/白雪公主的童话/output.mp4
+[2025-06-27 16:29:20,505] [INFO] [app:1344] - 请求 workstore 文件: user1/白雪公主的童话/output.mp4
+[2025-06-27 16:29:20,517] [INFO] [app:1344] - 请求 workstore 文件: user1/白雪公主的童话/output.mp4
+[2025-06-27 16:29:20,536] [INFO] [app:1344] - 请求 workstore 文件: user1/白雪公主的童话/output.mp4
+[2025-06-27 16:29:20,539] [INFO] [app:1344] - 请求 workstore 文件: user1/白雪公主的童话/output.mp4
+[2025-06-27 16:29:20,541] [INFO] [app:1344] - 请求 workstore 文件: user1/白雪公主的童话/output.mp4
+[2025-06-27 16:29:20,546] [INFO] [app:1344] - 请求 workstore 文件: user1/白雪公主的童话/output.mp4
+[2025-06-27 16:29:20,553] [INFO] [app:1344] - 请求 workstore 文件: user1/白雪公主的童话/output.mp4
+[2025-06-27 16:29:20,557] [INFO] [app:1344] - 请求 workstore 文件: user1/白雪公主的童话/output.mp4
+[2025-06-27 16:29:20,563] [INFO] [app:1344] - 请求 workstore 文件: user1/白雪公主的童话/output.mp4
+[2025-06-27 16:29:20,570] [INFO] [app:1344] - 请求 workstore 文件: user1/白雪公主的童话/output.mp4
+[2025-06-27 16:29:20,572] [INFO] [app:1344] - 请求 workstore 文件: user1/白雪公主的童话/output.mp4
+[2025-06-27 16:29:20,615] [INFO] [app:1344] - 请求 workstore 文件: user1/白雪公主的童话/output.mp4
+[2025-06-27 16:29:20,620] [INFO] [app:1344] - 请求 workstore 文件: user1/白雪公主的童话/output.mp4
+[2025-06-27 16:29:20,624] [INFO] [app:1344] - 请求 workstore 文件: user1/白雪公主的童话/output.mp4
+[2025-06-27 16:29:20,656] [INFO] [app:1344] - 请求 workstore 文件: user1/白雪公主的童话/output.mp4
+[2025-06-27 16:29:20,661] [INFO] [app:1344] - 请求 workstore 文件: user1/白雪公主的童话/output.mp4
+[2025-06-27 16:29:20,663] [INFO] [app:1344] - 请求 workstore 文件: user1/白雪公主的童话/output.mp4
+[2025-06-27 16:29:20,766] [INFO] [app:1344] - 请求 workstore 文件: user1/白雪公主的童话/output.mp4
+[2025-06-27 16:29:20,784] [INFO] [app:1344] - 请求 workstore 文件: user1/白雪公主的童话/output.mp4
+[2025-06-27 16:29:20,789] [INFO] [app:1344] - 请求 workstore 文件: user1/白雪公主的童话/output.mp4
+[2025-06-27 16:29:20,837] [INFO] [app:1344] - 请求 workstore 文件: user1/白雪公主的童话/output.mp4
+[2025-06-27 16:29:20,851] [INFO] [app:1344] - 请求 workstore 文件: user1/白雪公主的童话/output.mp4
+[2025-06-27 16:29:20,855] [INFO] [app:1344] - 请求 workstore 文件: user1/白雪公主的童话/output.mp4
+[2025-06-27 16:29:20,882] [INFO] [app:1344] - 请求 workstore 文件: user1/白雪公主的童话/output.mp4
+[2025-06-27 16:29:21,195] [INFO] [app:1344] - 请求 workstore 文件: user1/白雪公主的童话/output.mp4
+[2025-06-27 16:29:21,199] [INFO] [app:1344] - 请求 workstore 文件: user1/白雪公主的童话/output.mp4
+[2025-06-27 16:29:21,203] [INFO] [app:1344] - 请求 workstore 文件: user1/白雪公主的童话/output.mp4
+[2025-06-27 16:29:21,263] [INFO] [app:1344] - 请求 workstore 文件: user1/白雪公主的童话/output.mp4
+[2025-06-27 16:29:21,266] [INFO] [app:1344] - 请求 workstore 文件: user1/白雪公主的童话/output.mp4
+[2025-06-27 16:29:21,272] [INFO] [app:1344] - 请求 workstore 文件: user1/白雪公主的童话/output.mp4
+[2025-06-27 16:29:21,283] [INFO] [app:1344] - 请求 workstore 文件: user1/白雪公主的童话/output.mp4
+[2025-06-27 16:29:21,285] [INFO] [app:1344] - 请求 workstore 文件: user1/白雪公主的童话/output.mp4
+[2025-06-27 16:29:21,289] [INFO] [app:1344] - 请求 workstore 文件: user1/白雪公主的童话/output.mp4
+[2025-06-27 16:29:21,293] [INFO] [app:1344] - 请求 workstore 文件: user1/白雪公主的童话/output.mp4
+[2025-06-27 16:29:21,310] [INFO] [app:1344] - 请求 workstore 文件: user1/白雪公主的童话/output.mp4
+[2025-06-27 16:29:21,313] [INFO] [app:1344] - 请求 workstore 文件: user1/白雪公主的童话/output.mp4
+[2025-06-27 16:29:21,330] [INFO] [app:1344] - 请求 workstore 文件: user1/白雪公主的童话/output.mp4
+[2025-06-27 16:29:21,335] [INFO] [app:1344] - 请求 workstore 文件: user1/白雪公主的童话/output.mp4
+[2025-06-27 16:29:21,338] [INFO] [app:1344] - 请求 workstore 文件: user1/白雪公主的童话/output.mp4
+[2025-06-27 16:29:21,343] [INFO] [app:1344] - 请求 workstore 文件: user1/白雪公主的童话/output.mp4
+[2025-06-27 16:29:21,350] [INFO] [app:1344] - 请求 workstore 文件: user1/白雪公主的童话/output.mp4
+[2025-06-27 16:29:21,352] [INFO] [app:1344] - 请求 workstore 文件: user1/白雪公主的童话/output.mp4
+[2025-06-27 16:29:21,363] [INFO] [app:1344] - 请求 workstore 文件: user1/白雪公主的童话/output.mp4
+[2025-06-27 16:29:21,382] [INFO] [app:1344] - 请求 workstore 文件: user1/白雪公主的童话/output.mp4
+[2025-06-27 16:29:21,385] [INFO] [app:1344] - 请求 workstore 文件: user1/白雪公主的童话/output.mp4
+[2025-06-27 16:29:21,402] [INFO] [app:1344] - 请求 workstore 文件: user1/白雪公主的童话/output.mp4
+[2025-06-27 16:29:21,419] [INFO] [app:1344] - 请求 workstore 文件: user1/白雪公主的童话/output.mp4
+[2025-06-27 16:29:21,423] [INFO] [app:1344] - 请求 workstore 文件: user1/白雪公主的童话/output.mp4
+[2025-06-27 16:29:21,437] [INFO] [app:1344] - 请求 workstore 文件: user1/白雪公主的童话/output.mp4
+[2025-06-27 16:29:21,451] [INFO] [app:1344] - 请求 workstore 文件: user1/白雪公主的童话/output.mp4
+[2025-06-27 16:29:21,453] [INFO] [app:1344] - 请求 workstore 文件: user1/白雪公主的童话/output.mp4
+[2025-06-27 16:29:21,481] [INFO] [app:1344] - 请求 workstore 文件: user1/白雪公主的童话/output.mp4
+[2025-06-27 16:29:21,593] [INFO] [app:1344] - 请求 workstore 文件: user1/白雪公主的童话/output.mp4
+[2025-06-27 16:29:21,597] [INFO] [app:1344] - 请求 workstore 文件: user1/白雪公主的童话/output.mp4
+[2025-06-27 16:29:21,643] [INFO] [app:1344] - 请求 workstore 文件: user1/白雪公主的童话/output.mp4
+[2025-06-27 16:29:21,696] [INFO] [app:1344] - 请求 workstore 文件: user1/白雪公主的童话/output.mp4
+[2025-06-27 16:29:21,699] [INFO] [app:1344] - 请求 workstore 文件: user1/白雪公主的童话/output.mp4
+[2025-06-27 16:29:21,713] [INFO] [app:1344] - 请求 workstore 文件: user1/白雪公主的童话/output.mp4
+[2025-06-27 16:29:21,717] [INFO] [app:1344] - 请求 workstore 文件: user1/白雪公主的童话/output.mp4
+[2025-06-27 16:29:21,719] [INFO] [app:1344] - 请求 workstore 文件: user1/白雪公主的童话/output.mp4
+[2025-06-27 16:29:21,779] [INFO] [app:1344] - 请求 workstore 文件: user1/白雪公主的童话/output.mp4
+[2025-06-27 16:29:21,814] [INFO] [app:1344] - 请求 workstore 文件: user1/白雪公主的童话/output.mp4
+[2025-06-27 16:29:21,818] [INFO] [app:1344] - 请求 workstore 文件: user1/白雪公主的童话/output.mp4
+[2025-06-27 16:29:22,121] [INFO] [app:1344] - 请求 workstore 文件: user1/白雪公主的童话/output.mp4
+[2025-06-27 16:29:22,148] [INFO] [app:1344] - 请求 workstore 文件: user1/白雪公主的童话/output.mp4
+[2025-06-27 16:29:22,152] [INFO] [app:1344] - 请求 workstore 文件: user1/白雪公主的童话/output.mp4
+[2025-06-27 16:29:22,179] [INFO] [app:1344] - 请求 workstore 文件: user1/白雪公主的童话/output.mp4
+[2025-06-27 16:29:22,187] [INFO] [app:1344] - 请求 workstore 文件: user1/白雪公主的童话/output.mp4
+[2025-06-27 16:29:22,201] [INFO] [app:1344] - 请求 workstore 文件: user1/白雪公主的童话/output.mp4
+[2025-06-27 16:29:22,203] [INFO] [app:1344] - 请求 workstore 文件: user1/白雪公主的童话/output.mp4
+[2025-06-27 16:29:22,208] [INFO] [app:1344] - 请求 workstore 文件: user1/白雪公主的童话/output.mp4
+[2025-06-27 16:29:22,211] [INFO] [app:1344] - 请求 workstore 文件: user1/白雪公主的童话/output.mp4
+[2025-06-27 16:29:22,217] [INFO] [app:1344] - 请求 workstore 文件: user1/白雪公主的童话/output.mp4
+[2025-06-27 16:29:22,231] [INFO] [app:1344] - 请求 workstore 文件: user1/白雪公主的童话/output.mp4
+[2025-06-27 16:29:22,234] [INFO] [app:1344] - 请求 workstore 文件: user1/白雪公主的童话/output.mp4
+[2025-06-27 16:29:22,278] [INFO] [app:1344] - 请求 workstore 文件: user1/白雪公主的童话/output.mp4
+[2025-06-27 16:29:22,462] [INFO] [app:1344] - 请求 workstore 文件: user1/白雪公主的童话/output.mp4
+[2025-06-27 16:29:22,466] [INFO] [app:1344] - 请求 workstore 文件: user1/白雪公主的童话/output.mp4
+[2025-06-27 16:29:22,500] [INFO] [app:1344] - 请求 workstore 文件: user1/白雪公主的童话/output.mp4
+[2025-06-27 16:29:22,569] [INFO] [app:1344] - 请求 workstore 文件: user1/白雪公主的童话/output.mp4
+[2025-06-27 16:29:22,573] [INFO] [app:1344] - 请求 workstore 文件: user1/白雪公主的童话/output.mp4
+[2025-06-27 16:29:22,647] [INFO] [app:1344] - 请求 workstore 文件: user1/白雪公主的童话/output.mp4
+[2025-06-27 16:29:22,717] [INFO] [app:1344] - 请求 workstore 文件: user1/白雪公主的童话/output.mp4
+[2025-06-27 16:29:22,719] [INFO] [app:1344] - 请求 workstore 文件: user1/白雪公主的童话/output.mp4
+[2025-06-27 16:29:22,753] [INFO] [app:1344] - 请求 workstore 文件: user1/白雪公主的童话/output.mp4
+[2025-06-27 16:29:22,769] [INFO] [app:1344] - 请求 workstore 文件: user1/白雪公主的童话/output.mp4
+[2025-06-27 16:29:22,772] [INFO] [app:1344] - 请求 workstore 文件: user1/白雪公主的童话/output.mp4
+[2025-06-27 16:29:22,809] [INFO] [app:1344] - 请求 workstore 文件: user1/白雪公主的童话/output.mp4
+[2025-06-27 16:29:22,862] [INFO] [app:1344] - 请求 workstore 文件: user1/白雪公主的童话/output.mp4
+[2025-06-27 16:29:22,866] [INFO] [app:1344] - 请求 workstore 文件: user1/白雪公主的童话/output.mp4
+[2025-06-27 16:39:11,373] [INFO] [logger:55] - 用户 admin 查看我的视频页面，共 3 个视频
+[2025-06-27 16:39:11,590] [INFO] [app:1344] - 请求 workstore 文件: user1/纳什均衡解析/covers/cover_4:3.png
+[2025-06-27 16:39:11,600] [INFO] [app:1344] - 请求 workstore 文件: user1/白雪公主的童话/covers/cover_4:3.png
+[2025-06-27 16:39:13,446] [INFO] [app:1262] - 用户 1 请求下载视频 15, 路径: workstore/user1/白雪公主的童话/output.mp4
+[2025-06-27 16:39:13,446] [INFO] [app:1289] - 解析的基础目录: workstore/user1/白雪公主的童话
+[2025-06-27 16:39:13,664] [INFO] [app:1303] - 已添加视频文件到ZIP: workstore/user1/白雪公主的童话/output.mp4
+[2025-06-27 16:39:13,687] [INFO] [app:1315] - 已添加封面文件到ZIP: workstore/user1/白雪公主的童话/covers/cover_3:4.png
+[2025-06-27 16:39:13,711] [INFO] [app:1315] - 已添加封面文件到ZIP: workstore/user1/白雪公主的童话/covers/cover_4:3.png
+[2025-06-27 16:39:13,711] [INFO] [app:1324] - 开始下载，文件名: video_15_20250627163913.zip
+[2025-06-29 09:57:54,119] [INFO] [logger:55] - 用户 test4 生成视频扣除了 1 条额度，剩余 2 条
+[2025-06-29 10:04:14,475] [INFO] [logger:55] - 视频生成完成 - 项目: 白雪公主的故事, 视频: workstore/user6/白雪公主的故事/output.mp4
+[2025-06-29 10:07:10,003] [INFO] [logger:55] - 用户 test4 查看我的视频页面，共 1 个视频
+[2025-06-29 10:07:10,353] [INFO] [app:1393] - 请求 workstore 文件: user6/白雪公主的故事/covers/cover_4:3.png
+[2025-06-29 10:07:13,348] [INFO] [app:1311] - 用户 6 请求下载视频 19, 路径: workstore/user6/白雪公主的故事/output.mp4
+[2025-06-29 10:07:13,348] [INFO] [app:1338] - 解析的基础目录: workstore/user6/白雪公主的故事
+[2025-06-29 10:07:13,703] [INFO] [app:1352] - 已添加视频文件到ZIP: workstore/user6/白雪公主的故事/output.mp4
+[2025-06-29 10:07:13,723] [INFO] [app:1364] - 已添加封面文件到ZIP: workstore/user6/白雪公主的故事/covers/cover_3:4.png
+[2025-06-29 10:07:13,742] [INFO] [app:1364] - 已添加封面文件到ZIP: workstore/user6/白雪公主的故事/covers/cover_4:3.png
+[2025-06-29 10:07:13,743] [INFO] [app:1373] - 开始下载，文件名: video_19_20250629100713.zip
+[2025-06-29 10:35:34,293] [INFO] [logger:55] - 用户 test4 查看我的视频页面，共 1 个视频
+[2025-06-29 10:35:34,949] [INFO] [app:1430] - 请求 workstore 文件: user6/白雪公主的故事/covers/cover_4:3.png
+[2025-06-29 11:01:03,476] [INFO] [logger:55] - 用户 test4 查看我的视频页面，共 1 个视频
+[2025-06-29 11:01:03,682] [INFO] [app:1430] - 请求 workstore 文件: user6/白雪公主的故事/covers/cover_4:3.png
+[2025-06-29 11:16:25,260] [INFO] [logger:55] - 用户 test4 生成视频扣除了 1 条额度，剩余 1 条
+[2025-06-29 11:16:25,398] [ERROR] [logger:62] - 视频生成任务失败: 'ScriptService' object has no attribute 'generate_from_script'
+[2025-06-29 11:19:45,384] [INFO] [logger:55] - 用户 test4 获得了月度免费额度刷新，当前额度: 4
+[2025-06-29 11:19:45,407] [INFO] [logger:55] - 用户 test4 生成视频扣除了 1 条额度，剩余 3 条
+[2025-06-29 11:21:28,105] [INFO] [logger:55] - 用户 test4 生成视频扣除了 1 条额度，剩余 2 条
+[2025-06-29 11:25:00,723] [ERROR] [logger:62] - 视频生成任务失败: 脚本结构化失败，重试3次后仍然失败
+[2025-06-29 11:26:35,915] [INFO] [logger:55] - 用户 test4 查看我的视频页面，共 4 个视频
+[2025-06-29 11:26:36,170] [INFO] [app:1430] - 请求 workstore 文件: user6/白雪公主的故事/covers/cover_4:3.png
+[2025-06-29 11:26:50,328] [INFO] [logger:55] - 用户 test4 查看我的视频页面，共 4 个视频
+[2025-06-29 11:26:50,453] [INFO] [app:1430] - 请求 workstore 文件: user6/白雪公主的故事/covers/cover_4:3.png
+[2025-06-29 11:31:43,919] [INFO] [logger:55] - 用户 test4 查看我的视频页面，共 4 个视频
+[2025-06-29 11:31:43,928] [INFO] [logger:55] - 用户 test4 查看我的视频页面，共 4 个视频
+[2025-06-29 11:31:43,931] [INFO] [logger:55] - 用户 test4 查看我的视频页面，共 4 个视频
+[2025-06-29 11:34:08,750] [INFO] [logger:55] - 用户 test4 查看我的视频页面，共 4 个视频
+[2025-06-29 11:34:09,073] [INFO] [app:1472] - 请求 workstore 文件: user6/白雪公主的故事/covers/cover_4:3.png
+[2025-06-29 11:36:11,361] [INFO] [logger:55] - 用户 test4 查看我的视频页面，共 4 个视频
+[2025-06-29 11:38:09,321] [INFO] [logger:55] - 用户 test4 生成视频扣除了 1 条额度，剩余 1 条
+[2025-06-29 11:50:28,233] [INFO] [logger:55] - 用户 test4 生成视频扣除了 1 条额度，剩余 0 条
+[2025-06-29 12:04:58,427] [INFO] [logger:55] - 用户 test4 生成视频扣除了 1 条额度，剩余 19 条
+[2025-06-29 12:08:42,667] [ERROR] [logger:62] - 视频生成任务失败: 智谱AI图片生成失败: Error code: 400, with error text {"contentFilter":[{"level":2,"role":"user"}],"error":{"code":"1301","message":"系统检测到输入或生成内容可能包含不安全或敏感内容，请您避免输入易产生敏感内容的提示语，感谢您的配合。"}}
+[2025-06-29 12:19:03,330] [INFO] [logger:55] - 用户 test4 生成视频扣除了 1 条额度，剩余 18 条
+[2025-06-29 12:32:02,429] [INFO] [logger:55] - 视频生成完成 - 项目: 人性弱点智慧, 视频: workstore/user6/人性弱点智慧/output.mp4
+[2025-06-29 13:12:20,303] [INFO] [logger:55] - 用户 test4 查看我的视频页面，共 8 个视频
+[2025-06-29 13:12:21,205] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/covers/cover_4:3.png
+[2025-06-29 13:12:21,211] [INFO] [app:1483] - 请求 workstore 文件: user6/白雪公主的故事/covers/cover_4:3.png
+[2025-06-29 13:12:37,309] [INFO] [logger:55] - 用户 test4 查看我的视频页面，共 8 个视频
+[2025-06-29 13:12:37,533] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/covers/cover_4:3.png
+[2025-06-29 13:12:37,535] [INFO] [app:1483] - 请求 workstore 文件: user6/白雪公主的故事/covers/cover_4:3.png
+[2025-06-29 13:12:56,206] [INFO] [app:1401] - 用户 6 请求下载视频 26, 路径: workstore/user6/人性弱点智慧/output.mp4
+[2025-06-29 13:12:56,207] [INFO] [app:1428] - 解析的基础目录: workstore/user6/人性弱点智慧
+[2025-06-29 13:12:56,805] [INFO] [app:1442] - 已添加视频文件到ZIP: workstore/user6/人性弱点智慧/output.mp4
+[2025-06-29 13:12:56,825] [INFO] [app:1454] - 已添加封面文件到ZIP: workstore/user6/人性弱点智慧/covers/cover_3:4.png
+[2025-06-29 13:12:56,843] [INFO] [app:1454] - 已添加封面文件到ZIP: workstore/user6/人性弱点智慧/covers/cover_4:3.png
+[2025-06-29 13:12:56,843] [INFO] [app:1463] - 开始下载，文件名: video_26_20250629131256.zip
+[2025-06-29 13:15:53,163] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:53,193] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:56,679] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:56,683] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:57,477] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:57,481] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:57,483] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:57,491] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:57,493] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:57,496] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:57,497] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:57,501] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:57,508] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:57,512] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:57,514] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:57,515] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:57,527] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:57,528] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:57,532] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:57,533] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:57,536] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:57,544] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:57,559] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:57,562] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:57,565] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:57,566] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:57,571] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:57,577] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:57,577] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:57,581] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:57,582] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:57,586] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:57,594] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:57,599] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:57,601] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:57,606] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:57,611] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:57,615] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:57,616] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:57,628] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:57,634] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:57,638] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:57,644] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:57,644] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:57,648] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:57,650] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:57,655] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:57,661] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:57,662] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:57,665] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:57,668] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:57,671] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:57,677] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:57,682] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:57,685] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:57,693] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:57,693] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:57,695] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:57,696] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:57,698] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:57,703] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:57,705] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:57,709] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:57,710] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:57,713] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:57,714] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:57,716] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:57,718] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:57,720] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:57,726] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:57,734] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:57,737] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:57,742] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:57,746] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:57,747] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:57,751] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:57,760] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:57,763] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:57,769] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:57,777] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:57,778] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:57,780] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:57,785] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:57,788] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:57,793] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:57,796] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:57,797] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:57,820] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:57,838] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:57,844] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:57,856] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:57,877] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:57,878] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:57,881] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:57,885] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:57,888] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:57,905] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:57,940] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:57,943] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:57,989] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:58,023] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:58,026] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:58,072] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:58,088] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:58,091] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:58,106] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:58,118] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:58,119] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:58,150] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:58,188] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:58,190] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:58,222] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:58,396] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:58,399] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:58,953] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:58,969] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:58,972] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:58,987] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:59,006] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:59,009] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:59,011] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:59,016] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:59,019] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:59,034] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:59,044] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:59,061] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:59,063] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:59,093] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:59,112] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:15:59,116] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:16:00,570] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/output.mp4
+[2025-06-29 13:40:43,872] [INFO] [logger:55] - 用户 test4 查看我的视频页面，共 8 个视频
+[2025-06-29 13:40:44,338] [INFO] [app:1483] - 请求 workstore 文件: user6/人性弱点智慧/covers/cover_4:3.png
+[2025-06-29 13:40:44,345] [INFO] [app:1483] - 请求 workstore 文件: user6/白雪公主的故事/covers/cover_4:3.png
+[2025-06-30 09:13:13,540] [INFO] [email_service:61] - 验证码邮件已发送至: inter_trade@msn.com
+[2025-06-30 09:13:15,620] [INFO] [email_service:102] - 欢迎邮件已发送至: inter_trade@msn.com
+[2025-06-30 09:20:14,429] [INFO] [logger:55] - 用户 test4 查看我的视频页面，共 8 个视频
+[2025-06-30 09:20:14,740] [INFO] [app:1643] - 请求 workstore 文件: user6/白雪公主的故事/covers/cover_4:3.png
+[2025-06-30 09:20:14,743] [INFO] [app:1643] - 请求 workstore 文件: user6/人性弱点智慧/covers/cover_4:3.png
+[2025-06-30 10:14:48,894] [INFO] [email_service:82] - 密码重置邮件已发送至: inter_trade@msn.com
+[2025-06-30 10:25:17,455] [INFO] [logger:55] - 用户 test5 获得了月度免费额度刷新，当前额度: 6
+[2025-06-30 10:28:37,108] [INFO] [email_service:82] - 密码重置邮件已发送至: inter_trade@msn.com
+[2025-06-30 10:31:59,382] [INFO] [email_service:82] - 密码重置邮件已发送至: inter_trade@msn.com
+[2025-06-30 11:24:43,229] [INFO] [email_service:82] - 密码重置邮件已发送至: inter_trade@msn.com
+[2025-06-30 11:29:31,881] [INFO] [email_service:82] - 密码重置邮件已发送至: inter_trade@msn.com
+[2025-06-30 11:35:33,855] [INFO] [logger:55] - 用户 test4 查看我的视频页面，共 8 个视频
+[2025-06-30 11:35:34,074] [INFO] [app:1742] - 请求 workstore 文件: user6/白雪公主的故事/covers/cover_4:3.png
+[2025-06-30 11:35:34,075] [INFO] [app:1742] - 请求 workstore 文件: user6/人性弱点智慧/covers/cover_4:3.png
+[2025-06-30 11:37:26,089] [INFO] [logger:55] - 用户 test4 生成视频扣除了 1 条额度，剩余 17 条
+[2025-06-30 11:43:54,964] [INFO] [logger:55] - 视频生成完成 - 项目: 达克效应之谜, 视频: workstore/user6/达克效应之谜/output.mp4
+[2025-06-30 11:47:50,482] [INFO] [logger:55] - 用户 test4 查看我的视频页面，共 9 个视频
+[2025-06-30 11:47:51,307] [INFO] [app:1742] - 请求 workstore 文件: user6/达克效应之谜/covers/cover_4:3.png
+[2025-06-30 11:47:51,308] [INFO] [app:1742] - 请求 workstore 文件: user6/人性弱点智慧/covers/cover_4:3.png
+[2025-06-30 11:47:51,313] [INFO] [app:1742] - 请求 workstore 文件: user6/白雪公主的故事/covers/cover_4:3.png
+[2025-06-30 11:47:55,461] [INFO] [app:1660] - 用户 6 请求下载视频 27, 路径: workstore/user6/达克效应之谜/output.mp4
+[2025-06-30 11:47:55,462] [INFO] [app:1687] - 解析的基础目录: workstore/user6/达克效应之谜
+[2025-06-30 11:47:55,881] [INFO] [app:1701] - 已添加视频文件到ZIP: workstore/user6/达克效应之谜/output.mp4
+[2025-06-30 11:47:55,906] [INFO] [app:1713] - 已添加封面文件到ZIP: workstore/user6/达克效应之谜/covers/cover_3:4.png
+[2025-06-30 11:47:55,929] [INFO] [app:1713] - 已添加封面文件到ZIP: workstore/user6/达克效应之谜/covers/cover_4:3.png
+[2025-06-30 11:47:55,930] [INFO] [app:1722] - 开始下载，文件名: video_27_20250630114755.zip

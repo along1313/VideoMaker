@@ -1,0 +1,450 @@
+{% extends 'base.html' %}
+
+{% block title %}邮箱注册 - 百速AI一键生成短视频{% endblock %}
+
+{% block content %}
+<div class="register-email-container" id="registerEmailApp">
+    <div class="register-card">
+        <!-- 页面标题 -->
+        <div class="card-header">
+            <h1 class="title">邮箱注册</h1>
+            <p class="subtitle">使用邮箱验证，安全快速注册</p>
+        </div>
+
+        <!-- 进度指示器 -->
+        <div class="progress-indicator">
+            <div class="step" :class="{ active: currentStep >= 1, completed: currentStep > 1 }">
+                <div class="step-number">1</div>
+                <div class="step-label">邮箱验证</div>
+            </div>
+            <div class="step-line" :class="{ active: currentStep > 1 }"></div>
+            <div class="step" :class="{ active: currentStep >= 2, completed: currentStep > 2 }">
+                <div class="step-number">2</div>
+                <div class="step-label">账号信息</div>
+            </div>
+            <div class="step-line" :class="{ active: currentStep > 2 }"></div>
+            <div class="step" :class="{ active: currentStep >= 3 }">
+                <div class="step-number">3</div>
+                <div class="step-label">注册成功</div>
+            </div>
+        </div>
+
+        <!-- 步骤1：邮箱验证 -->
+        <div v-if="currentStep === 1" class="step-content">
+            <div class="step-title">
+                <i class="el-icon-message"></i>
+                <span>验证您的邮箱</span>
+            </div>
+            
+            <el-form ref="emailForm" :model="emailForm" :rules="emailRules" label-width="0px">
+                <el-form-item prop="email">
+                    <el-input
+                        v-model="emailForm.email"
+                        type="email"
+                        placeholder="请输入您的邮箱地址"
+                        prefix-icon="el-icon-message"
+                        size="large"
+                        :disabled="emailSent">
+                    </el-input>
+                </el-form-item>
+                
+                <el-form-item v-if="emailSent" prop="code">
+                    <el-input
+                        v-model="emailForm.code"
+                        placeholder="请输入6位验证码"
+                        prefix-icon="el-icon-key"
+                        size="large"
+                        maxlength="6">
+                        <template slot="append">
+                            <el-button 
+                                @click="sendVerificationCode" 
+                                :disabled="countdown > 0"
+                                :loading="sendingCode">
+                                ${ countdown > 0 ? countdown + 's后重发' : '重新发送' }
+                            </el-button>
+                        </template>
+                    </el-input>
+                </el-form-item>
+
+                <el-form-item>
+                    <el-button 
+                        v-if="!emailSent"
+                        type="primary" 
+                        size="large" 
+                        style="width: 100%;"
+                        @click="sendVerificationCode"
+                        :loading="sendingCode">
+                        发送验证码
+                    </el-button>
+                    
+                    <el-button 
+                        v-else
+                        type="primary" 
+                        size="large" 
+                        style="width: 100%;"
+                        @click="verifyCode"
+                        :loading="verifyingCode">
+                        验证邮箱
+                    </el-button>
+                </el-form-item>
+            </el-form>
+
+            <div v-if="emailSent" class="email-hint">
+                <i class="el-icon-info"></i>
+                <span>验证码已发送至 <strong>${ emailForm.email }</strong></span>
+            </div>
+        </div>
+
+        <!-- 步骤2：账号信息 -->
+        <div v-if="currentStep === 2" class="step-content">
+            <div class="step-title">
+                <i class="el-icon-user"></i>
+                <span>设置账号信息</span>
+            </div>
+            
+            <el-form ref="userForm" :model="userForm" :rules="userRules" label-width="0px">
+                <el-form-item prop="username">
+                    <el-input
+                        v-model="userForm.username"
+                        placeholder="请输入用户名"
+                        prefix-icon="el-icon-user"
+                        size="large">
+                    </el-input>
+                </el-form-item>
+                
+                <el-form-item prop="password">
+                    <el-input
+                        v-model="userForm.password"
+                        type="password"
+                        placeholder="请输入密码"
+                        prefix-icon="el-icon-lock"
+                        size="large"
+                        show-password>
+                    </el-input>
+                </el-form-item>
+
+                <el-form-item>
+                    <el-button 
+                        type="primary" 
+                        size="large" 
+                        style="width: 100%;"
+                        @click="submitRegistration"
+                        :loading="registering">
+                        完成注册
+                    </el-button>
+                </el-form-item>
+            </el-form>
+        </div>
+
+        <!-- 步骤3：注册成功 -->
+        <div v-if="currentStep === 3" class="step-content success-content">
+            <div class="success-icon">
+                <i class="el-icon-success"></i>
+            </div>
+            <h2 class="success-title">注册成功！</h2>
+            <p class="success-desc">欢迎加入百速AI！</p>
+            
+            <div class="success-actions">
+                <el-button type="primary" size="large" @click="goToIndex">
+                    开始创作视频
+                </el-button>
+            </div>
+        </div>
+
+        <!-- 页面底部链接 -->
+        <div class="card-footer">
+            <span>已有账号？</span>
+            <a href="{{ url_for('login') }}" class="link">立即登录</a>
+        </div>
+    </div>
+</div>
+
+<style>
+.register-email-container {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.register-card {
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    padding: 40px;
+    width: 100%;
+    max-width: 480px;
+}
+
+.card-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.title {
+    font-size: 28px;
+    font-weight: 600;
+    color: #2c3e50;
+    margin: 0 0 8px 0;
+}
+
+.subtitle {
+    color: #7f8c8d;
+    font-size: 16px;
+    margin: 0;
+}
+
+.progress-indicator {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 40px;
+}
+
+.step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.step-number {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #e9ecef;
+    color: #6c757d;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.step.active .step-number {
+    background: #6750a4;
+    color: white;
+}
+
+.step.completed .step-number {
+    background: #10b981;
+    color: white;
+}
+
+.step-label {
+    font-size: 12px;
+    color: #6c757d;
+}
+
+.step-line {
+    width: 60px;
+    height: 2px;
+    background: #e9ecef;
+    margin: 0 10px;
+}
+
+.step-line.active {
+    background: #10b981;
+}
+
+.step-content {
+    animation: fadeInUp 0.3s ease;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.step-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 18px;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 24px;
+}
+
+.email-hint {
+    background: #f0f9ff;
+    border: 1px solid #bae6fd;
+    border-radius: 8px;
+    padding: 16px;
+    text-align: center;
+    color: #0369a1;
+    font-size: 14px;
+    margin-top: 16px;
+}
+
+.success-content {
+    text-align: center;
+    padding: 20px 0;
+}
+
+.success-icon {
+    font-size: 80px;
+    color: #10b981;
+    margin-bottom: 20px;
+}
+
+.success-title {
+    font-size: 24px;
+    font-weight: 600;
+    color: #2c3e50;
+    margin: 0 0 16px 0;
+}
+
+.card-footer {
+    text-align: center;
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #e9ecef;
+    color: #6c757d;
+    font-size: 14px;
+}
+
+.link {
+    color: #6750a4;
+    text-decoration: none;
+    font-weight: 500;
+}
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script>
+new Vue({
+    el: '#registerEmailApp',
+    delimiters: ['${', '}'],
+    data() {
+        return {
+            currentStep: 1,
+            emailSent: false,
+            countdown: 0,
+            sendingCode: false,
+            verifyingCode: false,
+            registering: false,
+            
+            emailForm: {
+                email: '',
+                code: ''
+            },
+            
+            userForm: {
+                username: '',
+                password: ''
+            },
+            
+            emailRules: {
+                email: [
+                    { required: true, message: '请输入邮箱地址', trigger: 'blur' },
+                    { type: 'email', message: '请输入正确的邮箱格式', trigger: 'blur' }
+                ]
+            },
+            
+            userRules: {
+                username: [
+                    { required: true, message: '请输入用户名', trigger: 'blur' },
+                    { min: 3, max: 20, message: '用户名长度应在3-20个字符之间', trigger: 'blur' }
+                ],
+                password: [
+                    { required: true, message: '请输入密码', trigger: 'blur' },
+                    { min: 6, message: '密码长度不能少于6个字符', trigger: 'blur' }
+                ]
+            }
+        };
+    },
+    
+    methods: {
+        async sendVerificationCode() {
+            try {
+                this.sendingCode = true;
+                const response = await axios.post('/api/send-verification-code', {
+                    email: this.emailForm.email
+                });
+                
+                if (response.data.success) {
+                    this.$message.success(response.data.message);
+                    this.emailSent = true;
+                    this.startCountdown();
+                } else {
+                    this.$message.error(response.data.message);
+                }
+            } catch (error) {
+                this.$message.error('发送失败，请稍后重试');
+            } finally {
+                this.sendingCode = false;
+            }
+        },
+        
+        async verifyCode() {
+            try {
+                this.verifyingCode = true;
+                const response = await axios.post('/api/verify-email-code', {
+                    email: this.emailForm.email,
+                    code: this.emailForm.code
+                });
+                
+                if (response.data.success) {
+                    this.$message.success(response.data.message);
+                    this.currentStep = 2;
+                } else {
+                    this.$message.error(response.data.message);
+                }
+            } catch (error) {
+                this.$message.error('验证失败，请稍后重试');
+            } finally {
+                this.verifyingCode = false;
+            }
+        },
+        
+        async submitRegistration() {
+            try {
+                this.registering = true;
+                const response = await axios.post('/register-with-verification', {
+                    email: this.emailForm.email,
+                    username: this.userForm.username,
+                    password: this.userForm.password
+                });
+                
+                if (response.data.success) {
+                    this.$message.success(response.data.message);
+                    this.currentStep = 3;
+                    setTimeout(() => {
+                        window.location.href = response.data.redirect || '/';
+                    }, 2000);
+                } else {
+                    this.$message.error(response.data.message);
+                }
+            } catch (error) {
+                this.$message.error('注册失败，请稍后重试');
+            } finally {
+                this.registering = false;
+            }
+        },
+        
+        startCountdown() {
+            this.countdown = 60;
+            const timer = setInterval(() => {
+                this.countdown--;
+                if (this.countdown <= 0) {
+                    clearInterval(timer);
+                }
+            }, 1000);
+        },
+        
+        goToIndex() {
+            window.location.href = '/';
+        }
+    }
+});
+</script>
+{% endblock %} 

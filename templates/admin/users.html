@@ -6,6 +6,9 @@
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
     <h1 class="h2">用户管理</h1>
     <div class="btn-toolbar mb-2 mb-md-0">
+        <button type="button" class="btn btn-sm btn-warning me-2" onclick="refreshMonthlyCredits()">
+            <i class="bi bi-arrow-clockwise"></i> 刷新月度额度
+        </button>
         <a href="#" class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#addUserModal">
             <i class="bi bi-plus-lg"></i> 添加用户
         </a>
@@ -230,6 +233,27 @@ if (deleteUserModal) {
         deleteUsername.textContent = username;
         deleteForm.action = "{{ url_for('admin_delete_user', user_id=0) }}".replace('0', userId);
     });
+}
+
+// 刷新月度免费额度
+function refreshMonthlyCredits() {
+    if (confirm('确定要刷新所有非VIP用户的月度免费额度吗？每个用户将获得3条免费额度。')) {
+        var form = document.createElement('form');
+        form.method = 'post';
+        form.action = "{{ url_for('admin_refresh_monthly_credits') }}";
+        
+        var csrf_token = document.querySelector('meta[name=csrf-token]');
+        if (csrf_token) {
+            var csrfInput = document.createElement('input');
+            csrfInput.type = 'hidden';
+            csrfInput.name = 'csrf_token';
+            csrfInput.value = csrf_token.getAttribute('content');
+            form.appendChild(csrfInput);
+        }
+        
+        document.body.appendChild(form);
+        form.submit();
+    }
 }
 
 // 表单验证

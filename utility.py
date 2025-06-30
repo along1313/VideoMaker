@@ -228,6 +228,7 @@ def crop_image(image, target_ratio):
 def draw_text_on_image(image, text, font_path=None, font_size_to_width=0.15, fill_color="yellow", outline_color="black", stroke_width=2, margin=20):
     """
     在图片上绘制带描边的文字，并自动换行，保证所有文字都在图片内
+    当需要换行时，尽量保持两行字数相近
     :param image: PIL Image 对象
     :param text: 要绘制的文字
     :param font_path: 字体文件路径
@@ -251,20 +252,17 @@ def draw_text_on_image(image, text, font_path=None, font_size_to_width=0.15, fil
         font = ImageFont.load_default()
 
     width, height = image.size
+    max_width = width - 2 * margin
 
-    # 动态测量宽度，超宽即换行
-    lines = []
-    current_line = ""
-    for char in text:
-        test_line = current_line + char
-        line_width = draw.textlength(test_line, font=font)
-        if line_width > (width - 2 * margin) and current_line:
-            lines.append(current_line)
-            current_line = char
-        else:
-            current_line = test_line
-    if current_line:
-        lines.append(current_line)
+    # 检查整行文字是否超出宽度
+    full_text_width = draw.textlength(text, font=font)
+    
+    if full_text_width <= max_width:
+        # 不需要换行，直接显示
+        lines = [text]
+    else:
+        # 需要换行，使用均衡换行策略
+        lines = _balanced_text_wrap(text, draw, font, max_width)
 
     # 计算总文本高度
     line_heights = [draw.textbbox((0, 0), line, font=font)[3] - draw.textbbox((0, 0), line, font=font)[1] for line in lines]
@@ -288,6 +286,68 @@ def draw_text_on_image(image, text, font_path=None, font_size_to_width=0.15, fil
         y += line_heights.pop(0)
 
     return image
+
+def _balanced_text_wrap(text, draw, font, max_width):
+    """
+    实现均衡的文字换行，当需要换行时尽量保持两行字数相近
+    :param text: 要换行的文字
+    :param draw: ImageDraw 对象
+    :param font: 字体对象
+    :param max_width: 最大宽度
+    :return: 换行后的文字列表
+    """
+    text_length = len(text)
+    
+    # 如果文字很短，不需要特殊处理
+    if text_length <= 4:
+        return [text]
+    
+    # 先尝试找到最佳的分割点，使两行字数相近
+    best_split = None
+    min_width_diff = float('inf')
+    
+    # 从中间位置开始，向两边寻找最佳分割点
+    center = text_length // 2
+    search_range = min(3, text_length // 3)  # 搜索范围，最多向两边搜索3个字符
+    
+    for i in range(max(1, center - search_range), min(text_length, center + search_range + 1)):
+        first_line = text[:i]
+        second_line = text[i:]
+        
+        # 检查两行是否都能放下
+        first_width = draw.textlength(first_line, font=font)
+        second_width = draw.textlength(second_line, font=font)
+        
+        if first_width <= max_width and second_width <= max_width:
+            # 计算两行宽度差异，优选宽度差异小的分割点
+            width_diff = abs(first_width - second_width)
+            if width_diff < min_width_diff:
+                min_width_diff = width_diff
+                best_split = i
+    
+    # 如果找到了合适的分割点
+    if best_split is not None:
+        first_line = text[:best_split]
+        second_line = text[best_split:]
+        return [first_line, second_line]
+    
+    # 如果没有找到合适的分割点，回退到原来的逐字符换行方式
+    lines = []
+    current_line = ""
+    
+    for char in text:
+        test_line = current_line + char
+        line_width = draw.textlength(test_line, font=font)
+        if line_width > max_width and current_line:
+            lines.append(current_line)
+            current_line = char
+        else:
+            current_line = test_line
+    
+    if current_line:
+        lines.append(current_line)
+    
+    return lines
 
 def generate_covers(input_path, output_dir, text, **keywords):
     """
@@ -449,63 +509,80 @@ def make_blank_audio(duration, output_path, fps=44100):
 def img_y_slide(image_clip, screen_size, pan_speed, int_direction = "up"):
     """
     图片剪辑垂直平移
+    效果：从中间开始，向指定方向滑动到边缘，反弹回另一边缘，再反弹回中间停止
     :param image_clip: 图片剪辑
     :param screen_size: 屏幕大小
-    :param pan_speed: 平移速度
-    :param int_direction: 初始运动方向，"up"表示初始镜头向上（图片向下），"down"表示初始镜头向下（图片向上）
+    :param pan_speed: 平移速度（像素/秒）
+    :param int_direction: 初始运动方向，"up"表示向上滑动，"down"表示向下滑动
     :return: 平移后的图片剪辑
     """
+    # 调整图片宽度匹配屏幕宽度
     image_clip = image_clip.resized(width=screen_size[0])
     image_width, image_height = image_clip.size
-    panable_height = image_height - screen_size[1]
+    screen_width, screen_height = screen_size
     
-    # 计算时间节点
-    t1 = panable_height / 2 / pan_speed
-    t2 = t1 + panable_height / pan_speed
-    t3 = t2 + panable_height / 2 / pan_speed
+    # 如果图片高度小于等于屏幕高度，不需要滑动
+    if image_height <= screen_height:
+        # 图片居中显示，不进行滑动
+        center_y = -(image_height - screen_height) // 2
+        image_clip = image_clip.with_position((0, center_y))
+        return image_clip
     
-    # 根据方向设置初始位置
-    if int_direction == "up":
-        # 初始镜头向上（图片向下）：从图片顶部开始
-        initial_y = 0
-    elif int_direction == "down":
-        # 初始镜头向下（图片向上）：从图片底部开始
-        initial_y = -panable_height
-    else:
-        # 默认使用原来的逻辑（中间开始）
-        initial_y = -panable_height / 2
+    # 计算可滑动的高度
+    panable_height = image_height - screen_height
+    
+    # 定义关键位置
+    center_y = -panable_height / 2  # 中心位置
+    top_y = 0                       # 顶部边缘（图片顶部对齐屏幕顶部）
+    bottom_y = -panable_height      # 底部边缘（图片底部对齐屏幕底部）
+    
+    # 计算运动距离和时间节点
+    # 阶段1：从中心到第一个边缘
+    distance_to_edge = panable_height / 2
+    t1 = distance_to_edge / pan_speed
+    
+    # 阶段2：从一个边缘到另一个边缘
+    distance_across = panable_height
+    t2 = t1 + distance_across / pan_speed
+    
+    # 阶段3：从边缘回到中心
+    t3 = t2 + distance_to_edge / pan_speed
     
     def get_y_position(t):
-        if int_direction == "up":
-            # 镜头向上运动：图片向下移动
-            if t < t1:
-                return initial_y - pan_speed * t
-            elif t < t2:
-                return -panable_height / 2 + pan_speed * (t - t1)
-            elif t < t3:
-                return 0 - pan_speed * (t - t2)
+        if t <= t1:
+            # 阶段1：从中心向第一个边缘移动
+            if int_direction == "up":
+                # 向上移动：从中心到顶部
+                progress = t / t1
+                return center_y + (top_y - center_y) * progress
             else:
-                return -panable_height / 2
-        elif int_direction == "down":
-            # 镜头向下运动：图片向上移动
-            if t < t1:
-                return initial_y + pan_speed * t
-            elif t < t2:
-                return -panable_height / 2 - pan_speed * (t - t1)
-            elif t < t3:
-                return 0 + pan_speed * (t - t2)
+                # 向下移动：从中心到底部
+                progress = t / t1
+                return center_y + (bottom_y - center_y) * progress
+                
+        elif t <= t2:
+            # 阶段2：从第一个边缘到第二个边缘
+            progress = (t - t1) / (t2 - t1)
+            if int_direction == "up":
+                # 从顶部到底部
+                return top_y + (bottom_y - top_y) * progress
             else:
-                return -panable_height / 2
+                # 从底部到顶部
+                return bottom_y + (top_y - bottom_y) * progress
+                
+        elif t <= t3:
+            # 阶段3：从第二个边缘回到中心
+            progress = (t - t2) / (t3 - t2)
+            if int_direction == "up":
+                # 从底部回到中心
+                return bottom_y + (center_y - bottom_y) * progress
+            else:
+                # 从顶部回到中心
+                return top_y + (center_y - top_y) * progress
         else:
-            # 原来的逻辑（从中间开始）
-            if t < t1:
-                return initial_y + pan_speed * t
-            elif t < t2:
-                return 0 - pan_speed * (t - t1)
-            elif t < t3:
-                return -panable_height + pan_speed * (t - t2)
-            else:
-                return -panable_height / 2
+            # 阶段4：停在中心
+            return center_y
     
+    # 应用位置函数
     image_clip = image_clip.with_position(lambda t: (0, get_y_position(t)))
     return image_clip

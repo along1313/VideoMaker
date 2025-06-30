@@ -42,11 +42,75 @@
             
             <div class="form-actions">
                 <button type="submit" class="el-button el-button--primary">登录</button>
-                <a href="{{ url_for('register') }}" class="register-link">没有账号？立即注册</a>
+            </div>
+            
+            <!-- 忘记密码链接 -->
+            <div class="forgot-password-link">
+                <a href="{{ url_for('forgot_password') }}">
+                    <i class="el-icon-question"></i>
+                    忘记密码？
+                </a>
+            </div>
+            
+            <!-- 注册选项 -->
+            <div class="register-options">
+                <span>还没有账号？</span>
+                <a href="{{ url_for('register') }}" class="quick-register">立即注册</a>
             </div>
         </form>
     </div>
 </div>
+<style>
+.forgot-password-link {
+    text-align: center;
+    margin: 16px 0;
+    padding: 12px 0;
+    border-top: 1px solid #e9ecef;
+}
+
+.forgot-password-link a {
+    color: #6750a4;
+    text-decoration: none;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: color 0.3s ease;
+}
+
+.forgot-password-link a:hover {
+    color: #5a45a0;
+    text-decoration: underline;
+}
+
+.forgot-password-link i {
+    font-size: 16px;
+}
+
+.register-options {
+    text-align: center;
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid #e9ecef;
+    color: #6c757d;
+    font-size: 14px;
+}
+
+.register-options a {
+    color: #6750a4;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+.register-options a:hover {
+    color: #5a45a0;
+    text-decoration: underline;
+}
+
+
+</style>
 {% endblock %}
 
 {% block scripts %}

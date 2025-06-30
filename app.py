@@ -4,7 +4,9 @@ import uuid
 import traceback
 import io
 import zipfile
+import secrets
 from datetime import datetime, timedelta
+from urllib.parse import unquote
 from flask import Flask, request, jsonify, render_template, session, redirect, url_for, send_from_directory, flash, send_file, abort
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
@@ -33,13 +35,16 @@ from logger import log_info, log_error, log_warning, log_video_task
 
 # 导入核心服务
 from service.ai_service import LLMService, ImageModelService, TTSModelService
-from service.work_flow_service import run_work_flow_v1, run_work_flow_with_script, run_work_flow_v3
+from service.work_flow_service import run_work_flow_v3_with_progress
+from service.email_service import email_service
 from static.style_config import STYLE_CONFIG
 
 # 初始化Flask应用
 app = Flask(__name__, static_folder='static', template_folder='templates')
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'dev_key_for_baisu_ai_video')
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///baisu_video.db'
+# 使用绝对路径
+db_path = os.path.abspath(os.path.join('instance', 'baisu_video.db'))
+app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{db_path}'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SESSION_COOKIE_SECURE'] = False  # 开发环境设为False，生产环境设为True
 app.config['SESSION_COOKIE_HTTPONLY'] = True
@@ -48,6 +53,9 @@ app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=7)  # 会话有效期7
 # 初始化数据库
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
+
+# 初始化邮件服务
+email_service.init_app(app)
 
 # 初始化登录管理器
 login_manager = LoginManager()
@@ -76,16 +84,55 @@ class User(UserMixin, db.Model):
     credits = db.Column(db.Integer, default=3)  # 新用户赠送3条视频额度
     is_admin = db.Column(db.Boolean, default=False)  # 是否为管理员
     is_active = db.Column(db.Boolean, default=True)  # 账户是否启用
-    is_vip = db.Column(db.Boolean, default=False)  # 是否为会员
+    is_vip = db.Column(db.Boolean, default=False)  # 是否为会员（已弃用，通过vip_expires_at判断）
+    vip_expires_at = db.Column(db.DateTime, nullable=True)  # VIP到期时间
+    last_free_credits_refresh = db.Column(db.DateTime, nullable=True)  # 上次免费额度刷新时间
     last_login_ip = db.Column(db.String(50))  # 最后登录IP
     last_login_at = db.Column(db.DateTime)  # 最后登录时间
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    # 邮箱验证相关字段
+    is_email_verified = db.Column(db.Boolean, default=False)  # 邮箱验证状态
+    email_verification_token = db.Column(db.String(100))      # 验证令牌
+    email_verification_sent_at = db.Column(db.DateTime)       # 验证邮件发送时间
+    password_reset_token = db.Column(db.String(100))          # 密码重置令牌
+    password_reset_sent_at = db.Column(db.DateTime)           # 重置邮件发送时间
     login_logs = db.relationship('UserLoginLog', backref='user', lazy=True)  # 登录日志
     videos = db.relationship('Video', backref='user', lazy=True)  # 视频
     payments = db.relationship('Payment', backref='user', lazy=True)  # 充值记录
     
     def is_administrator(self):
         return self.is_admin
+    
+    @property
+    def is_current_vip(self):
+        """检查用户是否是当前有效的VIP"""
+        if not self.vip_expires_at:
+            return False
+        return datetime.utcnow() < self.vip_expires_at
+    
+    def should_refresh_free_credits(self):
+        """检查是否需要刷新免费额度（每月1日）"""
+        if not self.last_free_credits_refresh:
+            # 如果从未刷新过，需要刷新
+            return True
+        
+        current_date = datetime.utcnow()
+        last_refresh_date = self.last_free_credits_refresh
+        
+        # 检查是否已经跨月，且当前日期是1日
+        if (current_date.month != last_refresh_date.month or 
+            current_date.year != last_refresh_date.year) and current_date.day == 1:
+            return True
+        
+        return False
+    
+    def refresh_monthly_free_credits(self):
+        """刷新月度免费额度（仅对非VIP用户）"""
+        if not self.is_current_vip and self.should_refresh_free_credits():
+            self.credits += 3  # 增加3条免费额度
+            self.last_free_credits_refresh = datetime.utcnow()
+            return True
+        return False
     
     def set_password(self, password):
         """设置密码哈希"""
@@ -107,6 +154,7 @@ class Video(db.Model):
     cover_path = db.Column(db.String(200), nullable=True)
     status = db.Column(db.String(20), default='pending')  # pending, processing, completed, failed
     mode = db.Column(db.String(20), default='prompt')  # prompt(提示词模式) 或 script(文案模式)
+    credits_used = db.Column(db.Integer, default=1)  # 实际扣除的额度数量
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
 # 用户登录日志模型
@@ -326,6 +374,11 @@ def login():
             # 更新用户最后登录信息
             user.last_login_ip = request.remote_addr
             user.last_login_at = datetime.utcnow()
+            
+            # 检查并刷新月度免费额度
+            if user.refresh_monthly_free_credits():
+                log_info(f"用户 {user.username} 获得了月度免费额度刷新，当前额度: {user.credits}")
+            
             db.session.commit()
             
             # 登录用户
@@ -373,6 +426,254 @@ def register():
     
     return render_template('register.html')
 
+# ================================
+# 邮箱验证相关API
+# ================================
+
+@app.route('/api/send-verification-code', methods=['POST'])
+def send_verification_code():
+    """发送邮箱验证码"""
+    try:
+        data = request.get_json()
+        email = data.get('email', '').strip().lower()
+        
+        if not email:
+            return jsonify({'success': False, 'message': '请输入邮箱地址'})
+        
+        # 检查邮箱格式
+        import re
+        email_pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+        if not re.match(email_pattern, email):
+            return jsonify({'success': False, 'message': '邮箱格式不正确'})
+        
+        # 检查邮箱是否已注册
+        existing_user = User.query.filter_by(email=email).first()
+        if existing_user:
+            return jsonify({'success': False, 'message': '该邮箱已被注册'})
+        
+        # 检查发送频率限制（60秒内只能发送一次）
+        current_time = datetime.utcnow()
+        session_key = f'verification_email_sent_{email}'
+        last_sent = session.get(session_key)
+        
+        if last_sent:
+            last_sent_time = datetime.fromisoformat(last_sent)
+            if (current_time - last_sent_time).total_seconds() < 60:
+                remaining = 60 - int((current_time - last_sent_time).total_seconds())
+                return jsonify({'success': False, 'message': f'请等待{remaining}秒后再发送'})
+        
+        # 生成验证码
+        verification_code = email_service.generate_verification_code()
+        
+        # 存储验证码到session（10分钟有效期）
+        verification_data = {
+            'code': verification_code,
+            'email': email,
+            'expires_at': (current_time + timedelta(minutes=10)).isoformat()
+        }
+        session[f'verification_code_{email}'] = verification_data
+        session[session_key] = current_time.isoformat()
+        
+        # 发送验证码邮件
+        success = email_service.send_verification_email(email, verification_code)
+        
+        if success:
+            log_info(f"验证码已发送至邮箱: {email}")
+            return jsonify({'success': True, 'message': '验证码已发送，请查收邮件'})
+        else:
+            return jsonify({'success': False, 'message': '邮件发送失败，请稍后重试'})
+        
+    except Exception as e:
+        log_error(f"发送验证码失败: {str(e)}")
+        return jsonify({'success': False, 'message': '发送失败，请稍后重试'})
+
+@app.route('/api/verify-email-code', methods=['POST'])
+def verify_email_code():
+    """验证邮箱验证码"""
+    try:
+        data = request.get_json()
+        email = data.get('email', '').strip().lower()
+        code = data.get('code', '').strip()
+        
+        if not email or not code:
+            return jsonify({'success': False, 'message': '请输入邮箱和验证码'})
+        
+        # 获取存储的验证码
+        verification_data = session.get(f'verification_code_{email}')
+        if not verification_data:
+            return jsonify({'success': False, 'message': '验证码已过期，请重新发送'})
+        
+        # 检查过期时间
+        expires_at = datetime.fromisoformat(verification_data['expires_at'])
+        if datetime.utcnow() > expires_at:
+            session.pop(f'verification_code_{email}', None)
+            return jsonify({'success': False, 'message': '验证码已过期，请重新发送'})
+        
+        # 验证验证码
+        if verification_data['code'] != code:
+            return jsonify({'success': False, 'message': '验证码错误'})
+        
+        # 验证成功，标记验证状态
+        session[f'email_verified_{email}'] = True
+        log_info(f"邮箱验证成功: {email}")
+        
+        return jsonify({'success': True, 'message': '邮箱验证成功'})
+        
+    except Exception as e:
+        log_error(f"验证邮箱失败: {str(e)}")
+        return jsonify({'success': False, 'message': '验证失败，请稍后重试'})
+
+@app.route('/register-with-verification', methods=['POST'])
+def register_with_verification():
+    """邮箱验证注册"""
+    try:
+        data = request.get_json()
+        username = data.get('username', '').strip()
+        email = data.get('email', '').strip().lower()
+        password = data.get('password', '').strip()
+        
+        if not all([username, email, password]):
+            return jsonify({'success': False, 'message': '请填写完整信息'})
+        
+        # 验证邮箱是否已验证
+        if not session.get(f'email_verified_{email}'):
+            return jsonify({'success': False, 'message': '请先验证邮箱'})
+        
+        # 检查用户名和邮箱是否已存在
+        if User.query.filter_by(username=username).first():
+            return jsonify({'success': False, 'message': '用户名已存在'})
+        
+        if User.query.filter_by(email=email).first():
+            return jsonify({'success': False, 'message': '邮箱已被注册'})
+        
+        # 创建新用户
+        user = User(
+            username=username,
+            email=email,
+            is_email_verified=True  # 邮箱已验证
+        )
+        user.set_password(password)
+        
+        db.session.add(user)
+        db.session.commit()
+        
+        # 清除验证相关的session
+        session.pop(f'verification_code_{email}', None)
+        session.pop(f'email_verified_{email}', None)
+        session.pop(f'verification_email_sent_{email}', None)
+        
+        # 发送欢迎邮件
+        email_service.send_welcome_email(email, username)
+        
+        # 自动登录
+        login_user(user, remember=True)
+        
+        log_info(f"用户注册成功: {username} ({email})")
+        return jsonify({'success': True, 'message': '注册成功！', 'redirect': url_for('index')})
+        
+    except Exception as e:
+        db.session.rollback()
+        log_error(f"注册失败: {str(e)}")
+        return jsonify({'success': False, 'message': '注册失败，请稍后重试'})
+
+@app.route('/api/send-reset-email', methods=['POST'])
+def send_reset_email():
+    """发送密码重置邮件"""
+    try:
+        data = request.get_json()
+        email = data.get('email', '').strip().lower()
+        
+        if not email:
+            return jsonify({'success': False, 'message': '请输入邮箱地址'})
+        
+        # 检查用户是否存在
+        user = User.query.filter_by(email=email).first()
+        if not user:
+            return jsonify({'success': False, 'message': '该邮箱未注册'})
+        
+        # 生成重置令牌
+        reset_token = secrets.token_urlsafe(32)
+        user.password_reset_token = reset_token
+        user.password_reset_sent_at = datetime.utcnow()
+        db.session.commit()
+        
+        # 发送重置邮件
+        success = email_service.send_password_reset_email(email, reset_token, user.username)
+        
+        if success:
+            return jsonify({'success': True, 'message': '重置邮件已发送，请查收'})
+        else:
+            return jsonify({'success': False, 'message': '邮件发送失败，请稍后重试'})
+            
+    except Exception as e:
+        print(f'发送重置邮件错误: {str(e)}')
+        return jsonify({'success': False, 'message': '操作失败，请稍后重试'})
+
+@app.route('/api/reset-password', methods=['POST'])
+def reset_password():
+    """重置密码"""
+    try:
+        data = request.get_json()
+        token = data.get('token')
+        new_password = data.get('password')
+        
+        if not token or not new_password:
+            return jsonify({'success': False, 'message': '参数不完整'})
+        
+        # 验证重置令牌
+        user = User.query.filter_by(password_reset_token=token).first()
+        if not user:
+            return jsonify({'success': False, 'message': '重置链接无效或已过期'})
+        
+        # 检查令牌是否过期（30分钟有效期）
+        if user.password_reset_sent_at:
+            time_diff = datetime.utcnow() - user.password_reset_sent_at
+            if time_diff.total_seconds() > 1800:  # 30分钟
+                return jsonify({'success': False, 'message': '重置链接已过期，请重新申请'})
+        
+        # 更新密码
+        user.password_hash = generate_password_hash(new_password)
+        user.password_reset_token = None
+        user.password_reset_sent_at = None
+        db.session.commit()
+        
+        return jsonify({'success': True, 'message': '密码重置成功！'})
+        
+    except Exception as e:
+        print(f'重置密码错误: {str(e)}')
+        return jsonify({'success': False, 'message': '重置失败，请稍后重试'})
+
+# ================================
+# 页面路由
+# ================================
+
+@app.route('/register-with-email')
+def register_with_email():
+    """邮箱验证注册页面"""
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
+    return render_template('register_with_email.html')
+
+@app.route('/forgot-password')
+def forgot_password():
+    """找回密码页面"""
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
+    return render_template('forgot_password.html')
+
+@app.route('/reset-password')
+def reset_password_page():
+    """重置密码页面"""
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
+    
+    token = request.args.get('token')
+    if not token:
+        flash('重置链接无效', 'error')
+        return redirect(url_for('forgot_password'))
+    
+    return render_template('reset_password.html')
+
 # 路由：登出
 @app.route('/logout')
 @login_required
@@ -393,14 +694,45 @@ def profile():
 @login_required
 def my_videos():
     """我的视频页面"""
-    page = request.args.get('page', 1, type=int)
-    per_page = 10
+    try:
+        page = request.args.get('page', 1, type=int)
+        per_page = 10
+        
+        videos_pagination = Video.query.filter_by(user_id=current_user.id)\
+            .order_by(Video.created_at.desc())\
+            .paginate(page=page, per_page=per_page, error_out=False)
+        
+        # 将视频数据转换为JSON格式
+        videos_list = []
+        for video in videos_pagination.items:
+            video_data = {
+                'id': video.id,
+                'title': video.title or '未命名视频',
+                'video_path': video.video_path or '',
+                'cover_path': video.cover_path or '',
+                'status': video.status or 'unknown',
+                'created_at': video.created_at.isoformat() if video.created_at else '',
+                'style': video.style or '默认'
+            }
+            videos_list.append(video_data)
+        
+        # 将视频列表转换为JSON字符串
+        import json
+        videos_json = json.dumps(videos_list, ensure_ascii=False)
+        
+        log_info(f"用户 {current_user.username} 查看我的视频页面，共 {len(videos_list)} 个视频")
+        
+        return render_template('my_videos.html', 
+                             videos=videos_pagination,
+                             videos_json=videos_json,
+                             error=None)
     
-    videos = Video.query.filter_by(user_id=current_user.id)\
-        .order_by(Video.created_at.desc())\
-        .paginate(page=page, per_page=per_page, error_out=False)
-    
-    return render_template('my_videos.html', videos=videos)
+    except Exception as e:
+        log_error(f"我的视频页面加载失败: {str(e)}")
+        return render_template('my_videos.html', 
+                             videos=None,
+                             videos_json='[]',
+                             error=f'加载视频列表失败: {str(e)}')
 
 @app.route('/generate/<int:video_id>')
 @login_required
@@ -498,17 +830,46 @@ def generate_video_v3():
         template = request.form.get('template')
         mode = request.form.get('mode')
         is_display_title = request.form.get('is_display_title') == 'true' or request.form.get('is_display_title') == 'True'
-        user_name = request.form.get('user_name') or None
+        user_name = request.form.get('user_name')
+        # 处理用户名为空的情况
+        if not user_name or user_name.strip() == '':
+            user_name = None
 
         if not prompt or not style or not template:
             return jsonify({'success': False, 'message': '请提供完整信息'})
         
+        # 检查用户当前正在进行的任务数量
+        current_processing_count = 0
+        for task_id, task_data in generation_status.items():
+            if (task_data.get('status') == 'processing' and 
+                task_data.get('user_id') == current_user.id):
+                current_processing_count += 1
+        
+        if current_processing_count >= 3:
+            return jsonify({'success': False, 'message': '您当前有3个视频正在生成中，请等待完成后再启动新任务'})
+        
+        # 计算需要扣除的额度（文案模式根据字数计算）
+        estimated_credits = int(request.form.get('estimated_credits', 1))
+        credits_to_deduct = 1  # 默认扣除1条
+        
+        if mode == 'script' and prompt:
+            # 每超过2000字多扣1条额度
+            char_count = len(prompt)
+            credits_to_deduct = max(1, (char_count - 1) // 2000 + 1)
+            
+            # 验证前端计算的额度是否正确
+            if estimated_credits != credits_to_deduct:
+                log_warning(f"前端计算的额度({estimated_credits})与后端计算的额度({credits_to_deduct})不一致")
+        
         # 检查用户积分
-        if current_user.credits <= 0:
-            return jsonify({'success': False, 'message': '积分不足，请充值'})
+        if current_user.credits < credits_to_deduct:
+            return jsonify({
+                'success': False, 
+                'message': f'积分不足！需要{credits_to_deduct}条额度，当前剩余{current_user.credits}条'
+            })
 
-        # 会员逻辑
-        is_vip = current_user.is_vip
+        # 会员逻辑 - 使用新的VIP检查方法
+        is_vip = current_user.is_current_vip
         if not is_vip:
             user_name = '百速AI'
             is_need_ad_end = True
@@ -529,6 +890,48 @@ def generate_video_v3():
                 book_cover.save(save_path)
                 uploaded_title_picture_path = save_path
 
+        # 检查用户视频数量，如果超过25个则删除最老的
+        user_videos = Video.query.filter_by(user_id=current_user.id).order_by(Video.created_at.asc()).all()
+        videos_to_delete = []
+        
+        if len(user_videos) >= 25:
+            # 计算需要删除的视频数量（保留24个，为新视频留出空间）
+            videos_to_delete = user_videos[:len(user_videos) - 24]
+            
+            for old_video in videos_to_delete:
+                # 删除视频文件
+                if old_video.video_path and os.path.exists(old_video.video_path):
+                    try:
+                        os.remove(old_video.video_path)
+                        log_info(f"已删除旧视频文件: {old_video.video_path}", "video")
+                    except Exception as e:
+                        log_error(f"删除旧视频文件失败: {str(e)}", "video")
+                
+                # 删除封面文件
+                if old_video.cover_path and os.path.exists(old_video.cover_path):
+                    try:
+                        os.remove(old_video.cover_path)
+                        log_info(f"已删除旧封面文件: {old_video.cover_path}", "video")
+                    except Exception as e:
+                        log_error(f"删除旧封面文件失败: {str(e)}", "video")
+                
+                # 删除整个项目目录
+                if old_video.title:
+                    project_dir = os.path.join("./workstore", f"user{current_user.id}", old_video.title)
+                    if os.path.exists(project_dir):
+                        try:
+                            import shutil
+                            shutil.rmtree(project_dir)
+                            log_info(f"已删除旧项目目录: {project_dir}", "video")
+                        except Exception as e:
+                            log_error(f"删除旧项目目录失败: {str(e)}", "video")
+                
+                # 删除数据库记录
+                db.session.delete(old_video)
+            
+            if videos_to_delete:
+                log_info(f"用户 {current_user.username} 视频数量超限，自动删除了 {len(videos_to_delete)} 个旧视频", "video")
+
         # 创建视频记录
         video = Video(
             title=prompt[:30] if prompt else 'AI视频',
@@ -536,51 +939,132 @@ def generate_video_v3():
             style=style,
             prompt=prompt,
             status='pending',
-            mode=mode
+            mode=mode,
+            credits_used=credits_to_deduct
         )
         db.session.add(video)
         db.session.commit()
         video_id = video.id
 
         # 扣除积分
-        current_user.credits -= 1
+        current_user.credits -= credits_to_deduct
         db.session.commit()
+        log_info(f"用户 {current_user.username} 生成视频扣除了 {credits_to_deduct} 条额度，剩余 {current_user.credits} 条")
 
+        # 在线程外获取用户ID，避免在线程内访问current_user
+        user_id_for_thread = current_user.id
+        
+        # 初始化状态记录
+        task_id = str(uuid.uuid4())
+        generation_status[task_id] = {
+            'video_id': video_id,
+            'user_id': user_id_for_thread,  # 添加用户ID用于任务数量限制
+            'status': 'processing',
+            'progress': 0,
+            'message': '初始化生成任务...',
+            'logs': ['任务开始: 初始化生成环境'],
+            'current_step': 1
+        }
+        
         # 启动后台任务
         def task():
             try:
                 result_dir = 'workstore'
-                user_id = f'user{current_user.id}'
+                user_id = f'user{user_id_for_thread}'
+                
+                # 更新视频状态为处理中
+                with app.app_context():
+                    video = Video.query.get(video_id)
+                    if video:
+                        video.status = 'processing'
+                        db.session.commit()
                 
                 # 创建事件循环
                 loop = asyncio.new_event_loop()
                 asyncio.set_event_loop(loop)
                 
-                # 调用run_work_flow_v3
-                loop.run_until_complete(run_work_flow_v3(
+                # 调用run_work_flow_v3，并传递状态回调
+                loop.run_until_complete(run_work_flow_v3_with_progress(
                     text=prompt,
                     result_dir=result_dir,
                     user_id=user_id,
                     style=style,
                     template=template,
+                    llm_model_str="deepseek-reasoner",
                     is_prompt_mode=(mode == 'prompt'),
                     uploaded_title_picture_path=uploaded_title_picture_path,
                     input_title_voice_text=input_title_voice_text,
                     user_name=user_name,
                     is_display_title=is_display_title,
-                    is_need_ad_end=is_need_ad_end
+                    is_need_ad_end=is_need_ad_end,
+                    task_id=task_id,
+                    generation_status=generation_status
                 ))
                 
                 # 更新视频状态
                 with app.app_context():
                     video = Video.query.get(video_id)
                     if video:
-                        video.status = 'completed'
-                        # 设置视频路径（这里需要根据实际生成路径调整）
-                        project_dir = os.path.join(result_dir, user_id, video.title)
-                        video.video_path = os.path.join(project_dir, 'output.mp4')
-                        video.cover_path = os.path.join(project_dir, 'covers', '0.png')
-                        db.session.commit()
+                        # 查找最新生成的项目目录
+                        user_dir = os.path.join(result_dir, user_id)
+                        if os.path.exists(user_dir):
+                            # 找到最新的项目目录（按修改时间排序）
+                            project_folders = [f for f in os.listdir(user_dir) 
+                                             if os.path.isdir(os.path.join(user_dir, f)) and f != '__pycache__']
+                            if project_folders:
+                                # 按修改时间排序，取最新的
+                                project_folders.sort(key=lambda x: os.path.getmtime(os.path.join(user_dir, x)), reverse=True)
+                                latest_project = project_folders[0]
+                                project_dir = os.path.join(user_dir, latest_project)
+                                
+                                # 检查视频文件
+                                video_file = os.path.join(project_dir, 'output.mp4')
+                                if os.path.exists(video_file):
+                                    video.video_path = video_file
+                                    video.title = latest_project  # 更新为实际的项目名称
+                                    video.status = 'completed'
+                                    
+                                    # 查找封面文件
+                                    covers_dir = os.path.join(project_dir, 'covers')
+                                    if os.path.exists(covers_dir):
+                                        cover_files = [f for f in os.listdir(covers_dir) if f.endswith('.png')]
+                                        if cover_files:
+                                            # 优先选择4:3的封面，或者第一个封面
+                                            cover_file = None
+                                            for cf in cover_files:
+                                                if 'cover_4:3' in cf:
+                                                    cover_file = cf
+                                                    break
+                                            if not cover_file:
+                                                cover_file = cover_files[0]
+                                            video.cover_path = os.path.join(covers_dir, cover_file)
+                                    
+                                    db.session.commit()
+                                    log_info(f"视频生成完成 - 项目: {latest_project}, 视频: {video_file}")
+                                    
+                                    # 更新状态为完成
+                                    generation_status[task_id]['status'] = 'completed'
+                                    generation_status[task_id]['progress'] = 100
+                                    generation_status[task_id]['message'] = '视频生成完成！'
+                                    generation_status[task_id]['current_step'] = 7
+                                else:
+                                    video.status = 'failed'
+                                    db.session.commit()
+                                    log_error(f"视频文件不存在: {video_file}")
+                                    generation_status[task_id]['status'] = 'failed'
+                                    generation_status[task_id]['message'] = '视频文件生成失败'
+                            else:
+                                video.status = 'failed'
+                                db.session.commit()
+                                log_error(f"用户目录中没有找到项目文件夹: {user_dir}")
+                                generation_status[task_id]['status'] = 'failed'
+                                generation_status[task_id]['message'] = '项目文件夹创建失败'
+                        else:
+                            video.status = 'failed'
+                            db.session.commit()
+                            log_error(f"用户目录不存在: {user_dir}")
+                            generation_status[task_id]['status'] = 'failed'
+                            generation_status[task_id]['message'] = '用户目录创建失败'
                         
             except Exception as e:
                 log_error(f'视频生成任务失败: {str(e)}', 'video')
@@ -589,6 +1073,10 @@ def generate_video_v3():
                     if video:
                         video.status = 'failed'
                         db.session.commit()
+                
+                # 更新状态为失败
+                generation_status[task_id]['status'] = 'failed'
+                generation_status[task_id]['message'] = f'生成失败: {str(e)}'
 
         import threading
         thread = threading.Thread(target=task)
@@ -633,7 +1121,8 @@ def video_status(video_id):
                     'status': task_data.get('status', 'unknown'),
                     'progress': task_data.get('progress', 0),
                     'message': task_data.get('message', ''),
-                    'logs': task_data.get('logs', [])
+                    'logs': task_data.get('logs', []),
+                    'current_step': task_data.get('current_step', 1)
                 })
         
         # 如果没有找到任务状态，返回数据库中的状态
@@ -758,6 +1247,41 @@ def payment_history():
     return jsonify({
         'success': True,
         'payments': payment_list
+    })
+
+# API：获取使用记录
+@app.route('/api/usage-history')
+@login_required
+def usage_history():
+    """获取用户使用记录"""
+    videos = Video.query.filter_by(user_id=current_user.id).order_by(Video.created_at.desc()).all()
+    
+    usage_list = []
+    for video in videos:
+        # 使用数据库中记录的实际扣除额度
+        credits_used = getattr(video, 'credits_used', 1)
+        
+        # 如果数据库中没有记录，则根据模式计算
+        if not credits_used:
+            credits_used = 1
+            if video.mode == 'script' and video.prompt:
+                # 每超过2000字多扣1条额度
+                char_count = len(video.prompt)
+                credits_used = max(1, (char_count - 1) // 2000 + 1)
+        
+        usage_list.append({
+            'id': video.id,
+            'video_title': video.title,
+            'template': getattr(video, 'template', '通用'),  # 如果没有template字段，默认为通用
+            'style': video.style,
+            'credits_used': credits_used,
+            'status': video.status,
+            'created_at': video.created_at.strftime('%Y-%m-%d %H:%M:%S')
+        })
+    
+    return jsonify({
+        'success': True,
+        'records': usage_list
     })
 
 # 路由：视频文件
@@ -887,6 +1411,17 @@ def admin_edit_user(user_id):
         user.credits = int(request.form.get('credits', user.credits))
         user.is_admin = 'is_admin' in request.form
         user.is_active = 'is_active' in request.form
+        
+        # 更新VIP到期时间
+        vip_expires_str = request.form.get('vip_expires_at', '').strip()
+        if vip_expires_str:
+            try:
+                user.vip_expires_at = datetime.strptime(vip_expires_str, '%Y-%m-%dT%H:%M')
+            except ValueError:
+                flash('VIP到期时间格式不正确', 'danger')
+                return redirect(url_for('admin_edit_user', user_id=user.id))
+        else:
+            user.vip_expires_at = None
         
         # 更新密码（如果提供了新密码）
         password = request.form.get('password', '').strip()
@@ -1119,18 +1654,41 @@ def download_video(video_id):
         # 获取视频信息
         video = Video.query.filter_by(id=video_id, user_id=current_user.id).first()
         if not video:
+            app.logger.error(f"用户 {current_user.id} 尝试下载不存在的视频 {video_id}")
             return jsonify({'error': '视频不存在或无权访问'}), 404
 
-        # 获取视频目录
+        app.logger.info(f"用户 {current_user.id} 请求下载视频 {video_id}, 路径: {video.video_path}")
+
+        # 获取视频目录路径
         video_path = video.video_path or ''
-        if 'workstore/' in video_path:
-            video_path = video_path.split('workstore/')[-1]
+        if not video_path:
+            app.logger.error(f"视频 {video_id} 的路径为空")
+            return jsonify({'error': '视频路径为空'}), 404
+
+        # 从完整路径中提取基础目录
+        if video_path.startswith('workstore/'):
+            # 去掉 workstore/ 前缀
+            relative_path = video_path[10:]  # 去掉 'workstore/' 的10个字符
+            # 分割路径获取用户目录和视频目录
+            path_parts = relative_path.split('/')
+            if len(path_parts) >= 2:
+                user_dir = path_parts[0]  # 可能是 '1' 或 'user1'
+                video_dir = path_parts[1]  # 视频目录名
+                
+                # 构建基础目录路径
+                base_dir = os.path.join('workstore', user_dir, video_dir)
+            else:
+                app.logger.error(f"视频路径格式不正确: {video_path}")
+                return jsonify({'error': '视频路径格式错误'}), 404
+        else:
+            app.logger.error(f"视频路径不以workstore/开头: {video_path}")
+            return jsonify({'error': '视频路径格式错误'}), 404
         
-        # 获取基础目录
-        base_dir = os.path.join('workstore', str(current_user.id), video_path.split('/')[0])
+        app.logger.info(f"解析的基础目录: {base_dir}")
         
         # 检查目录是否存在
         if not os.path.exists(base_dir):
+            app.logger.error(f"视频目录不存在: {base_dir}")
             return jsonify({'error': '视频文件不存在'}), 404
 
         # 创建内存中的ZIP文件
@@ -1140,6 +1698,9 @@ def download_video(video_id):
             output_file = os.path.join(base_dir, 'output.mp4')
             if os.path.exists(output_file):
                 zf.write(output_file, 'output.mp4')
+                app.logger.info(f"已添加视频文件到ZIP: {output_file}")
+            else:
+                app.logger.warning(f"视频文件不存在: {output_file}")
             
             # 添加covers目录
             covers_dir = os.path.join(base_dir, 'covers')
@@ -1149,20 +1710,27 @@ def download_video(video_id):
                         file_path = os.path.join(root, file)
                         arcname = os.path.join('covers', os.path.relpath(file_path, covers_dir))
                         zf.write(file_path, arcname)
+                        app.logger.info(f"已添加封面文件到ZIP: {file_path}")
+            else:
+                app.logger.warning(f"封面目录不存在: {covers_dir}")
 
         # 准备下载
         memory_file.seek(0)
         timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
+        download_filename = f'video_{video.id}_{timestamp}.zip'
+        
+        app.logger.info(f"开始下载，文件名: {download_filename}")
+        
         return send_file(
             memory_file,
             as_attachment=True,
-            download_name=f'video_{video.id}_{timestamp}.zip',
+            download_name=download_filename,
             mimetype='application/zip'
         )
 
     except Exception as e:
         app.logger.error(f"下载视频时出错: {str(e)}", exc_info=True)
-        return jsonify({'error': '下载失败'}), 500
+        return jsonify({'error': f'下载失败: {str(e)}'}), 500
 
 # 处理 workstore 目录下的静态文件
 @app.route('/workstore/<path:filename>')
@@ -1341,6 +1909,46 @@ def admin_delete_video(video_id):
     
     return redirect(url_for('admin_videos'))
 
+@app.route('/test-progress')
+def test_progress():
+    """测试进度页面预览"""
+    # 创建一个模拟的视频对象用于测试
+    class MockVideo:
+        def __init__(self):
+            self.id = 999
+            self.title = "测试视频"
+    
+    mock_video = MockVideo()
+    return render_template('test_progress.html', video=mock_video)
+
+# 管理员手动刷新免费额度
+@app.route('/admin/refresh-monthly-credits', methods=['POST'])
+@login_required
+@admin_required
+def admin_refresh_monthly_credits():
+    """管理员手动刷新月度免费额度"""
+    try:
+        refreshed_count = 0
+        total_count = 0
+        
+        # 获取所有活跃用户
+        users = User.query.filter_by(is_active=True).all()
+        
+        for user in users:
+            total_count += 1
+            if user.refresh_monthly_free_credits():
+                refreshed_count += 1
+        
+        db.session.commit()
+        
+        flash(f'免费额度刷新完成！总共 {total_count} 个用户，刷新了 {refreshed_count} 个用户', 'success')
+        
+    except Exception as e:
+        db.session.rollback()
+        flash(f'刷新失败：{str(e)}', 'danger')
+    
+    return redirect(url_for('admin_users'))
+
 if __name__ == '__main__':
     # 确保数据库表存在
     with app.app_context():
@@ -1359,4 +1967,4 @@ if __name__ == '__main__':
             print("已创建默认管理员账户: admin / admin123")
     
     # 启动Flask应用
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    app.run(debug=True, host='0.0.0.0', port=5002)

@@ -1,0 +1,589 @@
+{% extends 'base.html' %}
+
+{% block title %}进度条测试页面{% endblock %}
+
+{% block content %}
+<div class="generate-container">
+    <!-- 标题区域 -->
+    <div class="header-section">
+        <h1>正在生成您的视频</h1>
+        <p>请耐心等待，我们正在为您制作精彩的内容</p>
+    </div>
+
+    <!-- 测试控制区域 -->
+    <div class="test-controls">
+        <h3>测试控制面板</h3>
+        <div class="control-buttons">
+            <button class="control-btn" onclick="setStep(0)">重置</button>
+            <button class="control-btn" onclick="setStep(1)">步骤1</button>
+            <button class="control-btn" onclick="setStep(2)">步骤2</button>
+            <button class="control-btn" onclick="setStep(3)">步骤3</button>
+            <button class="control-btn" onclick="setStep(4)">步骤4</button>
+            <button class="control-btn" onclick="setStep(5)">步骤5</button>
+            <button class="control-btn" onclick="setStep(6)">步骤6</button>
+            <button class="control-btn" onclick="showComplete()">完成</button>
+            <button class="control-btn error" onclick="showError()">错误</button>
+        </div>
+    </div>
+
+    <!-- 进度条区域 -->
+    <div class="progress-container">
+        <div class="steps-wrapper">
+            <!-- 步骤 0: 开始 -->
+            <div class="step-item completed" data-step="0">
+                <div class="step-circle">
+                    <i class="fas fa-check check-icon"></i>
+                </div>
+                <span class="step-label">开始</span>
+            </div>
+
+            <!-- 步骤 1: 撰写脚本 -->
+            <div class="step-item" data-step="1">
+                <div class="step-circle">
+                    <i class="fas fa-check check-icon"></i>
+                </div>
+                <span class="step-label">撰写脚本</span>
+            </div>
+
+            <!-- 步骤 2: 制作图片 -->
+            <div class="step-item" data-step="2">
+                <div class="step-circle">
+                    <i class="fas fa-check check-icon"></i>
+                </div>
+                <span class="step-label">制作图片</span>
+            </div>
+
+            <!-- 步骤 3: 录制语音 -->
+            <div class="step-item" data-step="3">
+                <div class="step-circle">
+                    <i class="fas fa-check check-icon"></i>
+                </div>
+                <span class="step-label">录制语音</span>
+            </div>
+
+            <!-- 步骤 4: 剪辑视频 -->
+            <div class="step-item" data-step="4">
+                <div class="step-circle">
+                    <i class="fas fa-check check-icon"></i>
+                </div>
+                <span class="step-label">剪辑视频</span>
+            </div>
+
+            <!-- 步骤 5: 制作封面 -->
+            <div class="step-item" data-step="5">
+                <div class="step-circle">
+                    <i class="fas fa-check check-icon"></i>
+                </div>
+                <span class="step-label">制作封面</span>
+            </div>
+
+            <!-- 步骤 6: 结束 -->
+            <div class="step-item" data-step="6">
+                <div class="step-circle">
+                    <i class="fas fa-check check-icon"></i>
+                </div>
+                <span class="step-label">结束</span>
+            </div>
+        </div>
+
+        <!-- 状态信息 -->
+        <div class="status-section">
+            <div class="status-message" id="status-message">
+                <div class="loading-spinner" id="loading-spinner">
+                    <div class="spinner"></div>
+                </div>
+                <span id="status-text">正在撰写脚本</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 完成后的视频展示 -->
+    <div class="result-section" id="result-section" style="display: none;">
+        <div class="success-header">
+            <i class="fas fa-check-circle"></i>
+            <h2>视频生成完成！</h2>
+        </div>
+        
+        <div class="video-wrapper">
+            <div class="video-loading">
+                <i class="fas fa-video"></i>
+                <p>这里会显示生成的视频</p>
+            </div>
+        </div>
+        
+        <div class="action-buttons">
+            <button class="btn-primary">
+                <i class="fas fa-download"></i> 下载视频
+            </button>
+            <button class="btn-secondary" onclick="window.location.href='/my-videos'">
+                <i class="fas fa-list"></i> 我的视频
+            </button>
+            <button class="btn-danger">
+                <i class="fas fa-trash"></i> 删除视频
+            </button>
+        </div>
+    </div>
+
+    <!-- 错误信息 -->
+    <div class="error-section" id="error-section" style="display: none;">
+        <div class="error-header">
+            <i class="fas fa-exclamation-circle"></i>
+            <h2>生成失败</h2>
+        </div>
+        <p id="error-text">这是一个错误状态的演示</p>
+        <button class="btn-primary" onclick="location.reload()">
+            <i class="fas fa-redo"></i> 重新生成
+        </button>
+    </div>
+</div>
+
+<style>
+.generate-container {
+    min-height: 100vh;
+    padding: 40px 20px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* 测试控制区域 */
+.test-controls {
+    padding: 20px;
+    margin-bottom: 40px;
+    text-align: center;
+    max-width: 900px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 40px;
+}
+
+.test-controls h3 {
+    margin: 0 0 16px 0;
+    color: #374151;
+    font-size: 18px;
+}
+
+.control-buttons {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.control-btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    background: #6750a4;
+    color: white;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.control-btn:hover {
+    background: #5a45a0;
+}
+
+.control-btn.error {
+    background: #dc2626;
+}
+
+.control-btn.error:hover {
+    background: #b91c1c;
+}
+
+/* 标题区域 */
+.header-section {
+    text-align: center;
+    margin-bottom: 60px;
+}
+
+.header-section h1 {
+    font-size: 32px;
+    font-weight: 600;
+    color: #1a1a1a;
+    margin: 0 0 12px 0;
+}
+
+.header-section p {
+    font-size: 16px;
+    color: #6b7280;
+    margin: 0;
+}
+
+/* 进度容器 */
+.progress-container {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+/* 步骤包装器 */
+.steps-wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    margin-bottom: 50px;
+    padding: 0 30px;
+}
+
+/* 步骤项 */
+.step-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+}
+
+/* 步骤圆圈 */
+.step-circle {
+    position: relative;
+    width: 60px;
+    height: 60px;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    border: 3px solid #e5e7eb;
+    background: #ffffff;
+}
+
+/* 完成图标 */
+.check-icon {
+    font-size: 24px;
+    color: #e5e7eb;
+    opacity: 0;
+    transition: all 0.3s ease;
+}
+
+/* 步骤标签 */
+.step-label {
+    font-size: 14px;
+    font-weight: 500;
+    color: #9ca3af;
+    text-align: center;
+    max-width: 80px;
+    line-height: 1.3;
+}
+
+/* 状态：完成 */
+.step-item.completed .check-icon {
+    opacity: 1;
+    color: #10b981;
+}
+
+.step-item.completed .step-circle {
+    border-color: #10b981;
+    background: #ffffff;
+}
+
+.step-item.completed .step-label {
+    color: #1f2937;
+    font-weight: 600;
+}
+
+/* 状态信息 */
+.status-section {
+    text-align: center;
+}
+
+.status-message {
+    padding: 20px 30px;
+    font-size: 16px;
+    color: #475569;
+    max-width: 500px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+}
+
+.status-message.error {
+    color: #dc2626;
+}
+
+.status-message.error .loading-spinner {
+    display: none;
+}
+
+/* Loading 组件 */
+.loading-spinner {
+    display: flex;
+    align-items: center;
+}
+
+.spinner {
+    width: 20px;
+    height: 20px;
+    border: 2px solid #e5e7eb;
+    border-top: 2px solid #6750a4;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* 结果区域 */
+.result-section {
+    text-align: center;
+    max-width: 600px;
+    margin: 60px auto 0;
+    padding: 40px;
+}
+
+.success-header {
+    margin-bottom: 30px;
+}
+
+.success-header i {
+    font-size: 48px;
+    color: #10b981;
+    margin-bottom: 16px;
+    display: block;
+}
+
+.success-header h2 {
+    font-size: 24px;
+    font-weight: 600;
+    color: #1f2937;
+    margin: 0;
+}
+
+/* 视频包装器 */
+.video-wrapper {
+    margin-bottom: 30px;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #000;
+}
+
+.video-wrapper video {
+    width: 100%;
+    max-height: 400px;
+    object-fit: contain;
+}
+
+.video-loading {
+    padding: 60px 20px;
+    color: #6b7280;
+    background: #f3f4f6;
+}
+
+.video-loading i {
+    font-size: 48px;
+    margin-bottom: 16px;
+    display: block;
+    color: #9ca3af;
+}
+
+/* 按钮 */
+.action-buttons {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.btn-primary, .btn-secondary, .btn-danger {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    min-width: 120px;
+    justify-content: center;
+}
+
+.btn-primary {
+    background: #6750a4;
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #5a45a0;
+}
+
+.btn-secondary {
+    background: #f3f4f6;
+    color: #374151;
+    border: 1px solid #d1d5db;
+}
+
+.btn-secondary:hover {
+    background: #e5e7eb;
+}
+
+.btn-danger {
+    background: #dc2626;
+    color: white;
+}
+
+.btn-danger:hover {
+    background: #b91c1c;
+}
+
+/* 错误区域 */
+.error-section {
+    text-align: center;
+    max-width: 500px;
+    margin: 60px auto 0;
+    padding: 40px;
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    border-radius: 16px;
+}
+
+.error-header i {
+    font-size: 48px;
+    color: #dc2626;
+    margin-bottom: 16px;
+    display: block;
+}
+
+.error-header h2 {
+    font-size: 24px;
+    font-weight: 600;
+    color: #dc2626;
+    margin: 0 0 16px 0;
+}
+
+.error-section p {
+    color: #991b1b;
+    margin-bottom: 30px;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .generate-container {
+        padding: 20px 15px;
+    }
+    
+    .header-section h1 {
+        font-size: 24px;
+    }
+    
+    .steps-wrapper {
+        flex-direction: column;
+        gap: 30px;
+        padding: 0;
+    }
+    
+    .step-item {
+        flex-direction: row;
+        align-items: center;
+        width: 100%;
+        max-width: 300px;
+    }
+    
+    .step-circle {
+        margin-bottom: 0;
+        margin-right: 20px;
+    }
+    
+    .step-label {
+        max-width: none;
+        text-align: left;
+        flex: 1;
+    }
+    
+    .action-buttons {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .btn-primary, .btn-secondary, .btn-danger {
+        width: 200px;
+    }
+    
+    .control-buttons {
+        justify-content: center;
+    }
+}
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script>
+let currentStep = 1; // 从步骤1开始，因为开始节点已经完成
+const stepItems = document.querySelectorAll('.step-item');
+const statusText = document.getElementById('status-text');
+const statusMessage = document.getElementById('status-message');
+const loadingSpinner = document.getElementById('loading-spinner');
+const resultSection = document.getElementById('result-section');
+const errorSection = document.getElementById('error-section');
+
+function updateStepDisplay() {
+    stepItems.forEach((item, index) => {
+        item.classList.remove('pending', 'active', 'completed');
+        
+        if (index === 0) {
+            // 开始节点始终完成
+            item.classList.add('completed');
+        } else if (index < currentStep) {
+            // 当前步骤之前的节点显示为完成
+            item.classList.add('completed');
+        } else {
+            // 当前步骤和之后的节点显示为等待
+            item.classList.add('pending');
+        }
+    });
+}
+
+function setStep(step) {
+    if (step === 0) {
+        currentStep = 1; // 重置时从步骤1开始
+    } else {
+        currentStep = step;
+    }
+    
+    resultSection.style.display = 'none';
+    errorSection.style.display = 'none';
+    statusMessage.classList.remove('error');
+    loadingSpinner.style.display = 'flex';
+    
+    const messages = [
+        '正在撰写脚本',    // step 0 - 对应步骤1（撰写脚本）
+        '正在撰写脚本',    // step 1 - 对应步骤1（撰写脚本）
+        '正在制作图片',    // step 2 - 对应步骤2（制作图片）
+        '正在录制语音',    // step 3 - 对应步骤3（录制语音）
+        '正在剪辑视频',    // step 4 - 对应步骤4（剪辑视频）
+        '正在制作封面',    // step 5 - 对应步骤5（制作封面）
+        '正在完成最后步骤', // step 6 - 对应步骤6（结束）
+        '视频生成完成！'   // step 7 - 全部完成
+    ];
+    
+    statusText.textContent = messages[step] || messages[1];
+    updateStepDisplay();
+}
+
+function showComplete() {
+    currentStep = 7;
+    updateStepDisplay();
+    loadingSpinner.style.display = 'none';
+    setTimeout(() => {
+        resultSection.style.display = 'block';
+        statusText.textContent = '视频生成完成！';
+    }, 1000);
+}
+
+function showError() {
+    statusMessage.classList.add('error');
+    statusText.textContent = '生成过程中出现错误，请重试';
+    loadingSpinner.style.display = 'none';
+    errorSection.style.display = 'block';
+}
+
+// 初始化
+updateStepDisplay();
+</script>
+{% endblock %} 

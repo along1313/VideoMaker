@@ -36,6 +36,7 @@ class LLMService:
             self.model_str = model_str
         else:
             raise ValueError("Model not found")
+        print(f'LLMService: {self.model_str}')
         
     def generate(self, messages: list[dict[str, str]], get_only_answer: bool=True, **kwargs) -> str:
         response = self.client.chat.completions.create(

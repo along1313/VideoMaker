@@ -425,7 +425,12 @@ def add_time(work_flow_record: dict, audios_dir: str, gap = 1.0):
 
     # 设置标题时间
     new_work_flow_record['title_time'] = [start_time, time_list[0]]
-    start_time = start_time + time_list[0] + gap
+    # 如果标题音频时长为0，则第一幅图片从0开始
+    if time_list[0] == 0:
+        start_time = 0
+    else:
+        start_time = start_time + time_list[0] + gap
+
     for index, item in enumerate(new_work_flow_record['content']):
         # 给音频加上时间
         new_work_flow_record['content'][index]['voice_time'] = [start_time, time_list[index+1]]
@@ -655,30 +660,3 @@ def generate_cover(work_flow_record, project_dir, **kwargs):
     cover_dir = os.path.join(project_dir, "covers")
     generate_covers(cover_image_path, cover_dir, text, **kwargs)
 
-if __name__ == "__main__":
-    with open("workstore/user1/三只小猪的智慧/work_flow_record.json", "r") as f:
-        work_flow_record = json.load(f)
-    style = "绘本"
-    template = "故事"
-    result_dir = "workstore/user1/三只小猪的智慧"
-    font_path = "lib/font/STHeiti Medium.ttc"
-    user_name = "百速AI"
-    screan_size = (1280, 720)
-    bg_pic_path = None
-    bgm_path = "lib/music/bgm.wav"
-    is_display_title = True
-    is_need_ad_end = False
- 
-    generate_video(
-        work_flow_record, 
-        style, 
-        template,
-        result_dir, 
-        font_path, 
-        user_name, 
-        screan_size, 
-        bg_pic_path, 
-        bgm_path, 
-        is_display_title,
-        is_need_ad_end
-        )

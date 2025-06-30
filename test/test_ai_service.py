@@ -14,5 +14,5 @@ messages = [
     {"role": "user", "content": "创作一个白雪公主故事的视频"}
 ]
 
-response = llm.generate(messages)
+response = llm.generate(messages,get_only_answer=False)
 print(response)

@@ -1,5 +1,8 @@
 from zhipuai import ZhipuAI
 from openai import OpenAI
+from google import genai
+from google.genai import types
+import wave
 import dashscope
 from dashscope.audio.tts_v2 import *
 from http import HTTPStatus
@@ -10,9 +13,9 @@ from dashscope import ImageSynthesis
 import os
 import time
 from dotenv import load_dotenv
-from static.model_info import ZHIPU_MODELS, DASHSCOPE_MODELS, DEEPSEEK_MODELS   
+from static.model_info import ZHIPU_MODELS, DASHSCOPE_MODELS, DEEPSEEK_MODELS, GEMINI_MODELS   
 import asyncio
-
+import tempfile
 
 
 load_dotenv()
@@ -130,6 +133,13 @@ class ImageModelService:
             raise ValueError("Model not found")
 
     
+def wave_file(filename, pcm, channels=1, rate=24000, sample_width=2):
+   with wave.open(filename, "wb") as wf:
+      wf.setnchannels(channels)
+      wf.setsampwidth(sample_width)
+      wf.setframerate(rate)
+      wf.writeframes(pcm)
+
 
 class TTSModelService:
     """
@@ -141,13 +151,60 @@ class TTSModelService:
             if not self.api_key:
                 raise ValueError("DASHSCOPE_API_KEY not found in environment variables")
             dashscope.api_key = self.api_key
+        elif model_str in GEMINI_MODELS:
+            self.api_key = os.environ.get("GEMINI_API_KEY")
+            if not self.api_key:
+                raise ValueError("GEMINI_API_KEY not found in environment variables")
+            self.client = genai.Client(api_key=self.api_key)
         else:
             raise ValueError("Model not found")
+        self.model_str = model_str
 
-    def generate(self, text: str, model_str: str="cosyvoice-v1", voice: str="longmiao", pitch_rate: float=1.0):
-        synthesizer = SpeechSynthesizer(model=model_str, voice=voice, pitch_rate=pitch_rate)
-        audio = synthesizer.call(text)
-        return audio
+    def generate(self, text: str, style_instructions = "say", voice_name = "Zephyr", **kwargs):
+        if self.model_str in DASHSCOPE_MODELS:
+            synthesizer = SpeechSynthesizer(model=self.model_str, voice="longmiao", **kwargs)
+            audio = synthesizer.call(text)
+            return audio
+        elif self.model_str in GEMINI_MODELS:
+            response = self.client.models.generate_content(
+                model=self.model_str,
+                contents=f'{style_instructions}: {text}',
+                config=types.GenerateContentConfig(
+                    response_modalities=["AUDIO"],
+                    speech_config=types.SpeechConfig(
+                        voice_config=types.VoiceConfig(
+                            prebuilt_voice_config=types.PrebuiltVoiceConfig(
+                            voice_name=voice_name,
+                            )
+                        )
+                    ),
+                )
+                )
+            data = response.candidates[0].content.parts[0].inline_data.data
+            return data
+        else:
+            raise ValueError("Model not found")
+    def save_audio(self, data: bytes, file_path: str):
+        if self.model_str in DASHSCOPE_MODELS:
+            with open(file_path, "wb") as f:
+                f.write(data)
+        elif self.model_str in GEMINI_MODELS:
+            with tempfile.NamedTemporaryFile(suffix='.wav', delete=False) as temp_wav:
+                temp_wav_path = temp_wav.name
+                wave_file(temp_wav_path, data)
+
+            try:
+                # 使用moviepy将WAV转换为MP3
+                from moviepy import AudioFileClip
+                audio_clip = AudioFileClip(temp_wav_path)
+                audio_clip.write_audiofile(file_path, codec='mp3')
+                audio_clip.close()
+            finally:
+                # 清理临时文件
+                os.unlink(temp_wav_path)
+
+        else:
+            raise ValueError("Model not found")
 
 class VideoModelService:
     """

@@ -375,9 +375,8 @@ def generate_audio(
         # 生成标题音频
         title_text = work_flow_record['title_voice_text']
         title_audio_path = os.path.join(result_dir, "title.mp3")
-        audio = tts_model.generate(title_text, model_str=model_str, voice=voice, pitch_rate=pitch_rate)
-        with open(title_audio_path, "wb") as f:
-            f.write(audio)
+        audio = tts_model.generate(title_text, voice=voice, pitch_rate=pitch_rate)
+        tts_model.save_audio(audio, title_audio_path)
 
         new_work_flow_record['title_audio_path'] = title_audio_path
         print(f'生成音频：{title_audio_path}')
@@ -387,9 +386,8 @@ def generate_audio(
     for index, item in enumerate(content):
         text = item['voice_text']
         audio_path = os.path.join(result_dir, f"{index}.mp3")
-        audio = tts_model.generate(text, model_str=model_str, voice=voice, pitch_rate=pitch_rate)
-        with open(audio_path, "wb") as f:
-            f.write(audio)
+        audio = tts_model.generate(text, voice=voice, pitch_rate=pitch_rate)
+        tts_model.save_audio(audio, audio_path)
 
         new_work_flow_record['content'][index]['audio_path'] = audio_path
     

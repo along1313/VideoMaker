@@ -56,3 +56,6 @@ class PictureGenerateService:
 
         return await self.image_model.generate(prompt, size)
     
+    async def save_image(self, image_or_url, file_path: str):
+        return await self.image_model.save_image(image_or_url, file_path)
+    

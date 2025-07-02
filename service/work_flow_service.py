@@ -200,6 +200,9 @@ async def run_work_flow_v3_with_progress(
     4. 添加时间
     5. 生成视频
     """
+    # 动态选择 tts_model_str
+    template_config = TEMPLATE_CONFIG.get(template, {}).get('config', {})
+    tts_model_str = template_config.get('tts_model_str', tts_model_str)
     
     def update_progress(step, message, progress):
         """更新进度状态"""
@@ -270,7 +273,7 @@ async def run_work_flow_v3_with_progress(
         work_flow_record['title_voice_text'] = ""
         work_flow_record['title_audio_path'] = ""
 
-        if template == "通用":
+        if template == "通用" or template == "讲经":
             template_config = TEMPLATE_CONFIG[template]['config']
         elif template == "读一本书":
             template_config = TEMPLATE_CONFIG[template]['config']

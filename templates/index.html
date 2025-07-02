@@ -164,6 +164,18 @@
                     <p>用于生成故事类视频</p>
                 </div>
             </div>
+            <div class="template-card" 
+                 :class="{ 'active': selectedTemplate === '讲经' }" 
+                 @click="selectTemplate('讲经')">
+                <!-- 视频预览留空，可用图片或空白div -->
+                <div style="width:100%;height:180px;background:#f5f5f5;display:flex;align-items:center;justify-content:center;">
+                    <img src="/static/img/讲经.png" alt="讲经" style="max-height:100px;max-width:100%;object-fit:contain;"/>
+                </div>
+                <div class="template-info">
+                    <h4>讲经</h4>
+                    <p>用于生成解读经典，玄学等视频</p>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -177,6 +189,10 @@
                 <p>{{ style_name }}</p>
             </div>
             {% endfor %}
+            <div class="style-card" :class="{ 'active': selectedStyle === '水墨画' }" @click="selectStyle('水墨画')">
+                <img src="/static/img/水墨画.png" alt="水墨画">
+                <p>水墨画</p>
+            </div>
         </div>
     </div>
 
@@ -220,7 +236,8 @@
                 isGenerating: false,
                 showLoginDialog: false,
                 showSettings: false,
-                showUserName: false
+                showUserName: false,
+                ttsModelStr: 'cosyvoice-v1',
             };
         },
         mounted() {
@@ -266,6 +283,11 @@
                 this.selectedTemplate = template;
                 if (template === '读一本书') {
                     this.inputMode = 'script';
+                }
+                if (template === '讲经') {
+                    this.ttsModelStr = 'speech-02-turbo';
+                } else {
+                    this.ttsModelStr = 'cosyvoice-v1';
                 }
             },
             selectStyle(style) {
@@ -355,6 +377,7 @@
                 formData.append('prompt', this.prompt);
                 formData.append('is_display_title', this.isDisplayTitle);
                 formData.append('estimated_credits', this.estimatedCredits); // 传递预估额度
+                formData.append('tts_model_str', this.ttsModelStr);
                 
                 // 用户名逻辑：如果勾选显示且有用户名，则使用用户名，否则使用None或百速AI
                 let finalUserName = '百速AI'; // 默认值

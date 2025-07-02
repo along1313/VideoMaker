@@ -6,7 +6,7 @@ import asyncio
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 
-from service.ai_service import ImageModelService
+from service.ai_service import ImageModelService, TTSModelService
 from service.picture_generate_service import PictureGenerateService
 from static.style_config import STYLE_CONFIG
 
@@ -15,15 +15,20 @@ json_text = """
 """
 
 style = "绘本"
+result_dir = "test/test_output"
 
-image_model_service = ImageModelService()
+tts_service = TTSModelService("gemini-2.5-flash-preview-tts")
+
+
+image_model_service = ImageModelService("gemini-2.0-flash-preview-image-generation")
 
 picture_generate_service = PictureGenerateService(image_model_service)
 
+for i in range(1, 6):
 
-
-image_url = asyncio.run(picture_generate_service.generate_picture_from_json(json_text, style, 4))
-print(image_url)
+    image = asyncio.run(picture_generate_service.generate_picture_from_json(json_text, style, i))
+    file_path = os.path.join(result_dir, f"test_image_{i}.png")
+    asyncio.run(picture_generate_service.save_image(image, file_path))
 
 
     

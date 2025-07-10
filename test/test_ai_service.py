@@ -7,7 +7,7 @@ from service.ai_service import LLMService
 
 
 
-llm = LLMService(model_str="deepseek-reasoner")
+llm = LLMService(model_str="gemini-2.5-flash")
 
 messages = [
     {"role": "system", "content": "你是一个专业的文案写手，擅长根据用户需求创作优质的视频文案。视频形式为人声朗读配上播放静态插图，配以字幕。"},

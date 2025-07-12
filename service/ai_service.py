@@ -260,7 +260,9 @@ class TTSModelService:
         if self.model_str in DASHSCOPE_MODELS:
             if voice_name == "default" or voice_name not in self.voice_list:
                 voice_name = "longmiao"
-            synthesizer = SpeechSynthesizer(model=self.model_str, voice=voice_name, **kwargs)
+            # 避免参数冲突：从kwargs中移除voice参数（如果存在）
+            filtered_kwargs = {k: v for k, v in kwargs.items() if k != 'voice'}
+            synthesizer = SpeechSynthesizer(model=self.model_str, voice=voice_name, **filtered_kwargs)
             audio = synthesizer.call(text)
             return audio
         

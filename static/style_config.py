@@ -3,6 +3,8 @@ TEMPLATE_CONFIG = {
         "description": "可以生成心理学科普，教育，解说等普通视频",
         "config": {
             "template": "通用",
+            "tts_model_str": "speech-02-turbo",
+            "voice_name": "Chinese (Mandarin)_Wise_Women",
             "is_generate_title_picture": False,
             "is_generate_title_audio": False,
             "title_picture_resize": 1.0
@@ -12,6 +14,8 @@ TEMPLATE_CONFIG = {
         "description": "用于生成读一本书视频，需要上传书本封面图片和给出书名，并且给出视频文案，仅支持文案模式",
         "config": {
             "template": "读一本书",
+            "tts_model_str": "speech-02-turbo",
+            "voice_name": "Chinese (Mandarin)_Wise_Women",
             "is_generate_title_picture": False,
             "is_generate_title_audio": True,
             "title_picture_resize": 0.4
@@ -21,6 +25,8 @@ TEMPLATE_CONFIG = {
         "description": "用于生成故事类视频，开头有标题画面，并且语音朗读标题",
         "config": {
             "template": "故事",
+            "tts_model_str": "speech-02-turbo",
+            "voice_name": "Chinese (Mandarin)_Wise_Women",
             "is_generate_title_picture": True,
             "is_generate_title_audio": True,
             "title_picture_resize": 1.0
@@ -31,6 +37,7 @@ TEMPLATE_CONFIG = {
         "config": {
             "template": "讲经",
             "tts_model_str": "speech-02-turbo",
+            "voice_name": "Chinese (Mandarin)_Lyrical_Voice",
             "is_generate_title_picture": False,
             "is_generate_title_audio": False,
             "title_picture_resize": 1.0,
@@ -145,7 +152,7 @@ STYLE_CONFIG = {
         "is_y_slide": True,
     },
     "水墨画": {
-        "img_generate_system_prompt": "--niji 5 --style raw 国画风格，柔和毛笔质感，意境淡雅，构图简洁，纯黑白，中国风格，--no cartoon, anime, photograph, realism, 3D render, modern art, texture, shadow, photo, realistic, depth of field, camera",
+        "img_generate_system_prompt": "--niji 5 --style raw 国画风格，柔和毛笔质感，意境淡雅，构图简洁，纯黑白色彩，中国风格，--no cartoon, anime, photograph, realism, 3D render, modern art, texture, shadow, photo, realistic, depth of field, camera",
         "img_size": "1024x1024",
         "img_resize": 1.0,
         "text_color": "white",

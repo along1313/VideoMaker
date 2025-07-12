@@ -84,17 +84,22 @@ async def run_work_flow_v3(
     work_flow_record['title_audio_path'] = ""
 
     if template == "通用":
-        template_config = TEMPLATE_CONFIG[template]['config']
+        template_config = TEMPLATE_CONFIG[template]['config'].copy()
     elif template == "读一本书":
-        template_config = TEMPLATE_CONFIG[template]['config']
+        template_config = TEMPLATE_CONFIG[template]['config'].copy()
         work_flow_record['title_picture_path'] = uploaded_title_picture_path
         work_flow_record['title_voice_text'] = f'今天,我们来读{input_title_voice_text}这本书'
     elif template == "故事":
-        template_config = TEMPLATE_CONFIG[template]['config']
+        template_config = TEMPLATE_CONFIG[template]['config'].copy()
         work_flow_record['title_voice_text'] = work_flow_record['title']
+    elif template == "讲经":
+        template_config = TEMPLATE_CONFIG[template]['config'].copy()
     else:
         print(f'模板{template}不存在')
         return
+    
+    # 确保 voice_name 参数被传递
+    template_config['voice_name'] = template_config.get('voice_name', 'default')
 
     print(f'#####Work Flow 2 生成插页####')
       #创建图片目录
@@ -200,9 +205,10 @@ async def run_work_flow_v3_with_progress(
     4. 添加时间
     5. 生成视频
     """
-    # 动态选择 tts_model_str
+    # 动态选择 tts_model_str 和 voice_name
     template_config = TEMPLATE_CONFIG.get(template, {}).get('config', {})
     tts_model_str = template_config.get('tts_model_str', tts_model_str)
+    voice_name = template_config.get('voice_name', 'default')
     
     def update_progress(step, message, progress):
         """更新进度状态"""
@@ -212,6 +218,12 @@ async def run_work_flow_v3_with_progress(
             generation_status[task_id]['message'] = message
             generation_status[task_id]['logs'].append(f"步骤{step}: {message}")
             print(f"[进度更新] 步骤{step}: {message} ({progress}%)")
+
+    print(f"llm_model_str: {llm_model_str}")
+    print(f"image_model_str: {image_model_str}")
+    print(f"tts_model_str: {tts_model_str}")
+    print(f"template: {template}")
+    print(f"style: {style}")
     
     try:
         update_progress(1, '正在撰写脚本', 10)
@@ -274,17 +286,20 @@ async def run_work_flow_v3_with_progress(
         work_flow_record['title_audio_path'] = ""
 
         if template == "通用" or template == "讲经":
-            template_config = TEMPLATE_CONFIG[template]['config']
+            template_config = TEMPLATE_CONFIG[template]['config'].copy()
         elif template == "读一本书":
-            template_config = TEMPLATE_CONFIG[template]['config']
+            template_config = TEMPLATE_CONFIG[template]['config'].copy()
             work_flow_record['title_picture_path'] = uploaded_title_picture_path
             work_flow_record['title_voice_text'] = f'今天,我们来读{input_title_voice_text}这本书'
         elif template == "故事":
-            template_config = TEMPLATE_CONFIG[template]['config']
+            template_config = TEMPLATE_CONFIG[template]['config'].copy()
             work_flow_record['title_voice_text'] = work_flow_record['title']
         else:
             print(f'模板{template}不存在')
             return
+        
+        # 确保 voice_name 参数被传递
+        template_config['voice_name'] = voice_name
         
         # 保存工作流记录
         with open(os.path.join(project_dir, "work_flow_record.json"), "w") as f:
@@ -332,14 +347,14 @@ async def run_work_flow_v3_with_progress(
         with open(os.path.join(project_dir, "work_flow_record.json"), "w") as f:
             json.dump(work_flow_record, f, ensure_ascii=False)
 
-        update_progress(4, '正在剪辑视频', 70)
+        #update_progress(4, '正在处理素材', 70)
         print(f'#####Work Flow 4 添加时间####')
         work_flow_record = add_time(work_flow_record, audio_dir, gap=1.0)
         
         with open(os.path.join(project_dir, "work_flow_record.json"), "w") as f:
             json.dump(work_flow_record, f, ensure_ascii=False)
 
-        update_progress(5, '正在剪辑视频', 85)
+        update_progress(4, '正在剪辑视频', 85)
         print(f'#####Work Flow 5 视频生成####')
         # 生成视频
         generate_video(work_flow_record=work_flow_record, 
@@ -355,7 +370,7 @@ async def run_work_flow_v3_with_progress(
                        is_need_ad_end=is_need_ad_end)   
         print(f'视频生成完成')
 
-        update_progress(6, '正在制作封面', 95)
+        update_progress(5, '正在制作封面', 95)
         print(f'#####Work Flow 6 封面生成####')
         # 创建封面目录
         cover_dir = os.path.join(project_dir, "covers")
@@ -365,7 +380,7 @@ async def run_work_flow_v3_with_progress(
         work_flow_record = generate_cover(work_flow_record, project_dir, font_path=cover_font_path)
         print(f'封面生成完成')
 
-        update_progress(7, '视频生成完成！', 100)
+        update_progress(6, '视频生成完成！', 100)
         print(f'#####Work Flow 完成####')
         
         return work_flow_record

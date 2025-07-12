@@ -1154,3 +1154,17 @@ WHERE video.id = ?]
 [2025-06-30 11:47:55,906] [INFO] [app:1713] - 已添加封面文件到ZIP: workstore/user6/达克效应之谜/covers/cover_3:4.png
 [2025-06-30 11:47:55,929] [INFO] [app:1713] - 已添加封面文件到ZIP: workstore/user6/达克效应之谜/covers/cover_4:3.png
 [2025-06-30 11:47:55,930] [INFO] [app:1722] - 开始下载，文件名: video_27_20250630114755.zip
+[2025-07-11 11:19:04,650] [INFO] [logger:55] - 用户 test4 生成视频扣除了 1 条额度，剩余 16 条
+[2025-07-11 11:23:41,730] [ERROR] [logger:62] - 视频生成任务失败: Model not found
+[2025-07-12 10:00:46,650] [INFO] [logger:55] - 用户 test4 生成视频扣除了 1 条额度，剩余 15 条
+[2025-07-12 10:04:52,067] [ERROR] [logger:62] - 视频生成任务失败: Model not found
+[2025-07-12 10:17:25,701] [INFO] [logger:55] - 用户 test4 生成视频扣除了 1 条额度，剩余 14 条
+[2025-07-12 10:20:30,457] [ERROR] [logger:62] - 视频生成任务失败: dashscope.audio.tts_v2.speech_synthesizer.SpeechSynthesizer() got multiple values for keyword argument 'voice'
+[2025-07-12 11:04:41,382] [INFO] [logger:55] - 用户 test4 生成视频扣除了 1 条额度，剩余 13 条
+[2025-07-12 11:06:48,995] [ERROR] [logger:62] - 视频生成任务失败: 智谱AI图片生成失败: Error code: 400, with error text {"contentFilter":[{"level":1,"role":"user"}],"error":{"code":"1301","message":"系统检测到输入或生成内容可能包含不安全或敏感内容，请您避免输入易产生敏感内容的提示语，感谢您的配合。"}}
+[2025-07-12 11:07:33,511] [INFO] [logger:55] - 用户 test4 生成视频扣除了 1 条额度，剩余 12 条
+[2025-07-12 11:15:34,087] [INFO] [logger:55] - 视频生成完成 - 项目: 《金刚经》第一品：法会因由分, 视频: workstore/user6/《金刚经》第一品：法会因由分/output.mp4
+[2025-07-12 11:34:09,877] [INFO] [logger:55] - 用户 test4 生成视频扣除了 1 条额度，剩余 11 条
+[2025-07-12 11:44:03,947] [INFO] [logger:55] - 视频生成完成 - 项目: 《金刚经》第二品善现启请分, 视频: workstore/user6/《金刚经》第二品善现启请分/output.mp4
+[2025-07-12 11:50:46,496] [INFO] [logger:55] - 用户 admin 生成视频扣除了 1 条额度，剩余 93 条
+[2025-07-12 11:55:27,733] [INFO] [logger:55] - 视频生成完成 - 项目: 小红帽的森林奇遇, 视频: workstore/user1/小红帽的森林奇遇/output.mp4

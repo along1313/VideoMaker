@@ -796,3 +796,156 @@ Traceback (most recent call last):
   File "/Users/zhusisi/CascadeProjects/VideoMaker/service/ai_service.py", line 101, in generate
     raise ValueError(f"智谱AI图片生成失败: {str(e)}")
 ValueError: 智谱AI图片生成失败: Error code: 400, with error text {"contentFilter":[{"level":2,"role":"user"}],"error":{"code":"1301","message":"系统检测到输入或生成内容可能包含不安全或敏感内容，请您避免输入易产生敏感内容的提示语，感谢您的配合。"}}
+[2025-07-11 11:23:41,718] [ERROR] [logger:61] - 视频生成任务失败: Model not found
+Traceback (most recent call last):
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/app.py", line 987, in task
+    loop.run_until_complete(run_work_flow_v3_with_progress(
+    ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        text=prompt,
+        ^^^^^^^^^^^^
+    ...<12 lines>...
+        generation_status=generation_status
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ))
+    ^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.3/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py", line 719, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/service/work_flow_service.py", line 377, in run_work_flow_v3_with_progress
+    raise e
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/service/work_flow_service.py", line 322, in run_work_flow_v3_with_progress
+    tts_model = TTSModelService(model_str=tts_model_str)
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/service/ai_service.py", line 242, in __init__
+    raise ValueError("Model not found")
+ValueError: Model not found
+[2025-07-12 10:04:52,055] [ERROR] [logger:61] - 视频生成任务失败: Model not found
+Traceback (most recent call last):
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/app.py", line 987, in task
+    loop.run_until_complete(run_work_flow_v3_with_progress(
+    ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        text=prompt,
+        ^^^^^^^^^^^^
+    ...<12 lines>...
+        generation_status=generation_status
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ))
+    ^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.3/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py", line 719, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/service/work_flow_service.py", line 377, in run_work_flow_v3_with_progress
+    raise e
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/service/work_flow_service.py", line 322, in run_work_flow_v3_with_progress
+    tts_model = TTSModelService(model_str=tts_model_str)
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/service/ai_service.py", line 242, in __init__
+    raise ValueError("Model not found")
+ValueError: Model not found
+[2025-07-12 10:20:30,448] [ERROR] [logger:61] - 视频生成任务失败: dashscope.audio.tts_v2.speech_synthesizer.SpeechSynthesizer() got multiple values for keyword argument 'voice'
+Traceback (most recent call last):
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/app.py", line 987, in task
+    loop.run_until_complete(run_work_flow_v3_with_progress(
+    ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        text=prompt,
+        ^^^^^^^^^^^^
+    ...<12 lines>...
+        generation_status=generation_status
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ))
+    ^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.3/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py", line 719, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/service/work_flow_service.py", line 377, in run_work_flow_v3_with_progress
+    raise e
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/service/work_flow_service.py", line 323, in run_work_flow_v3_with_progress
+    work_flow_record = await asyncio.to_thread(
+                       ^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.3/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/threads.py", line 25, in to_thread
+    return await loop.run_in_executor(None, func_call)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.3/Frameworks/Python.framework/Versions/3.13/lib/python3.13/concurrent/futures/thread.py", line 59, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/workflow.py", line 389, in generate_audio
+    audio = tts_model.generate(text, voice=voice, pitch_rate=pitch_rate)
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/service/ai_service.py", line 261, in generate
+    synthesizer = SpeechSynthesizer(model=self.model_str, voice="longmiao", **kwargs)
+TypeError: dashscope.audio.tts_v2.speech_synthesizer.SpeechSynthesizer() got multiple values for keyword argument 'voice'
+[2025-07-12 11:06:48,976] [ERROR] [logger:61] - 视频生成任务失败: 智谱AI图片生成失败: Error code: 400, with error text {"contentFilter":[{"level":1,"role":"user"}],"error":{"code":"1301","message":"系统检测到输入或生成内容可能包含不安全或敏感内容，请您避免输入易产生敏感内容的提示语，感谢您的配合。"}}
+Traceback (most recent call last):
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/service/ai_service.py", line 148, in generate
+    response = await asyncio.to_thread(
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<5 lines>...
+    )
+    ^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.3/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/threads.py", line 25, in to_thread
+    return await loop.run_in_executor(None, func_call)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.3/Frameworks/Python.framework/Versions/3.13/lib/python3.13/concurrent/futures/thread.py", line 59, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/zhipuai/api_resource/images.py", line 43, in generations
+    return self._post(
+           ~~~~~~~~~~^
+        "/images/generations",
+        ^^^^^^^^^^^^^^^^^^^^^^
+    ...<17 lines>...
+        stream=False,
+        ^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/zhipuai/core/_http_client.py", line 809, in post
+    return cast(ResponseT, self.request(cast_type, opts, stream=stream, stream_cls=stream_cls))
+                           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/zhipuai/core/_http_client.py", line 495, in request
+    return self._request(
+           ~~~~~~~~~~~~~^
+        cast_type=cast_type,
+        ^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+        remaining_retries=remaining_retries,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/zhipuai/core/_http_client.py", line 582, in _request
+    raise self._make_status_error(err.response) from None
+zhipuai.core._errors.APIRequestFailedError: Error code: 400, with error text {"contentFilter":[{"level":1,"role":"user"}],"error":{"code":"1301","message":"系统检测到输入或生成内容可能包含不安全或敏感内容，请您避免输入易产生敏感内容的提示语，感谢您的配合。"}}
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/app.py", line 987, in task
+    loop.run_until_complete(run_work_flow_v3_with_progress(
+    ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        text=prompt,
+        ^^^^^^^^^^^^
+    ...<12 lines>...
+        generation_status=generation_status
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ))
+    ^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.3/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py", line 719, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/service/work_flow_service.py", line 386, in run_work_flow_v3_with_progress
+    raise e
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/service/work_flow_service.py", line 311, in run_work_flow_v3_with_progress
+    work_flow_record = await generate_picture_from_json(
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<8 lines>...
+    )
+    ^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/workflow.py", line 64, in generate_picture_from_json
+    image_url = await picture_generate_service.generate_picture_from_json(
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/service/picture_generate_service.py", line 57, in generate_picture_from_json
+    return await self.image_model.generate(prompt, size)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/service/ai_service.py", line 158, in generate
+    raise ValueError(f"智谱AI图片生成失败: {str(e)}")
+ValueError: 智谱AI图片生成失败: Error code: 400, with error text {"contentFilter":[{"level":1,"role":"user"}],"error":{"code":"1301","message":"系统检测到输入或生成内容可能包含不安全或敏感内容，请您避免输入易产生敏感内容的提示语，感谢您的配合。"}}

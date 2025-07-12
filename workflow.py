@@ -345,6 +345,7 @@ def generate_audio(
         tts_model: TTSModelService, 
         model_str: str="cosyvoice-v1", 
         voice: str="longmiao", 
+        voice_name: str="default",
         pitch_rate: float=1.0,
         is_generate_title_audio: bool=False,
         **kwargs
@@ -375,7 +376,7 @@ def generate_audio(
         # 生成标题音频
         title_text = work_flow_record['title_voice_text']
         title_audio_path = os.path.join(result_dir, "title.mp3")
-        audio = tts_model.generate(title_text, voice=voice, pitch_rate=pitch_rate)
+        audio = tts_model.generate(title_text, voice_name=voice_name, pitch_rate=pitch_rate)
         tts_model.save_audio(audio, title_audio_path)
 
         new_work_flow_record['title_audio_path'] = title_audio_path
@@ -386,7 +387,7 @@ def generate_audio(
     for index, item in enumerate(content):
         text = item['voice_text']
         audio_path = os.path.join(result_dir, f"{index}.mp3")
-        audio = tts_model.generate(text, voice=voice, pitch_rate=pitch_rate)
+        audio = tts_model.generate(text, voice_name=voice_name, pitch_rate=pitch_rate)
         tts_model.save_audio(audio, audio_path)
 
         new_work_flow_record['content'][index]['audio_path'] = audio_path

@@ -832,7 +832,7 @@ def generate_video_v3():
         is_display_title = request.form.get('is_display_title') == 'true' or request.form.get('is_display_title') == 'True'
         user_name = request.form.get('user_name')
         # 处理用户名为空的情况
-        if not user_name or user_name.strip() == '':
+        if not user_name or user_name.strip() == '' or user_name.strip().lower() == 'null':
             user_name = None
 
         if not prompt or not style or not template:
@@ -871,7 +871,10 @@ def generate_video_v3():
         # 会员逻辑 - 使用新的VIP检查方法
         is_vip = current_user.is_current_vip
         if not is_vip:
-            user_name = '百速AI'
+            # 对于非VIP用户，如果user_name为None，则保持None（不显示用户名）
+            # 只有在用户设置了用户名的情况下，才强制改为'百速AI'
+            if user_name is not None:
+                user_name = '百速AI'
             is_need_ad_end = True
         else:
             is_need_ad_end = False

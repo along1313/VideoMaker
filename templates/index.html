@@ -124,74 +124,91 @@
     <!-- 模板选择区域 -->
     <div class="template-section centered">
         <h3>选择视频模板</h3>
-        <div class="template-grid">
-            <div class="template-card" 
-                 :class="{ 'active': selectedTemplate === '通用' }" 
-                 @click="selectTemplate('通用')"
-                 @mouseenter="playVideo('通用')"
-                 @mouseleave="pauseVideo('通用')">
-                <video ref="video通用" muted loop>
-                    <source src="/static/video/通用.mp4" type="video/mp4">
-                </video>
-                <div class="template-info">
-                    <h4>通用</h4>
-                    <p>可以生成心理学科普，教育，解说等普通视频</p>
+        <div class="template-slider-container">
+            <div class="slider-nav slider-nav-left" @click="scrollTemplateLeft">
+                <i class="fas fa-chevron-left"></i>
+            </div>
+            <div class="template-slider" ref="templateSlider">
+                <div class="template-grid">
+                    <div class="template-card" 
+                         :class="{ 'active': selectedTemplate === '通用' }" 
+                         @click="selectTemplate('通用')"
+                         @mouseenter="playVideo('通用')"
+                         @mouseleave="pauseVideo('通用')">
+                        <video ref="video通用" muted loop>
+                            <source src="/static/video/preview/通用_preview.mp4" type="video/mp4">
+                        </video>
+                        <div class="template-info">
+                            <h4>通用</h4>
+                            <p>可以生成心理学科普，教育，解说等普通视频</p>
+                        </div>
+                    </div>
+                    <div class="template-card" 
+                         :class="{ 'active': selectedTemplate === '读一本书' }" 
+                         @click="selectTemplate('读一本书')"
+                         @mouseenter="playVideo('读一本书')"
+                         @mouseleave="pauseVideo('读一本书')">
+                        <video ref="video读一本书" muted loop>
+                            <source src="/static/video/preview/读一本书_preview.mp4" type="video/mp4">
+                        </video>
+                        <div class="template-info">
+                            <h4>读一本书</h4>
+                            <p>用于生成读一本书视频，需要上传书本封面图片和给出书名，并且给出视频文案，仅支持文案模式</p>
+                        </div>
+                    </div>
+                    <div class="template-card" 
+                         :class="{ 'active': selectedTemplate === '故事' }" 
+                         @click="selectTemplate('故事')"
+                         @mouseenter="playVideo('故事')"
+                         @mouseleave="pauseVideo('故事')">
+                        <video ref="video故事" muted loop>
+                            <source src="/static/video/preview/故事_preview.mp4" type="video/mp4">
+                        </video>
+                        <div class="template-info">
+                            <h4>故事</h4>
+                            <p>用于生成故事类视频</p>
+                        </div>
+                    </div>
+                    <div class="template-card" 
+                         :class="{ 'active': selectedTemplate === '讲经' }" 
+                         @click="selectTemplate('讲经')"
+                         @mouseenter="playVideo('讲经')"
+                         @mouseleave="pauseVideo('讲经')">
+                        <video ref="video讲经" muted loop>
+                            <source src="/static/video/preview/讲经_preview.mp4" type="video/mp4">
+                        </video>
+                        <div class="template-info">
+                            <h4>讲经</h4>
+                            <p>用于生成解读经典，玄学等视频</p>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="template-card" 
-                 :class="{ 'active': selectedTemplate === '读一本书' }" 
-                 @click="selectTemplate('读一本书')"
-                 @mouseenter="playVideo('读一本书')"
-                 @mouseleave="pauseVideo('读一本书')">
-                <video ref="video读一本书" muted loop>
-                    <source src="/static/video/读一本书.mp4" type="video/mp4">
-                </video>
-                <div class="template-info">
-                    <h4>读一本书</h4>
-                    <p>用于生成读一本书视频，需要上传书本封面图片和给出书名，并且给出视频文案，仅支持文案模式</p>
-                </div>
-            </div>
-            <div class="template-card" 
-                 :class="{ 'active': selectedTemplate === '故事' }" 
-                 @click="selectTemplate('故事')"
-                 @mouseenter="playVideo('故事')"
-                 @mouseleave="pauseVideo('故事')">
-                <video ref="video故事" muted loop>
-                    <source src="/static/video/故事.mp4" type="video/mp4">
-                </video>
-                <div class="template-info">
-                    <h4>故事</h4>
-                    <p>用于生成故事类视频</p>
-                </div>
-            </div>
-            <div class="template-card" 
-                 :class="{ 'active': selectedTemplate === '讲经' }" 
-                 @click="selectTemplate('讲经')">
-                <!-- 视频预览留空，可用图片或空白div -->
-                <div style="width:100%;height:180px;background:#f5f5f5;display:flex;align-items:center;justify-content:center;">
-                    <img src="/static/img/讲经.png" alt="讲经" style="max-height:100px;max-width:100%;object-fit:contain;"/>
-                </div>
-                <div class="template-info">
-                    <h4>讲经</h4>
-                    <p>用于生成解读经典，玄学等视频</p>
-                </div>
+            <div class="slider-nav slider-nav-right" @click="scrollTemplateRight">
+                <i class="fas fa-chevron-right"></i>
             </div>
         </div>
     </div>
 
     <!-- 风格选择区域 -->
-    <div class="style-section">
+    <div class="style-section centered">
         <h3>选择视频风格</h3>
-        <div class="style-grid">
-            {% for style_name, style_img in styles.items() %}
-            <div class="style-card" :class="{ 'active': selectedStyle === '{{ style_name|safe }}' }" @click="selectStyle('{{ style_name|safe }}')">
-                <img src="{{ style_img }}" alt="{{ style_name }}">
-                <p>{{ style_name }}</p>
+        <div class="style-slider-container">
+            <div class="slider-nav slider-nav-left" @click="scrollStyleLeft">
+                <i class="fas fa-chevron-left"></i>
             </div>
-            {% endfor %}
-            <div class="style-card" :class="{ 'active': selectedStyle === '水墨画' }" @click="selectStyle('水墨画')">
-                <img src="/static/img/水墨画.png" alt="水墨画">
-                <p>水墨画</p>
+            <div class="style-slider" ref="styleSlider">
+                <div class="style-grid">
+                    {% for style_name, style_img in styles.items() %}
+                    <div class="style-card" :class="{ 'active': selectedStyle === '{{ style_name|safe }}' }" @click="selectStyle('{{ style_name|safe }}')">
+                        <img src="{{ style_img }}" alt="{{ style_name }}">
+                        <p>{{ style_name }}</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="slider-nav slider-nav-right" @click="scrollStyleRight">
+                <i class="fas fa-chevron-right"></i>
             </div>
         </div>
     </div>
@@ -284,11 +301,8 @@
                 if (template === '读一本书') {
                     this.inputMode = 'script';
                 }
-                if (template === '讲经') {
-                    this.ttsModelStr = 'speech-02-turbo';
-                } else {
-                    this.ttsModelStr = 'cosyvoice-v1';
-                }
+                // 所有模板都使用 speech-02-turbo 模型
+                this.ttsModelStr = 'speech-02-turbo';
             },
             selectStyle(style) {
                 this.selectedStyle = style;
@@ -379,14 +393,15 @@
                 formData.append('estimated_credits', this.estimatedCredits); // 传递预估额度
                 formData.append('tts_model_str', this.ttsModelStr);
                 
-                // 用户名逻辑：如果勾选显示且有用户名，则使用用户名，否则使用None或百速AI
-                let finalUserName = '百速AI'; // 默认值
-                if (this.showUserName && this.userName) {
-                    finalUserName = this.userName;
-                } else if (!this.showUserName) {
-                    finalUserName = null; // 不显示时返回None
+                // 用户名逻辑：只有当勾选显示且有用户名时，才使用用户名，否则不显示
+                let finalUserName = null; // 默认不显示
+                if (this.showUserName && this.userName && this.userName.trim() !== '') {
+                    finalUserName = this.userName.trim();
                 }
-                formData.append('user_name', finalUserName);
+                // 只有当用户名不为null时才添加到formData中
+                if (finalUserName !== null) {
+                    formData.append('user_name', finalUserName);
+                }
                 
                 if (this.selectedTemplate === '读一本书') {
                     formData.append('book_title', this.bookTitle);
@@ -433,6 +448,44 @@
             onPromptInput() {
                 // 实现输入框内容变化时的处理逻辑
                 console.log('Prompt input changed:', this.prompt);
+            },
+            // 模板滑动方法
+            scrollTemplateLeft() {
+                const slider = this.$refs.templateSlider;
+                if (slider) {
+                    slider.scrollBy({
+                        left: -300,
+                        behavior: 'smooth'
+                    });
+                }
+            },
+            scrollTemplateRight() {
+                const slider = this.$refs.templateSlider;
+                if (slider) {
+                    slider.scrollBy({
+                        left: 300,
+                        behavior: 'smooth'
+                    });
+                }
+            },
+            // 风格滑动方法
+            scrollStyleLeft() {
+                const slider = this.$refs.styleSlider;
+                if (slider) {
+                    slider.scrollBy({
+                        left: -250,
+                        behavior: 'smooth'
+                    });
+                }
+            },
+            scrollStyleRight() {
+                const slider = this.$refs.styleSlider;
+                if (slider) {
+                    slider.scrollBy({
+                        left: 250,
+                        behavior: 'smooth'
+                    });
+                }
             }
         }
         });

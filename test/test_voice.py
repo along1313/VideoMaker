@@ -13,6 +13,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from service.ai_service import LLMService, ImageModelService, TTSModelService
 import dashscope
 from dashscope.audio.tts_v2 import *
+from static.model_info import MINIMAX_MODELS
 
 
 text_list = [
@@ -27,6 +28,7 @@ for i, text in enumerate(text_list):
     output_path = os.path.join(output_dir, f"test_{i}.mp3")
     data = tts_service.generate(text=text, voice_name="default")
     tts_service.save_audio(data, output_path)
+    print(f"生成第{i}段音频")
 
 """
 import requests

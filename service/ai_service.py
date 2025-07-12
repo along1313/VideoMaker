@@ -16,6 +16,7 @@ from dotenv import load_dotenv
 from static.model_info import ZHIPU_MODELS, DASHSCOPE_MODELS, DEEPSEEK_MODELS, GEMINI_MODELS, MINIMAX_MODELS   
 import asyncio
 import tempfile
+import json
 
 
 load_dotenv()
@@ -238,17 +239,31 @@ class TTSModelService:
             if not self.api_key:
                 raise ValueError("GEMINI_API_KEY not found in environment variables")
             self.client = genai.Client(api_key=self.api_key)
+        elif model_str in MINIMAX_MODELS:
+            self.api_key = os.environ.get("MINIMAX_API_KEY")
+            self.group_id = os.environ.get("MINIMAX_GROUP_ID")
+            if not self.api_key or not self.group_id:
+                raise ValueError("MINIMAX_API_KEY and MINIMAX_GROUP_ID must be set in environment variables")
+            self.voice_list = [
+                "Chinese (Mandarin)_Lyrical_Voice",
+                "Chinese (Mandarin)_Wise_Women", 
+            ]
         else:
             raise ValueError("Model not found")
         self.model_str = model_str
 
-    def generate(self, text: str, style_instructions = "say", voice_name = "Zephyr", **kwargs):
+
+    def generate(self, text: str, style_instructions = "say", voice_name = "default", **kwargs):
         # @param ["Zephyr", "Puck", "Charon", "Kore", "Fenrir", "Leda", "Orus", "Aoede", "Callirhoe", "Autonoe", "Enceladus", "Iapetus", "Umbriel", "Algieba", "Despina", "Erinome", "Algenib", "Rasalgethi", "Laomedeia", "Achernar", "Alnilam", "Schedar", "Gacrux", "Pulcherrima", "Achird", "Zubenelgenubi", "Vindemiatrix", "Sadachbia", "Sadaltager", "Sulafar"]
         print(f'voice_name: {voice_name}')
+
         if self.model_str in DASHSCOPE_MODELS:
-            synthesizer = SpeechSynthesizer(model=self.model_str, voice="longmiao", **kwargs)
+            if voice_name == "default" or voice_name not in self.voice_list:
+                voice_name = "longmiao"
+            synthesizer = SpeechSynthesizer(model=self.model_str, voice=voice_name, **kwargs)
             audio = synthesizer.call(text)
             return audio
+        
         elif self.model_str in GEMINI_MODELS:
             if voice_name == "default" or voice_name not in self.voice_list:
                 voice_name = "Zephyr"
@@ -268,8 +283,105 @@ class TTSModelService:
                 )
             data = response.candidates[0].content.parts[0].inline_data.data
             return data
+        
+        elif self.model_str in MINIMAX_MODELS:
+            if voice_name == "default":
+                voice_name = "Chinese (Mandarin)_Lyrical_Voice"
+            return self._generate_minimax_tts(text, voice_name, **kwargs)
         else:
             raise ValueError("Model not found")
+    
+    def _generate_minimax_tts(self, text: str, voice_name: str = "Chinese (Mandarin)_Lyrical_Voice", 
+                             speed: float = 1, pitch: int = 0, vol: float = 1, 
+                             sample_rate: int = 32000, bitrate: int = 128000, **kwargs):
+        """
+        使用 MiniMax API 生成语音
+        
+        Args:
+            text: 要转换的文本
+            voice_name: 语音名称
+            speed: 语速 (0.5-2.0)
+            pitch: 音调 (-12到12)
+            vol: 音量 (0.1-1.0)
+            sample_rate: 采样率
+            bitrate: 比特率
+            
+        Returns:
+            bytes: 音频数据
+        """
+        # 设置默认语音
+        if voice_name == "default" or voice_name not in self.voice_list:
+            voice_name = "Chinese (Mandarin)_Lyrical_Voice"
+            
+        url = f"https://api.minimax.chat/v1/t2a_v2?GroupId={self.group_id}"
+        headers = {
+            "Authorization": f"Bearer {self.api_key}",
+            "Content-Type": "application/json"
+        }
+        
+        payload = {
+            "model": self.model_str,
+            "text": text,
+            "timber_weights": [
+                {
+                    "voice_id": voice_name,
+                    "weight": 1
+                }
+            ],
+            "voice_setting": {
+                "voice_id": "",
+                "speed": speed,
+                "pitch": pitch,
+                "vol": vol,
+                "latex_read": False
+            },
+            "audio_setting": {
+                "sample_rate": sample_rate,
+                "bitrate": bitrate,
+                "format": "mp3"
+            },
+            "language_boost": "auto"
+        }
+        
+        try:
+            print("[MiniMax TTS 调试] 请求URL:", url)
+            print("[MiniMax TTS 调试] 请求headers:", headers)
+            print("[MiniMax TTS 调试] 请求payload:", json.dumps(payload, ensure_ascii=False))
+            response = requests.post(url, headers=headers, json=payload, timeout=60)
+            print("[MiniMax TTS 调试] 返回状态码:", response.status_code)
+            response.raise_for_status()
+            
+            result = response.json()
+            
+            # 检查响应状态
+            if result.get("base_resp", {}).get("status_code") != 0:
+                error_msg = result.get("base_resp", {}).get("status_msg", "Unknown error")
+                print("[MiniMax TTS 调试] API 错误:", error_msg)
+                raise ValueError(f"MiniMax API 错误: {error_msg}")
+
+            # 只处理新API格式：audio 在 data 下，且为 hex 编码
+            data = result.get("data")
+            if data and "audio" in data:
+                audio_hex = data["audio"]
+                print("[MiniMax TTS 调试] data.audio 字段存在，长度:", len(audio_hex))
+                try:
+                    audio_bytes = bytes.fromhex(audio_hex)
+                    return audio_bytes
+                except Exception as e:
+                    print("[MiniMax TTS 调试] data.audio 字段解码失败:", str(e))
+                    raise ValueError("MiniMax API 返回的 data.audio 字段解码失败")
+            else:
+                print("[MiniMax TTS 调试] 未返回 data.audio 字段，完整返回:", result)
+                raise ValueError("MiniMax API 未返回 data.audio 字段")
+            
+        except requests.exceptions.RequestException as e:
+            print("[MiniMax TTS 调试] requests异常:", str(e))
+            raise ValueError(f"MiniMax API 请求失败: {str(e)}")
+        except Exception as e:
+            print("[MiniMax TTS 调试] 其他异常:", str(e))
+            raise ValueError(f"MiniMax TTS 生成失败: {str(e)}")
+
+        
     def save_audio(self, data: bytes, file_path: str):
         # 保存为mp3文件
         if self.model_str in DASHSCOPE_MODELS:

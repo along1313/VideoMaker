@@ -1970,4 +1970,4 @@ if __name__ == '__main__':
             print("已创建默认管理员账户: admin / admin123")
     
     # 启动Flask应用
-    app.run(debug=True, host='0.0.0.0', port=5002)
+    app.run(debug=True, host='0.0.0.0', port=5001)

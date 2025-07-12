@@ -37,11 +37,45 @@ git push origin master
 echo "📍 上传部署脚本到服务器..."
 scp -i "$SSH_KEY" deploy_scripts/deploy.sh "$SERVER_USER@$SERVER_HOST:$SERVER_PROJECT_DIR/"
 
-# 4. 在服务器上执行部署
+# 4. 上传静态文件到服务器
+echo "📍 上传静态文件到服务器..."
+
+# 创建服务器上的必要目录
+ssh -i "$SSH_KEY" "$SERVER_USER@$SERVER_HOST" "
+    mkdir -p $SERVER_PROJECT_DIR/static/video/preview
+    mkdir -p $SERVER_PROJECT_DIR/static/img
+    mkdir -p $SERVER_PROJECT_DIR/static/audio
+"
+
+# 上传视频模板文件
+echo "  📁 上传视频模板文件..."
+scp -i "$SSH_KEY" static/video/*.mp4 "$SERVER_USER@$SERVER_HOST:$SERVER_PROJECT_DIR/static/video/"
+
+# 上传预览视频文件
+echo "  📁 上传预览视频文件..."
+scp -i "$SSH_KEY" static/video/preview/*.mp4 "$SERVER_USER@$SERVER_HOST:$SERVER_PROJECT_DIR/static/video/preview/"
+
+# 上传图片文件
+echo "  📁 上传图片文件..."
+scp -i "$SSH_KEY" static/img/*.png static/img/*.jpg "$SERVER_USER@$SERVER_HOST:$SERVER_PROJECT_DIR/static/img/"
+
+# 上传音频文件（如果存在）
+if [ -f "static/audio/end_voice.mp3" ]; then
+    echo "  📁 上传音频文件..."
+    scp -i "$SSH_KEY" static/audio/end_voice.mp3 "$SERVER_USER@$SERVER_HOST:$SERVER_PROJECT_DIR/static/audio/"
+fi
+
+# 设置文件权限
+ssh -i "$SSH_KEY" "$SERVER_USER@$SERVER_HOST" "
+    chown -R www:www $SERVER_PROJECT_DIR/static/
+    chmod -R 755 $SERVER_PROJECT_DIR/static/
+"
+
+# 5. 在服务器上执行部署
 echo "📍 在服务器上执行部署..."
 ssh -i "$SSH_KEY" "$SERVER_USER@$SERVER_HOST" "cd $SERVER_PROJECT_DIR && chmod +x deploy.sh && ./deploy.sh"
 
-# 5. 检查部署结果
+# 6. 检查部署结果
 echo "📍 检查部署结果..."
 DEPLOYMENT_STATUS=$(ssh -i "$SSH_KEY" "$SERVER_USER@$SERVER_HOST" "systemctl is-active videomaker" 2>/dev/null || echo "failed")
 
@@ -57,6 +91,11 @@ if [ "$DEPLOYMENT_STATUS" = "active" ]; then
         echo 'Nginx 服务: $(systemctl is-active nginx)'
         echo '服务器负载: $(uptime)'
         echo '磁盘使用: $(df -h $SERVER_PROJECT_DIR | tail -1)'
+        echo ''
+        echo '静态文件检查:'
+        echo '  视频模板: $(ls -la $SERVER_PROJECT_DIR/static/video/*.mp4 2>/dev/null | wc -l) 个文件'
+        echo '  预览视频: $(ls -la $SERVER_PROJECT_DIR/static/video/preview/*.mp4 2>/dev/null | wc -l) 个文件'
+        echo '  图片文件: $(ls -la $SERVER_PROJECT_DIR/static/img/*.png $SERVER_PROJECT_DIR/static/img/*.jpg 2>/dev/null | wc -l) 个文件'
     "
 else
     echo "❌ 部署失败！"

@@ -5,12 +5,20 @@
 
 set -e  # 出错时停止执行
 
-# 配置信息
-SERVER_HOST="43.163.98.206"
-SERVER_USER="root"
-SSH_KEY="/Users/zhusisi/CascadeProjects/keys/sin_key.pem"
-LOCAL_PROJECT_DIR="/Users/zhusisi/CascadeProjects/VideoMaker"
-SERVER_PROJECT_DIR="/root/VideoMaker"
+# 配置信息 (从环境变量读取，如果没有则使用默认值)
+SERVER_HOST="${SERVER_HOST:-43.163.98.206}"
+SERVER_USER="${SERVER_USER:-root}"
+SSH_KEY="${SSH_KEY_PATH:-/Users/zhusisi/CascadeProjects/keys/sin_key.pem}"
+LOCAL_PROJECT_DIR="${LOCAL_PROJECT_DIR:-/Users/zhusisi/CascadeProjects/VideoMaker}"
+SERVER_PROJECT_DIR="${SERVER_PROJECT_DIR:-/root/VideoMaker}"
+
+echo "📋 部署配置:"
+echo "  服务器: $SERVER_HOST"
+echo "  用户: $SERVER_USER"
+echo "  SSH密钥: $SSH_KEY"
+echo "  本地目录: $LOCAL_PROJECT_DIR"
+echo "  服务器目录: $SERVER_PROJECT_DIR"
+echo ""
 
 echo "🚀 从本地部署 VideoMaker 到服务器..."
 

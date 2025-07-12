@@ -1,8 +1,10 @@
-# VideoMaker 项目部署指南
+# VideoMaker 统一部署指南
 
 ## 📋 概述
 
-本文档提供了VideoMaker项目在腾讯云服务器上的科学部署方案，包括初始化设置、日常更新和维护操作。
+VideoMaker 是一个 AI 视频生成平台，本文档提供完整的部署解决方案，包括环境配置、服务部署和维护指南。
+
+> **重要说明**: 此文档已合并原 QUICK_DEPLOY.md，提供一站式部署解决方案。
 
 ## 🏗️ 部署架构
 
@@ -18,42 +20,57 @@
 - **数据库**: SQLite
 - **版本控制**: Git
 
-## 🚀 部署步骤
+## 🚀 快速部署
 
-### 1. 初次部署（仅需执行一次）
-
-如果是首次在服务器上部署，需要先运行服务器设置脚本：
-
+### 方式一：一键部署（推荐）
 ```bash
-# 在本地执行
-scp -i /Users/zhusisi/CascadeProjects/keys/sin_key.pem deploy_scripts/server_setup.sh root@43.163.98.206:/root/
-ssh -i /Users/zhusisi/CascadeProjects/keys/sin_key.pem root@43.163.98.206 "chmod +x /root/server_setup.sh && /root/server_setup.sh"
-```
-
-### 2. 日常部署更新
-
-使用本地部署脚本一键更新：
-
-```bash
-# 在项目根目录执行
 chmod +x deploy_scripts/deploy_from_local.sh
 ./deploy_scripts/deploy_from_local.sh
 ```
 
-### 3. 手动部署（备选方案）
-
-如果自动化脚本出现问题，可以手动执行：
-
+### 方式二：手动部署
 ```bash
-# 1. 推送代码到Git仓库
-git add -A
-git commit -m "部署更新"
-git push origin master
+# 1. 提交并推送代码
+git add -A && git commit -m "Deploy update" && git push origin master
 
-# 2. 连接服务器并拉取更新
-ssh -i /Users/zhusisi/CascadeProjects/keys/sin_key.pem root@43.163.98.206
-cd /root/VideoMaker
-./deploy.sh
+# 2. 连接服务器部署
+ssh -i /path/to/your/key.pem root@your_server_ip "cd /root/VideoMaker && ./deploy.sh"
+```
+
+## ⚙️ 环境配置
+
+### 1. 环境变量配置
+
+**必需的环境变量** (在服务器 `/root/VideoMaker/.env` 文件中):
+```bash
+# 基础配置
+FLASK_ENV=production
+FLASK_DEBUG=False
+PORT=5001
+
+# AI服务API密钥（必需）
+ZHIPU_API_KEY=your_zhipu_api_key
+DASHSCOPE_API_KEY=your_dashscope_api_key  
+MINIMAX_API_KEY=your_minimax_api_key
+MINIMAX_GROUP_ID=your_minimax_group_id
+
+# 安全配置
+SECRET_KEY=your_random_secret_key
+```
+
+### 2. 获取API密钥
+
+- **智谱AI**: https://bigmodel.cn/
+- **阿里云通义千问**: https://dashscope.aliyun.com/
+- **MiniMax**: https://api.minimax.chat/
+
+### 3. 初次部署设置
+
+**只在首次部署时执行**：
+```bash
+# 上传并执行服务器初始化脚本
+scp -i /path/to/key.pem deploy_scripts/server_setup.sh root@server_ip:/root/
+ssh -i /path/to/key.pem root@server_ip "chmod +x /root/server_setup.sh && /root/server_setup.sh"
 ```
 
 ## 🔧 服务管理
@@ -155,42 +172,64 @@ systemctl restart videomaker
 tar -czf /root/workstore_backup_$(date +%Y%m%d_%H%M%S).tar.gz /root/VideoMaker/workstore/
 ```
 
-## 🐛 故障排除
+## 🔍 故障排除
 
-### 常见问题
+### 常见问题诊断
 
-1. **服务无法启动**
-   ```bash
-   # 检查配置文件
-   python -c "import gunicorn.config; print('配置文件正常')"
-   
-   # 检查端口占用
-   netstat -tlnp | grep 5001
-   
-   # 查看详细错误
-   journalctl -u videomaker -n 50
-   ```
+**1. 502 Bad Gateway**
+```bash
+# 检查服务状态
+systemctl status videomaker
 
-2. **502 Bad Gateway**
-   ```bash
-   # 检查gunicorn是否运行
-   systemctl status videomaker
-   
-   # 检查端口连接
-   curl http://127.0.0.1:5001
-   
-   # 重启服务
-   systemctl restart videomaker
-   ```
+# 检查端口监听
+netstat -tlnp | grep :5001
 
-3. **静态文件404**
-   ```bash
-   # 检查文件权限
-   ls -la /root/VideoMaker/static/
-   
-   # 重新加载nginx
-   systemctl reload nginx
-   ```
+# 重启服务
+systemctl restart videomaker
+```
+
+**2. 端口配置不一致**
+```bash
+# 检查应用端口配置
+grep PORT /root/VideoMaker/.env
+
+# 检查nginx代理配置
+grep proxy_pass /www/server/panel/vhost/nginx/videomaker.conf
+
+# 统一端口配置（应该都是5001）
+```
+
+**3. API密钥错误**
+```bash
+# 检查必需的API密钥
+grep -E 'MINIMAX_API_KEY|MINIMAX_GROUP_ID|ZHIPU_API_KEY|DASHSCOPE_API_KEY' /root/VideoMaker/.env
+
+# 重启以加载新配置
+systemctl restart videomaker
+```
+
+**4. 视频生成失败**
+```bash
+# 查看详细错误日志
+tail -50 /root/VideoMaker/logs/app.log | grep ERROR
+
+# 常见错误类型：
+# - "MINIMAX_API_KEY and MINIMAX_GROUP_ID must be set"
+# - "got multiple values for keyword argument 'voice'"
+# - "系统检测到输入或生成内容可能包含不安全或敏感内容"
+```
+
+**5. 静态文件404**
+```bash
+# 检查文件权限
+ls -la /root/VideoMaker/static/
+
+# 检查nginx配置
+grep "root /root/VideoMaker" /www/server/panel/vhost/nginx/videomaker.conf
+
+# 重新加载nginx
+systemctl reload nginx
+```
 
 ### 性能优化
 

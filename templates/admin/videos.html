@@ -3,153 +3,189 @@
 {% block title %}视频管理{% endblock %}
 
 {% block content %}
-<div class="card">
-    <div class="card-header d-flex justify-content-between align-items-center">
-        <h5 class="mb-0">视频管理</h5>
-        <div class="d-flex gap-2">
-            <form class="d-flex" method="get">
-                <input type="text" class="form-control form-control-sm" name="q" placeholder="搜索视频..." value="{{ request.args.get('q', '') }}">
-                <button type="submit" class="btn btn-sm btn-primary ms-2">搜索</button>
-            </form>
-        </div>
+<!-- 页面头部 -->
+<div class="flex justify-between items-center mb-8">
+    <div>
+        <h1 class="text-3xl font-bold text-white mb-2">视频管理</h1>
+        <p class="text-slate-400">管理和查看所有用户视频</p>
     </div>
-    <div class="card-body">
-        <div class="table-responsive">
-            <table class="table table-hover">
+    
+    <!-- 搜索表单 -->
+    <form method="get" class="flex gap-3">
+        <div class="relative">
+            <span class="material-icons absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400">search</span>
+            <input type="text" 
+                   name="q" 
+                   placeholder="搜索视频标题、用户..." 
+                   value="{{ request.args.get('q', '') }}"
+                   class="bg-slate-800/50 border border-slate-600 rounded-lg pl-10 pr-4 py-3 text-white placeholder-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all w-64">
+        </div>
+        <button type="submit" 
+                class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg transition-colors inline-flex items-center gap-2">
+            <span class="material-icons text-sm">search</span>
+            搜索
+        </button>
+    </form>
+</div>
+
+<!-- 视频表格 -->
+<div class="bg-slate-800/50 backdrop-blur-sm rounded-xl border border-slate-700 overflow-hidden">
+    <div class="p-6 border-b border-slate-700">
+        <h3 class="text-lg font-semibold text-white flex items-center gap-2">
+            <span class="material-icons text-blue-400">movie</span>
+            视频列表
+            <span class="text-slate-400 text-sm ml-2">(共 {{ videos|length }} 个视频)</span>
+        </h3>
+    </div>
+    
+    <div class="overflow-x-auto">
+        <table class="w-full">
                 <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>标题</th>
-                        <th>用户</th>
-                        <th>风格</th>
-                        <th>状态</th>
-                        <th>创建时间</th>
-                        <th>操作</th>
+                <tr class="border-b border-slate-700">
+                    <th class="text-left px-6 py-4 text-slate-300 font-medium">ID</th>
+                    <th class="text-left px-6 py-4 text-slate-300 font-medium">标题</th>
+                    <th class="text-left px-6 py-4 text-slate-300 font-medium">用户</th>
+                    <th class="text-left px-6 py-4 text-slate-300 font-medium">风格</th>
+                    <th class="text-left px-6 py-4 text-slate-300 font-medium">状态</th>
+                    <th class="text-left px-6 py-4 text-slate-300 font-medium">创建时间</th>
+                    <th class="text-left px-6 py-4 text-slate-300 font-medium">操作</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for video in videos %}
-                    <tr>
-                        <td>{{ video.id }}</td>
-                        <td>{{ video.title }}</td>
-                        <td>
-                            <a href="{{ url_for('admin_edit_user', user_id=video.user.id) }}">
+                <tr class="border-b border-slate-700/50 hover:bg-slate-700/30 transition-colors">
+                    <td class="px-6 py-4 text-slate-300 font-mono text-sm">{{ video.id }}</td>
+                    <td class="px-6 py-4">
+                        <div class="text-white font-medium max-w-xs truncate" title="{{ video.title }}">
+                            {{ video.title }}
+                        </div>
+                    </td>
+                    <td class="px-6 py-4">
+                        <a href="{{ url_for('admin_edit_user', user_id=video.user.id) }}" 
+                           class="text-blue-400 hover:text-blue-300 transition-colors flex items-center gap-1">
+                            <span class="material-icons text-sm">person</span>
                                 {{ video.user.username }}
                             </a>
                         </td>
-                        <td>{{ video.style }}</td>
-                        <td>
+                    <td class="px-6 py-4">
+                        <span class="bg-purple-500/20 text-purple-300 px-2 py-1 rounded text-sm">
+                            {{ video.style }}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4">
                             {% if video.status == 'completed' %}
-                                <span class="badge bg-success">已完成</span>
+                            <span class="bg-green-500/20 text-green-300 px-2 py-1 rounded-full text-xs flex items-center gap-1 w-fit">
+                                <span class="material-icons text-xs">check_circle</span>
+                                已完成
+                            </span>
                             {% elif video.status == 'processing' %}
-                                <span class="badge bg-warning">处理中</span>
+                            <span class="bg-yellow-500/20 text-yellow-300 px-2 py-1 rounded-full text-xs flex items-center gap-1 w-fit">
+                                <span class="material-icons text-xs animate-spin">refresh</span>
+                                处理中
+                            </span>
                             {% elif video.status == 'failed' %}
-                                <span class="badge bg-danger">失败</span>
+                            <span class="bg-red-500/20 text-red-300 px-2 py-1 rounded-full text-xs flex items-center gap-1 w-fit">
+                                <span class="material-icons text-xs">error</span>
+                                失败
+                            </span>
                             {% else %}
-                                <span class="badge bg-secondary">等待中</span>
+                            <span class="bg-slate-500/20 text-slate-300 px-2 py-1 rounded-full text-xs flex items-center gap-1 w-fit">
+                                <span class="material-icons text-xs">schedule</span>
+                                等待中
+                            </span>
                             {% endif %}
                         </td>
-                        <td>{{ video.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
-                        <td>
-                            <div class="btn-group btn-group-sm">
-                                {% if video.status == 'completed' %}
-                                <a href="{{ url_for('download_video', video_id=video.id) }}" class="btn btn-outline-primary" title="下载视频">
-                                    <i class="bi bi-download"></i>
+                    <td class="px-6 py-4 text-slate-400 text-sm">
+                        {{ video.created_at.strftime('%Y-%m-%d %H:%M') }}
+                    </td>
+                    <td class="px-6 py-4">
+                        <div class="flex gap-2">
+                            {% if video.video_path %}
+                                <a href="{{ url_for('static', filename='video/' + video.video_path) }}" 
+                                   target="_blank"
+                                   class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm transition-colors inline-flex items-center gap-1">
+                                    <span class="material-icons text-sm">play_arrow</span>
+                                    播放
                                 </a>
                                 {% endif %}
-                                <button type="button" class="btn btn-outline-danger" 
-                                        data-bs-toggle="modal" data-bs-target="#deleteVideoModal" 
-                                        data-video-id="{{ video.id }}" data-video-title="{{ video.title }}">
-                                    <i class="bi bi-trash"></i>
+                            <button onclick="downloadVideo({{ video.id }})" 
+                                    class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-sm transition-colors inline-flex items-center gap-1">
+                                <span class="material-icons text-sm">download</span>
+                                下载
+                            </button>
+                            <button onclick="deleteVideo({{ video.id }})" 
+                                    class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm transition-colors inline-flex items-center gap-1">
+                                <span class="material-icons text-sm">delete</span>
+                                删除
                                 </button>
                             </div>
                         </td>
                     </tr>
                     {% else %}
                     <tr>
-                        <td colspan="7" class="text-center py-4 text-muted">
-                            <i class="bi bi-exclamation-circle me-2"></i> 没有找到符合条件的视频
+                    <td colspan="7" class="px-6 py-12 text-center text-slate-400">
+                        <div class="flex flex-col items-center gap-3">
+                            <span class="material-icons text-4xl text-slate-600">movie_filter</span>
+                            <p>暂无视频数据</p>
+                        </div>
                         </td>
                     </tr>
                     {% endfor %}
                 </tbody>
             </table>
         </div>
-    </div>
-    <div class="card-footer d-flex justify-content-between align-items-center">
-        <div class="text-muted">
-            显示 <span>{{ videos|length }}</span> 条记录，共 <span>{{ total_videos }}</span> 条
+    
+    {% if videos %}
+    <!-- 分页信息 -->
+    <div class="p-6 border-t border-slate-700 flex justify-between items-center">
+        <div class="text-slate-400 text-sm">
+            显示第 1-{{ videos|length }} 条，共 {{ videos|length }} 条记录
         </div>
-        <nav>
-            <ul class="pagination pagination-sm mb-0">
-                {% if pagination.has_prev %}
-                <li class="page-item">
-                    <a class="page-link" href="{{ url_for('admin_videos', page=pagination.prev_num, q=request.args.get('q', '')) }}">
-                        &laquo;
-                    </a>
-                </li>
-                {% endif %}
-                
-                {% for page_num in range(1, pagination.pages + 1) %}
-                    <li class="page-item {% if page_num == pagination.page %}active{% endif %}">
-                        <a class="page-link" href="{{ url_for('admin_videos', page=page_num, q=request.args.get('q', '')) }}">
-                            {{ page_num }}
-                        </a>
-                    </li>
-                {% endfor %}
-                
-                {% if pagination.has_next %}
-                <li class="page-item">
-                    <a class="page-link" href="{{ url_for('admin_videos', page=pagination.next_num, q=request.args.get('q', '')) }}">
-                        &raquo;
-                    </a>
-                </li>
-                {% endif %}
-            </ul>
-        </nav>
-    </div>
-</div>
-
-<!-- 删除视频确认模态框 -->
-<div class="modal fade" id="deleteVideoModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">确认删除</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <p>确定要删除视频 <strong id="deleteVideoTitle"></strong> 吗？此操作无法撤销！</p>
-                <p class="text-danger">警告：这将永久删除该视频及其所有相关文件！</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
-                <form id="deleteVideoForm" method="post" action="">
-                    <button type="submit" class="btn btn-danger">确认删除</button>
-                </form>
-            </div>
+        <div class="flex gap-2">
+            <button class="bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded-lg transition-colors text-sm" disabled>
+                上一页
+            </button>
+            <button class="bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded-lg transition-colors text-sm" disabled>
+                下一页
+            </button>
         </div>
     </div>
+    {% endif %}
 </div>
 {% endblock %}
 
 {% block extra_js %}
 <script>
-// 删除视频确认
-var deleteVideoModal = document.getElementById('deleteVideoModal');
-if (deleteVideoModal) {
-    deleteVideoModal.addEventListener('show.bs.modal', function (event) {
-        var button = event.relatedTarget;
-        var videoId = button.getAttribute('data-video-id');
-        var videoTitle = button.getAttribute('data-video-title');
-        
-        var modalTitle = deleteVideoModal.querySelector('.modal-title');
-        var deleteVideoTitle = deleteVideoModal.querySelector('#deleteVideoTitle');
-        var deleteForm = deleteVideoModal.querySelector('#deleteVideoForm');
-        
-        deleteVideoTitle.textContent = videoTitle;
-        deleteForm.action = "{{ url_for('admin_delete_video', video_id=0) }}".replace('0', videoId);
+function downloadVideo(videoId) {
+    // 创建一个隐藏的表单来发送POST请求
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = '/admin/videos/' + videoId + '/download';
+    form.style.display = 'none';
+    document.body.appendChild(form);
+    form.submit();
+    document.body.removeChild(form);
+}
+
+function deleteVideo(videoId) {
+    if (confirm('确定要删除这个视频吗？此操作不可恢复！')) {
+        fetch('/admin/video/' + videoId + '/delete', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
+        .then(response => {
+            if (response.ok) {
+                location.reload();
+            } else {
+                throw new Error('删除失败');
+            }
+        })
+        .catch(error => {
+            alert('删除失败: ' + error.message);
     });
+    }
 }
 </script>
 {% endblock %} 

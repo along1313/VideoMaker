@@ -1171,3 +1171,108 @@ WHERE video.id = ?]
 [2025-07-13 08:54:21,733] [INFO] [logger:55] - 新留言：123@456.com - 测试，测试...
 [2025-07-13 08:58:54,616] [INFO] [logger:55] - 新留言：test@example.com - 这是一条测试留言...
 [2025-07-13 09:01:13,454] [INFO] [logger:55] - 新留言：123@456.com - 测试，测试...
+[2025-07-13 10:07:52,231] [INFO] [logger:55] - 用户 admin 查看我的视频页面，共 4 个视频
+[2025-07-13 10:07:52,791] [INFO] [app:1758] - 请求 workstore 文件: user1/白雪公主的童话/covers/cover_4:3.png
+[2025-07-13 10:07:52,792] [INFO] [app:1758] - 请求 workstore 文件: user1/小红帽的森林奇遇/covers/cover_4:3.png
+[2025-07-13 10:07:52,794] [INFO] [app:1758] - 请求 workstore 文件: user1/纳什均衡解析/covers/cover_4:3.png
+[2025-07-13 10:11:26,414] [INFO] [logger:55] - 用户 admin 查看我的视频页面，共 4 个视频
+[2025-07-13 10:11:26,808] [INFO] [app:1758] - 请求 workstore 文件: user1/小红帽的森林奇遇/covers/cover_4:3.png
+[2025-07-13 10:11:26,810] [INFO] [app:1758] - 请求 workstore 文件: user1/白雪公主的童话/covers/cover_4:3.png
+[2025-07-13 10:11:26,813] [INFO] [app:1758] - 请求 workstore 文件: user1/纳什均衡解析/covers/cover_4:3.png
+[2025-07-13 10:29:33,468] [INFO] [logger:55] - 用户 admin 查看我的视频页面，共 4 个视频
+[2025-07-13 10:29:33,664] [INFO] [app:1758] - 请求 workstore 文件: user1/白雪公主的童话/covers/cover_4:3.png
+[2025-07-13 10:29:33,671] [INFO] [app:1758] - 请求 workstore 文件: user1/小红帽的森林奇遇/covers/cover_4:3.png
+[2025-07-13 10:29:33,675] [INFO] [app:1758] - 请求 workstore 文件: user1/纳什均衡解析/covers/cover_4:3.png
+[2025-07-13 11:02:17,899] [INFO] [logger:55] - 用户 admin 查看我的视频页面，共 4 个视频
+[2025-07-13 11:02:18,089] [INFO] [app:1758] - 请求 workstore 文件: user1/小红帽的森林奇遇/covers/cover_4:3.png
+[2025-07-13 11:02:18,091] [INFO] [app:1758] - 请求 workstore 文件: user1/白雪公主的童话/covers/cover_4:3.png
+[2025-07-13 11:02:18,093] [INFO] [app:1758] - 请求 workstore 文件: user1/纳什均衡解析/covers/cover_4:3.png
+[2025-07-13 11:12:45,232] [INFO] [logger:55] - 用户 admin 查看我的视频页面，共 4 个视频
+[2025-07-13 11:12:45,662] [INFO] [app:1758] - 请求 workstore 文件: user1/小红帽的森林奇遇/covers/cover_4:3.png
+[2025-07-13 11:12:45,664] [INFO] [app:1758] - 请求 workstore 文件: user1/纳什均衡解析/covers/cover_4:3.png
+[2025-07-13 11:12:45,665] [INFO] [app:1758] - 请求 workstore 文件: user1/白雪公主的童话/covers/cover_4:3.png
+[2025-07-13 11:12:48,927] [INFO] [app:1758] - 请求 workstore 文件: user1/小红帽的森林奇遇/output.mp4
+[2025-07-13 11:12:48,959] [INFO] [app:1758] - 请求 workstore 文件: user1/小红帽的森林奇遇/output.mp4
+[2025-07-13 11:12:51,952] [INFO] [app:1758] - 请求 workstore 文件: user1/小红帽的森林奇遇/output.mp4
+[2025-07-13 11:12:51,958] [INFO] [app:1758] - 请求 workstore 文件: user1/小红帽的森林奇遇/output.mp4
+[2025-07-13 11:32:06,705] [INFO] [logger:55] - 用户 admin 查看我的视频页面，共 4 个视频
+[2025-07-13 11:32:06,935] [INFO] [app:1813] - 请求 workstore 文件: user1/白雪公主的童话/covers/cover_4:3.png
+[2025-07-13 11:32:06,940] [INFO] [app:1813] - 请求 workstore 文件: user1/纳什均衡解析/covers/cover_4:3.png
+[2025-07-13 11:32:06,945] [INFO] [app:1813] - 请求 workstore 文件: user1/小红帽的森林奇遇/covers/cover_4:3.png
+[2025-07-13 11:32:10,510] [INFO] [app:1731] - 用户 1 请求下载视频 34, 路径: workstore/user1/小红帽的森林奇遇/output.mp4
+[2025-07-13 11:32:10,510] [INFO] [app:1758] - 解析的基础目录: workstore/user1/小红帽的森林奇遇
+[2025-07-13 11:32:10,798] [INFO] [app:1772] - 已添加视频文件到ZIP: workstore/user1/小红帽的森林奇遇/output.mp4
+[2025-07-13 11:32:10,821] [INFO] [app:1784] - 已添加封面文件到ZIP: workstore/user1/小红帽的森林奇遇/covers/cover_3:4.png
+[2025-07-13 11:32:10,843] [INFO] [app:1784] - 已添加封面文件到ZIP: workstore/user1/小红帽的森林奇遇/covers/cover_4:3.png
+[2025-07-13 11:32:10,843] [INFO] [app:1793] - 开始下载，文件名: video_34_20250713113210.zip
+[2025-07-13 11:32:40,918] [INFO] [logger:55] - 用户 admin 查看我的视频页面，共 3 个视频
+[2025-07-13 11:32:41,101] [INFO] [app:1813] - 请求 workstore 文件: user1/白雪公主的童话/covers/cover_4:3.png
+[2025-07-13 11:32:41,102] [INFO] [app:1813] - 请求 workstore 文件: user1/小红帽的森林奇遇/covers/cover_4:3.png
+[2025-07-13 11:32:41,105] [INFO] [app:1813] - 请求 workstore 文件: user1/纳什均衡解析/covers/cover_4:3.png
+[2025-07-13 11:53:48,206] [INFO] [logger:55] - 用户 test9 获得了月度免费额度刷新，当前额度: 6
+[2025-07-13 12:01:24,124] [INFO] [logger:55] - 用户 test9 生成视频扣除了 1 条额度，剩余 5 条
+[2025-07-13 12:10:32,154] [INFO] [logger:55] - 视频生成完成 - 项目: 《金刚经》第五品 如理实见分, 视频: workstore/user8/《金刚经》第五品 如理实见分/output.mp4
+[2025-07-13 16:28:12,483] [INFO] [logger:55] - 用户 test9 生成视频扣除了 1 条额度，剩余 4 条
+[2025-07-13 16:36:32,936] [INFO] [logger:55] - 视频生成完成 - 项目: 《金刚经》第六品 正信希有分, 视频: workstore/user8/《金刚经》第六品 正信希有分/output.mp4
+[2025-07-13 16:37:23,930] [INFO] [logger:55] - 用户 test9 查看我的视频页面，共 2 个视频
+[2025-07-13 16:37:24,156] [INFO] [app:1813] - 请求 workstore 文件: user8/《金刚经》第六品 正信希有分/covers/cover_4:3.png
+[2025-07-13 16:37:24,159] [INFO] [app:1813] - 请求 workstore 文件: user8/《金刚经》第五品 如理实见分/covers/cover_4:3.png
+[2025-07-13 16:37:30,712] [INFO] [app:1731] - 用户 8 请求下载视频 35, 路径: workstore/user8/《金刚经》第五品 如理实见分/output.mp4
+[2025-07-13 16:37:30,713] [INFO] [app:1758] - 解析的基础目录: workstore/user8/《金刚经》第五品 如理实见分
+[2025-07-13 16:37:31,259] [INFO] [app:1772] - 已添加视频文件到ZIP: workstore/user8/《金刚经》第五品 如理实见分/output.mp4
+[2025-07-13 16:37:31,276] [INFO] [app:1784] - 已添加封面文件到ZIP: workstore/user8/《金刚经》第五品 如理实见分/covers/cover_3:4.png
+[2025-07-13 16:37:31,289] [INFO] [app:1784] - 已添加封面文件到ZIP: workstore/user8/《金刚经》第五品 如理实见分/covers/cover_4:3.png
+[2025-07-13 16:37:31,290] [INFO] [app:1793] - 开始下载，文件名: video_35_20250713163731.zip
+[2025-07-13 16:37:39,850] [INFO] [app:1731] - 用户 8 请求下载视频 36, 路径: workstore/user8/《金刚经》第六品 正信希有分/output.mp4
+[2025-07-13 16:37:39,850] [INFO] [app:1758] - 解析的基础目录: workstore/user8/《金刚经》第六品 正信希有分
+[2025-07-13 16:37:40,335] [INFO] [app:1772] - 已添加视频文件到ZIP: workstore/user8/《金刚经》第六品 正信希有分/output.mp4
+[2025-07-13 16:37:40,350] [INFO] [app:1784] - 已添加封面文件到ZIP: workstore/user8/《金刚经》第六品 正信希有分/covers/cover_3:4.png
+[2025-07-13 16:37:40,363] [INFO] [app:1784] - 已添加封面文件到ZIP: workstore/user8/《金刚经》第六品 正信希有分/covers/cover_4:3.png
+[2025-07-13 16:37:40,363] [INFO] [app:1793] - 开始下载，文件名: video_36_20250713163740.zip
+[2025-07-13 21:23:53,172] [INFO] [logger:55] - 百速一键AI视频生成应用正在启动... 时间: 2025-07-13 21:23:53
+[2025-07-13 21:23:53,173] [INFO] [logger:55] - 正在初始化数据库...
+[2025-07-13 21:23:54,268] [ERROR] [logger:62] - 应用启动失败: No module named 'service.voice_generate_service'
+[2025-07-13 21:28:20,647] [INFO] [logger:55] - 百速一键AI视频生成应用正在启动... 时间: 2025-07-13 21:28:20
+[2025-07-13 21:28:20,647] [INFO] [logger:55] - 正在初始化数据库...
+[2025-07-13 21:28:22,392] [INFO] [logger:55] - 数据库初始化完成
+[2025-07-13 21:28:22,392] [INFO] [logger:55] - 百速一键AI视频生成应用服务器已启动，监听端口: 5002
+[2025-07-13 21:28:22,715] [INFO] [logger:55] - 百速一键AI视频生成应用正在启动... 时间: 2025-07-13 21:28:22
+[2025-07-13 21:28:22,715] [INFO] [logger:55] - 正在初始化数据库...
+[2025-07-13 21:28:23,493] [INFO] [logger:55] - 数据库初始化完成
+[2025-07-13 21:28:23,493] [INFO] [logger:55] - 百速一键AI视频生成应用服务器已启动，监听端口: 5002
+[2025-07-13 21:29:05,990] [INFO] [logger:55] - 用户 admin 生成视频扣除了 1 条额度，剩余 92 条
+[2025-07-13 21:29:11,022] [ERROR] [logger:62] - 查询视频状态出错 - 视频ID: 37, 错误: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+[2025-07-13 21:29:42,616] [INFO] [logger:55] - 用户 admin 生成视频扣除了 1 条额度，剩余 92 条
+[2025-07-13 21:30:14,771] [ERROR] [logger:62] - 视频生成任务失败: 任务被用户主动取消
+[2025-07-13 21:33:25,021] [INFO] [logger:55] - 用户 admin 查看我的视频页面，共 4 个视频
+[2025-07-13 21:33:25,293] [INFO] [app:1935] - 请求 workstore 文件: user1/小红帽的森林奇遇/covers/cover_4:3.png
+[2025-07-13 21:33:25,293] [INFO] [app:1935] - 请求 workstore 文件: user1/白雪公主的童话/covers/cover_4:3.png
+[2025-07-13 21:33:25,295] [INFO] [app:1935] - 请求 workstore 文件: user1/纳什均衡解析/covers/cover_4:3.png
+[2025-07-13 21:34:27,315] [INFO] [logger:55] - 视频生成完成 - 项目: 停止按钮背后的故事, 视频: workstore/user1/停止按钮背后的故事/output.mp4
+[2025-07-13 21:34:44,815] [INFO] [logger:55] - 用户 admin 查看我的视频页面，共 4 个视频
+[2025-07-13 21:34:45,043] [INFO] [app:1935] - 请求 workstore 文件: user1/停止按钮背后的故事/covers/cover_4:3.png
+[2025-07-13 21:34:45,044] [INFO] [app:1935] - 请求 workstore 文件: user1/小红帽的森林奇遇/covers/cover_4:3.png
+[2025-07-13 21:34:45,044] [INFO] [app:1935] - 请求 workstore 文件: user1/白雪公主的童话/covers/cover_4:3.png
+[2025-07-13 21:34:45,047] [INFO] [app:1935] - 请求 workstore 文件: user1/纳什均衡解析/covers/cover_4:3.png
+[2025-07-13 21:34:59,158] [INFO] [app:1935] - 请求 workstore 文件: user1/停止按钮背后的故事/output.mp4
+[2025-07-13 21:34:59,163] [INFO] [app:1935] - 请求 workstore 文件: user1/停止按钮背后的故事/output.mp4
+[2025-07-13 21:34:59,167] [INFO] [app:1935] - 请求 workstore 文件: user1/停止按钮背后的故事/output.mp4
+[2025-07-13 21:34:59,169] [INFO] [app:1935] - 请求 workstore 文件: user1/停止按钮背后的故事/output.mp4
+[2025-07-13 21:35:03,861] [INFO] [app:1935] - 请求 workstore 文件: user1/停止按钮背后的故事/output.mp4
+[2025-07-13 21:35:40,850] [INFO] [app:1935] - 请求 workstore 文件: user1/停止按钮背后的故事/output.mp4
+[2025-07-13 21:35:40,853] [INFO] [app:1935] - 请求 workstore 文件: user1/停止按钮背后的故事/output.mp4
+[2025-07-13 21:35:44,747] [INFO] [app:1935] - 请求 workstore 文件: user1/停止按钮背后的故事/output.mp4
+[2025-07-13 21:35:46,525] [INFO] [app:1935] - 请求 workstore 文件: user1/停止按钮背后的故事/output.mp4
+[2025-07-13 21:35:46,530] [INFO] [app:1935] - 请求 workstore 文件: user1/停止按钮背后的故事/output.mp4
+[2025-07-13 21:35:48,154] [INFO] [app:1935] - 请求 workstore 文件: user1/停止按钮背后的故事/output.mp4
+[2025-07-13 21:35:49,414] [INFO] [app:1935] - 请求 workstore 文件: user1/停止按钮背后的故事/output.mp4
+[2025-07-13 21:35:49,420] [INFO] [app:1935] - 请求 workstore 文件: user1/停止按钮背后的故事/output.mp4
+[2025-07-13 21:35:50,944] [INFO] [app:1935] - 请求 workstore 文件: user1/停止按钮背后的故事/output.mp4
+[2025-07-13 21:35:51,952] [INFO] [app:1935] - 请求 workstore 文件: user1/停止按钮背后的故事/output.mp4
+[2025-07-13 21:35:51,955] [INFO] [app:1935] - 请求 workstore 文件: user1/停止按钮背后的故事/output.mp4
+[2025-07-13 21:50:50,878] [INFO] [logger:55] - 百速一键AI视频生成应用正在启动... 时间: 2025-07-13 21:50:50
+[2025-07-13 21:50:50,878] [INFO] [logger:55] - 正在初始化数据库...
+[2025-07-13 21:50:52,392] [INFO] [logger:55] - 数据库初始化完成
+[2025-07-13 21:50:52,392] [INFO] [logger:55] - 百速一键AI视频生成应用服务器已启动，监听端口: 5002
+[2025-07-13 21:55:52,109] [INFO] [logger:55] - 用户 admin 生成视频扣除了 1 条额度，剩余 91 条
+[2025-07-13 22:03:09,311] [INFO] [logger:55] - 视频生成完成 - 项目: 《金刚经》第八品 依法出生分, 视频: workstore/user1/《金刚经》第八品 依法出生分/output.mp4

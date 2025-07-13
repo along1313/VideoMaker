@@ -4,12 +4,32 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}百速AI一键生成短视频{% endblock %}</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        // 抑制Tailwind CDN生产环境警告
+        tailwind.config = {
+            corePlugins: {
+                preflight: false,
+            }
+        }
+    </script>
+    
+    <!-- Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    
+    <!-- Noto Sans SC 字体 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+    
     <!-- 引入Vue.js -->
     <script src="{{ url_for('static', filename='vendor/vue/vue.min.js') }}"></script>
     <!-- 引入Element UI -->
     <link rel="stylesheet" href="{{ url_for('static', filename='vendor/element-ui/index.css') }}">
     <script src="{{ url_for('static', filename='vendor/element-ui/index.js') }}"></script>
-    <!-- 引入Font Awesome -->
+    <!-- 引入Font Awesome (保留以备使用) -->
     <link rel="stylesheet" href="{{ url_for('static', filename='vendor/font-awesome/css/all.min.css') }}">
     <!-- 引入Axios -->
     <script src="{{ url_for('static', filename='vendor/axios/axios.min.js') }}"></script>
@@ -19,6 +39,79 @@
     <!-- Favicon设置 -->
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/icon.png') }}">
     <link rel="shortcut icon" type="image/png" href="{{ url_for('static', filename='img/icon.png') }}">
+    
+    <!-- 深色主题和毛玻璃效果样式 -->
+    <style>
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background-color: #0F172A;
+            color: #E2E8F0;
+        }
+        .bg-glass {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .btn-primary {
+            background: linear-gradient(90deg, #3B82F6, #8B5CF6);
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            box-shadow: 0 0 15px rgba(99, 102, 241, 0.6);
+        }
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+            border-color: #3B82F6;
+        }
+        
+        /* Element UI组件深色主题适配 */
+        .el-input__inner, .el-textarea__inner {
+            background-color: rgba(30, 41, 59, 0.5) !important;
+            border-color: #475569 !important;
+            color: #E2E8F0 !important;
+        }
+        
+        .el-input__inner:focus, .el-textarea__inner:focus {
+            border-color: #3B82F6 !important;
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2) !important;
+        }
+        
+        .el-button--primary {
+            background: linear-gradient(90deg, #3B82F6, #8B5CF6) !important;
+            border: none !important;
+        }
+        
+        .el-button--primary:hover {
+            box-shadow: 0 0 15px rgba(99, 102, 241, 0.6) !important;
+        }
+        
+        .el-dialog {
+            background-color: #1E293B !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        }
+        
+        .el-dialog__header {
+            background-color: #1E293B !important;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+        }
+        
+        .el-dialog__title {
+            color: #E2E8F0 !important;
+        }
+        
+        .el-checkbox__label {
+            color: #E2E8F0 !important;
+        }
+        
+        .el-switch__core {
+            background-color: #475569 !important;
+        }
+        
+        .el-switch.is-checked .el-switch__core {
+            background-color: #3B82F6 !important;
+        }
+    </style>
     
     <!-- 全局数据配置 - 现代化方式传递服务器端数据 -->
     <script type="application/json" id="global-config">
@@ -47,47 +140,60 @@
     
     {% block head %}{% endblock %}
 </head>
-<body>
+<body class="bg-slate-950 text-slate-300">
     <div id="app">
         <!-- 导航栏 -->
-        <el-header height="60px">
-            <nav class="navbar">
-                <div class="logo">
-                    <a href="{{ url_for('index') }}">
-                        <img src="{{ url_for('static', filename='img/logo.png') }}" alt="百速AI" class="logo-img">
-                    </a>
+        <header class="bg-slate-900/50 backdrop-blur-sm sticky top-0 z-50">
+            <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+                <div class="flex items-center space-x-2">
+                    <svg class="h-8 w-8 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M13 10V3L4 14h7v7l9-11h-7z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                    </svg>
+                    <span class="text-xl font-bold text-white">百速AI</span>
                 </div>
-                <div class="nav-links">
-                    <a href="{{ url_for('index') }}">首页</a>
+                <nav class="hidden md:flex items-center space-x-8 text-slate-300">
+                    <a class="hover:text-blue-400 transition-colors" href="{{ url_for('index') }}">首页</a>
                     {% if current_user.is_authenticated %}
-                        <a href="{{ url_for('my_videos') }}">我的视频</a>
-                        <a href="{{ url_for('profile') }}">个人中心</a>
+                        <a class="hover:text-blue-400 transition-colors" href="{{ url_for('my_videos') }}">我的视频</a>
+                        <a class="hover:text-blue-400 transition-colors" href="{{ url_for('profile') }}">个人中心</a>
                         {% if current_user.is_admin %}
-                            <a href="{{ url_for('admin_dashboard') }}">管理后台</a>
+                            <a class="hover:text-blue-400 transition-colors" href="{{ url_for('admin_dashboard') }}">管理后台</a>
                         {% endif %}
-                        <a href="{{ url_for('contact') }}">联系我们</a>
-                        <a href="{{ url_for('logout') }}">退出登录</a>
-                        <span class="credits">剩余额度: {{ current_user.credits }}条</span>
+                        <a class="hover:text-blue-400 transition-colors" href="{{ url_for('contact') }}">联系我们</a>
                     {% else %}
-                        <a href="{{ url_for('login') }}">登录</a>
-                        <a href="{{ url_for('register') }}">注册</a>
-                        <a href="{{ url_for('contact') }}">联系我们</a>
+                        <a class="hover:text-blue-400 transition-colors" href="{{ url_for('login') }}">登录</a>
+                        <a class="hover:text-blue-400 transition-colors" href="{{ url_for('register') }}">注册</a>
+                        <a class="hover:text-blue-400 transition-colors" href="{{ url_for('contact') }}">联系我们</a>
+                    {% endif %}
+                </nav>
+                <div class="flex items-center space-x-4">
+                    {% if current_user.is_authenticated %}
+                        <a class="text-slate-300 hover:text-white transition-colors" href="{{ url_for('logout') }}">退出登录</a>
+                        <div class="relative">
+                            <span class="absolute top-0 right-0 -mt-1 -mr-1 flex h-3 w-3">
+                                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                                <span class="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+                            </span>
+                            <button class="bg-green-500/20 text-green-300 px-4 py-2 rounded-full text-sm font-medium border border-green-500/30">
+                                剩余额度: {{ current_user.credits }}条
+                            </button>
+                        </div>
                     {% endif %}
                 </div>
-            </nav>
-        </el-header>
+            </div>
+        </header>
 
         <!-- 主要内容 -->
-        <el-main>
+        <main class="container mx-auto px-6 py-16">
             {% block content %}{% endblock %}
-        </el-main>
+        </main>
 
         <!-- 页脚 -->
-        <el-footer height="60px">
-            <div class="footer">
+        <footer class="bg-slate-900/50 mt-20 py-8">
+            <div class="container mx-auto px-6 text-center text-slate-400">
                 <p>&copy; 2025 百速AI一键生成短视频 - 让创意更简单</p>
             </div>
-        </el-footer>
+        </footer>
     </div>
 
     <!-- 全局Vue配置 - 现代化方式 -->
@@ -138,17 +244,24 @@
                     };
                 } else if (options.data && typeof options.data === 'object') {
                     options.data.$global = globalDataRef;
+                } else {
+                    // 如果没有data函数，创建一个
+                    options.data = function() {
+                        return {
+                            $global: globalDataRef
+                        };
+                    };
                 }
                 
-                // 添加beforeCreate钩子确保数据正确注入
-                const originalBeforeCreate = options.beforeCreate;
-                options.beforeCreate = function() {
-                    if (originalBeforeCreate) {
-                        originalBeforeCreate.call(this);
-                    }
+                // 使用mounted钩子确保数据正确注入
+                const originalMounted = options.mounted;
+                options.mounted = function() {
                     // 确保$global数据存在
                     if (!this.$data.$global) {
-                        this.$data.$global = globalDataRef;
+                        this.$set(this.$data, '$global', globalDataRef);
+                    }
+                    if (originalMounted) {
+                        originalMounted.call(this);
                     }
                 };
                 

@@ -11,7 +11,6 @@ from service.ai_service import LLMService, ImageModelService, TTSModelService, V
 from service.script_service import ScriptService
 from service.picture_prompt_service import PicturePromptService
 from service.picture_generate_service import PictureGenerateService
-from service.voice_generate_service import VoiceGenerateService
 from utility import parse_json, func_and_retry_parse_json
 from workflow import generate_picture_from_json, generate_audio, add_time, generate_video, generate_cover
 from static.style_config import TEMPLATE_CONFIG
@@ -219,46 +218,48 @@ async def run_work_flow_v3_with_progress(
             generation_status[task_id]['logs'].append(f"步骤{step}: {message}")
             print(f"[进度更新] 步骤{step}: {message} ({progress}%)")
 
+    def check_cancellation():
+        """检查任务是否被用户取消"""
+        if task_id and generation_status and task_id in generation_status:
+            if generation_status[task_id].get('status') == 'cancelled':
+                print(f"[工作流] 检测到任务被取消，任务ID: {task_id}")
+                raise Exception("任务被用户主动取消")
+
+    def cleanup_partial_files(project_dir):
+        """清理部分生成的文件"""
+        try:
+            if os.path.exists(project_dir):
+                import shutil
+                shutil.rmtree(project_dir)
+                print(f"[清理] 已删除部分生成的项目目录: {project_dir}")
+        except Exception as e:
+            print(f"[清理] 清理部分文件失败: {str(e)}")
+
     print(f"llm_model_str: {llm_model_str}")
     print(f"image_model_str: {image_model_str}")
     print(f"tts_model_str: {tts_model_str}")
     print(f"template: {template}")
     print(f"style: {style}")
-    
+
     try:
+        # 检查取消状态 - 开始前
+        check_cancellation()
+        
         update_progress(1, '正在撰写脚本', 10)
         print(f'#####Work Flow 1 生成视频脚本json####')
+        
+        # 实例化服务
         llm = LLMService(model_str=llm_model_str)
         script_service = ScriptService(llm)
         
-        # 检查模式并生成脚本（使用异步调用避免阻塞）
-        print(f"开始生成脚本，模式: {'提示词' if is_prompt_mode else '文案'}")
-        if is_prompt_mode:
-            print(f"调用 generate_json_script_from_prompt，输入: {text[:100]}...")
-            work_flow_record = await asyncio.to_thread(script_service.generate_json_script_from_prompt, text)
-            print(f"generate_json_script_from_prompt 完成，返回长度: {len(work_flow_record) if work_flow_record else 0}")
+        # 生成脚本
+        if is_prompt_mode == True:
+            work_flow_record = await func_and_retry_parse_json(text, script_service.generate_json_script_from_prompt, json_retry_times)
         else:
-            print(f"调用 generate_json_script_from_text，输入: {text[:100]}...")
-            work_flow_record = await asyncio.to_thread(script_service.generate_json_script_from_text, text)
-            print(f"generate_json_script_from_text 完成，返回长度: {len(work_flow_record) if work_flow_record else 0}")
+            work_flow_record = await func_and_retry_parse_json(text, script_service.generate_json_script_from_text, json_retry_times)
         
-        print(f"开始解析JSON...")
-        # 解析JSON
-        try:
-            work_flow_record = parse_json(work_flow_record)
-            print(f"JSON解析成功")
-            if work_flow_record is None:
-                raise Exception("解析返回None")
-        except Exception as e:
-            print(f'首次结构化失败: {str(e)}, 开始重试')
-            # 使用重试机制
-            if is_prompt_mode:
-                work_flow_record = await func_and_retry_parse_json(text, script_service.generate_json_script_from_prompt, json_retry_times)
-            else:
-                work_flow_record = await func_and_retry_parse_json(text, script_service.generate_json_script_from_text, json_retry_times)
-            
-            if work_flow_record is None:
-                raise Exception(f'脚本结构化失败，重试{json_retry_times}次后仍然失败')
+        # 检查取消状态 - 脚本生成后
+        check_cancellation()
         
         print(work_flow_record)
         
@@ -305,6 +306,9 @@ async def run_work_flow_v3_with_progress(
         with open(os.path.join(project_dir, "work_flow_record.json"), "w") as f:
             json.dump(work_flow_record, f, ensure_ascii=False)
 
+        # 检查取消状态 - 图片生成前
+        check_cancellation()
+        
         update_progress(2, '正在制作图片', 30)
         print(f'#####Work Flow 2 图片生成####')
         # 创建图片目录
@@ -328,6 +332,9 @@ async def run_work_flow_v3_with_progress(
         with open(os.path.join(project_dir, "work_flow_record.json"), "w") as f:
             json.dump(work_flow_record, f, ensure_ascii=False)
 
+        # 检查取消状态 - 音频生成前
+        check_cancellation()
+        
         update_progress(3, '正在录制语音', 50)
         print(f'#####Work Flow 3 生成音频####')
         # 创建音频目录
@@ -347,6 +354,9 @@ async def run_work_flow_v3_with_progress(
         with open(os.path.join(project_dir, "work_flow_record.json"), "w") as f:
             json.dump(work_flow_record, f, ensure_ascii=False)
 
+        # 检查取消状态 - 时间轴处理前
+        check_cancellation()
+        
         #update_progress(4, '正在处理素材', 70)
         print(f'#####Work Flow 4 添加时间####')
         work_flow_record = add_time(work_flow_record, audio_dir, gap=1.0)
@@ -354,6 +364,9 @@ async def run_work_flow_v3_with_progress(
         with open(os.path.join(project_dir, "work_flow_record.json"), "w") as f:
             json.dump(work_flow_record, f, ensure_ascii=False)
 
+        # 检查取消状态 - 视频生成前
+        check_cancellation()
+        
         update_progress(4, '正在剪辑视频', 85)
         print(f'#####Work Flow 5 视频生成####')
         # 生成视频
@@ -370,6 +383,9 @@ async def run_work_flow_v3_with_progress(
                        is_need_ad_end=is_need_ad_end)   
         print(f'视频生成完成')
 
+        # 检查取消状态 - 封面生成前
+        check_cancellation()
+        
         update_progress(5, '正在制作封面', 95)
         print(f'#####Work Flow 6 封面生成####')
         # 创建封面目录
@@ -386,8 +402,21 @@ async def run_work_flow_v3_with_progress(
         return work_flow_record
         
     except Exception as e:
+        error_message = str(e)
+        if "取消" in error_message:
+            print(f"[工作流] 任务被用户取消: {error_message}")
+            # 清理部分生成的文件
+            if 'project_dir' in locals():
+                cleanup_partial_files(project_dir)
+        else:
+            print(f"[工作流] 生成过程中发生错误: {error_message}")
+        
         if task_id and generation_status and task_id in generation_status:
-            generation_status[task_id]['status'] = 'failed'
-            generation_status[task_id]['message'] = f'生成失败: {str(e)}'
+            if "取消" in error_message:
+                generation_status[task_id]['status'] = 'cancelled'
+                generation_status[task_id]['message'] = '用户主动停止生成'
+            else:
+                generation_status[task_id]['status'] = 'failed'
+                generation_status[task_id]['message'] = f'生成失败: {error_message}'
         raise e
 

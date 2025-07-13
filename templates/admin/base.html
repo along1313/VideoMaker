@@ -4,123 +4,261 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}管理后台{% endblock %}</title>
-    <link href="{{ url_for('static', filename='vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
-    <link rel="stylesheet" href="{{ url_for('static', filename='vendor/bootstrap-icons/bootstrap-icons.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='vendor/font-awesome/css/all.min.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    
+    <!-- Noto Sans SC 字体 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- 引入Element UI -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='vendor/element-ui/index.css') }}">
+    <script src="{{ url_for('static', filename='vendor/vue/vue.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='vendor/element-ui/index.js') }}"></script>
+    <!-- 引入Axios -->
+    <script src="{{ url_for('static', filename='vendor/axios/axios.min.js') }}"></script>
+    
+    <!-- 深色主题样式 -->
     <style>
-        .sidebar {
-            min-height: calc(100vh - 56px);
-            background-color: #f8f9fa;
-            padding: 20px 0;
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background-color: #0F172A;
+            color: #E2E8F0;
         }
-        .nav-link {
-            color: #333;
-            border-radius: 0.25rem;
-            margin: 2px 0;
+        .bg-glass {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
-        .nav-link:hover, .nav-link.active {
-            background-color: #e9ecef;
-            color: #0d6efd;
+        .sidebar-glass {
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
-        .sidebar-sticky {
-            position: -webkit-sticky;
-            position: sticky;
-            top: 1rem;
+        
+        /* Element UI 深色主题适配 */
+        .el-input__inner, .el-textarea__inner, .el-select .el-input__inner {
+            background-color: rgba(30, 41, 59, 0.5) !important;
+            border-color: #475569 !important;
+            color: #E2E8F0 !important;
+        }
+        
+        .el-input__inner:focus, .el-textarea__inner:focus {
+            border-color: #3B82F6 !important;
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2) !important;
+        }
+        
+        .el-button--primary {
+            background: linear-gradient(90deg, #3B82F6, #8B5CF6) !important;
+            border: none !important;
+        }
+        
+        .el-table {
+            background-color: transparent !important;
+            color: #E2E8F0 !important;
+        }
+        
+        .el-table th, .el-table td {
+            background-color: transparent !important;
+            border-color: #475569 !important;
+            color: #E2E8F0 !important;
+        }
+        
+        .el-table__header {
+            background-color: rgba(30, 41, 59, 0.5) !important;
+        }
+        
+        .el-table--striped .el-table__body tr.el-table__row--striped td {
+            background-color: rgba(30, 41, 59, 0.3) !important;
+        }
+        
+        .el-table__body tr:hover td {
+            background-color: rgba(59, 130, 246, 0.1) !important;
+        }
+        
+        .el-pagination {
+            color: #E2E8F0 !important;
+        }
+        
+        .el-pagination button {
+            background-color: rgba(30, 41, 59, 0.5) !important;
+            color: #E2E8F0 !important;
+            border-color: #475569 !important;
+        }
+        
+        .el-pagination .el-pager li {
+            background-color: rgba(30, 41, 59, 0.5) !important;
+            color: #E2E8F0 !important;
+            border-color: #475569 !important;
+        }
+        
+        .el-pagination .el-pager li.active {
+            background-color: #3B82F6 !important;
+            color: white !important;
+        }
+        
+        .el-tag {
+            background-color: rgba(59, 130, 246, 0.2) !important;
+            border-color: #3B82F6 !important;
+            color: #3B82F6 !important;
+        }
+        
+        .el-dialog {
+            background-color: #1E293B !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        }
+        
+        .el-dialog__header {
+            background-color: #1E293B !important;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+        }
+        
+        .el-dialog__title {
+            color: #E2E8F0 !important;
+        }
+        
+        .el-alert {
+            background-color: rgba(59, 130, 246, 0.1) !important;
+            border: 1px solid rgba(59, 130, 246, 0.3) !important;
+            color: #E2E8F0 !important;
+        }
+        
+        .el-alert--success {
+            background-color: rgba(16, 185, 129, 0.1) !important;
+            border-color: #10B981 !important;
+        }
+        
+        .el-alert--warning {
+            background-color: rgba(245, 158, 11, 0.1) !important;
+            border-color: #F59E0B !important;
+        }
+        
+        .el-alert--error {
+            background-color: rgba(239, 68, 68, 0.1) !important;
+            border-color: #EF4444 !important;
         }
     </style>
     {% block extra_css %}{% endblock %}
 </head>
-<body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="{{ url_for('admin_dashboard') }}">视频生成系统 - 管理后台</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
+<body class="bg-slate-950 text-slate-300">
+    <!-- 顶部导航栏 -->
+    <nav class="bg-slate-900/50 backdrop-blur-sm sticky top-0 z-50 border-b border-slate-700">
+        <div class="px-6 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    <div class="flex items-center space-x-2">
+                        <span class="material-icons text-blue-400 text-2xl">admin_panel_settings</span>
+                        <h1 class="text-xl font-bold text-white">百速AI 管理后台</h1>
+                    </div>
+                </div>
+                
+                <div class="flex items-center space-x-4">
+                    <a href="{{ url_for('index') }}" target="_blank" 
+                       class="flex items-center space-x-2 text-slate-300 hover:text-blue-400 transition-colors">
+                        <span class="material-icons">home</span>
+                        <span>前台首页</span>
+                    </a>
+                    
+                    <div class="relative group">
+                        <button class="flex items-center space-x-2 text-slate-300 hover:text-white transition-colors">
+                            <span class="material-icons">account_circle</span>
+                            <span>{{ current_user.username }}</span>
+                            <span class="material-icons text-sm">keyboard_arrow_down</span>
             </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('index') }}" target="_blank">
-                            <i class="bi bi-house-door"></i> 前台首页
+                        <div class="absolute right-0 mt-2 w-48 bg-glass rounded-lg shadow-xl border border-slate-600 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+                            <div class="py-2">
+                                <a href="{{ url_for('profile') }}" class="block px-4 py-2 text-slate-300 hover:text-white hover:bg-slate-700/50 transition-colors">
+                                    <span class="material-icons mr-2 text-sm">person</span>个人中心
                         </a>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
-                            <i class="bi bi-person-circle"></i> {{ current_user.username }}
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end">
-                            <li><a class="dropdown-item" href="{{ url_for('profile') }}">个人中心</a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="{{ url_for('logout') }}">退出登录</a></li>
-                        </ul>
-                    </li>
-                </ul>
+                                <hr class="border-slate-600 my-1">
+                                <a href="{{ url_for('logout') }}" class="block px-4 py-2 text-slate-300 hover:text-white hover:bg-slate-700/50 transition-colors">
+                                    <span class="material-icons mr-2 text-sm">logout</span>退出登录
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </nav>
 
-    <div class="container-fluid">
-        <div class="row">
+    <div class="flex min-h-screen">
             <!-- 侧边栏 -->
-            <div class="col-md-2 d-none d-md-block sidebar">
-                <div class="sidebar-sticky">
-                    <ul class="nav flex-column">
-                        <li class="nav-item">
-                            <a class="nav-link {% if request.endpoint == 'admin_dashboard' %}active{% endif %}" 
-                               href="{{ url_for('admin_dashboard') }}">
-                                <i class="bi bi-speedometer2"></i> 控制面板
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link {% if request.endpoint == 'admin_users' %}active{% endif %}" 
-                               href="{{ url_for('admin_users') }}">
-                                <i class="bi bi-people me-2"></i>用户管理
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link {% if request.endpoint == 'admin_videos' %}active{% endif %}" href="{{ url_for('admin_videos') }}">
-                                <i class="bi bi-film me-2"></i>视频管理
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link {% if request.endpoint == 'admin_messages' %}active{% endif %}" href="{{ url_for('admin_messages') }}">
-                                <i class="bi bi-chat-left-text me-2"></i>留言管理
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">
-                                <i class="bi bi-credit-card"></i> 充值记录
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">
-                                <i class="bi bi-gear"></i> 系统设置
-                            </a>
-                        </li>
-                    </ul>
+        <div class="w-64 sidebar-glass border-r border-slate-700">
+            <div class="p-6">
+                <nav class="space-y-2">
+                    <a href="{{ url_for('admin_dashboard') }}" 
+                       class="flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 {% if request.endpoint == 'admin_dashboard' %}bg-blue-500/20 text-blue-400 border border-blue-500/30{% else %}text-slate-300 hover:bg-slate-700/50 hover:text-white{% endif %}">
+                        <span class="material-icons">dashboard</span>
+                        <span>控制面板</span>
+                    </a>
+                    
+                    <a href="{{ url_for('admin_users') }}" 
+                       class="flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 {% if request.endpoint == 'admin_users' %}bg-blue-500/20 text-blue-400 border border-blue-500/30{% else %}text-slate-300 hover:bg-slate-700/50 hover:text-white{% endif %}">
+                        <span class="material-icons">people</span>
+                        <span>用户管理</span>
+                    </a>
+                    
+                    <a href="{{ url_for('admin_videos') }}" 
+                       class="flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 {% if request.endpoint == 'admin_videos' %}bg-blue-500/20 text-blue-400 border border-blue-500/30{% else %}text-slate-300 hover:bg-slate-700/50 hover:text-white{% endif %}">
+                        <span class="material-icons">video_library</span>
+                        <span>视频管理</span>
+                    </a>
+                    
+                    <a href="{{ url_for('admin_messages') }}" 
+                       class="flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 {% if request.endpoint == 'admin_messages' %}bg-blue-500/20 text-blue-400 border border-blue-500/30{% else %}text-slate-300 hover:bg-slate-700/50 hover:text-white{% endif %}">
+                        <span class="material-icons">message</span>
+                        <span>留言管理</span>
+                    </a>
+                    
+                    <a href="#" 
+                       class="flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 text-slate-300 hover:bg-slate-700/50 hover:text-white">
+                        <span class="material-icons">payment</span>
+                        <span>充值记录</span>
+                    </a>
+                    
+                    <a href="#" 
+                       class="flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 text-slate-300 hover:bg-slate-700/50 hover:text-white">
+                        <span class="material-icons">settings</span>
+                        <span>系统设置</span>
+                    </a>
+                </nav>
                 </div>
             </div>
 
             <!-- 主内容区 -->
-            <main class="col-md-10 ms-sm-auto px-4 py-4">
+        <main class="flex-1 p-6">
                 {% with messages = get_flashed_messages(with_categories=true) %}
                     {% if messages %}
+                    <div class="mb-6 space-y-4">
                         {% for category, message in messages %}
-                            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
-                                {{ message }}
-                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            <div class="bg-blue-500/10 border border-blue-500/30 rounded-lg p-4 flex items-center space-x-3
+                                {% if category == 'success' %}bg-green-500/10 border-green-500/30{% endif %}
+                                {% if category == 'warning' %}bg-yellow-500/10 border-yellow-500/30{% endif %}
+                                {% if category == 'error' %}bg-red-500/10 border-red-500/30{% endif %}">
+                                <span class="material-icons 
+                                    {% if category == 'success' %}text-green-400{% elif category == 'warning' %}text-yellow-400{% elif category == 'error' %}text-red-400{% else %}text-blue-400{% endif %}">
+                                    {% if category == 'success' %}check_circle{% elif category == 'warning' %}warning{% elif category == 'error' %}error{% else %}info{% endif %}
+                                </span>
+                                <span class="text-slate-300">{{ message }}</span>
+                                <button onclick="this.parentElement.remove()" class="ml-auto text-slate-400 hover:text-white">
+                                    <span class="material-icons">close</span>
+                                </button>
                             </div>
                         {% endfor %}
+                    </div>
                     {% endif %}
                 {% endwith %}
 
                 {% block content %}{% endblock %}
             </main>
-        </div>
     </div>
 
-    <script src="{{ url_for('static', filename='vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
     <script src="{{ url_for('static', filename='vendor/chart.js/chart.umd.js') }}"></script>
     {% block extra_js %}{% endblock %}
 </body>

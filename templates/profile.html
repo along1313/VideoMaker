@@ -3,61 +3,78 @@
 {% block title %}个人中心 - 百速AI一键生成短视频{% endblock %}
 
 {% block content %}
-<div class="profile-container">
-    <div class="profile-card">
-        <h2>个人中心</h2>
+<div class="profile-container max-w-4xl mx-auto">
+    <div class="bg-glass rounded-2xl p-8 shadow-2xl shadow-slate-900/50 mb-8">
+        <h2 class="text-3xl font-bold text-white mb-8 text-center">个人中心</h2>
         
-        <div class="user-info">
-            <div class="info-item">
-                <span class="label">用户名：</span>
-                <span class="value">{{ current_user.username }}</span>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            <div class="space-y-4">
+                <div class="flex items-center space-x-3">
+                    <span class="material-icons text-blue-400">person</span>
+                    <span class="text-slate-300 w-20">用户名：</span>
+                    <span class="text-white font-medium">{{ current_user.username }}</span>
+                </div>
+                <div class="flex items-center space-x-3">
+                    <span class="material-icons text-blue-400">email</span>
+                    <span class="text-slate-300 w-20">邮箱：</span>
+                    <span class="text-white font-medium">{{ current_user.email }}</span>
             </div>
-            <div class="info-item">
-                <span class="label">邮箱：</span>
-                <span class="value">{{ current_user.email }}</span>
+                <div class="flex items-center space-x-3">
+                    <span class="material-icons text-green-400">credit_card</span>
+                    <span class="text-slate-300 w-20">剩余额度：</span>
+                    <span class="text-green-400 font-bold text-lg">{{ current_user.credits }} 条</span>
             </div>
-            <div class="info-item">
-                <span class="label">剩余视频额度：</span>
-                <span class="value credits">{{ current_user.credits }} 条</span>
             </div>
-            <div class="info-item">
-                <span class="label">会员状态：</span>
-                <span class="value">
+            
+            <div class="space-y-4">
+                <div class="flex items-center space-x-3">
+                    <span class="material-icons text-purple-400">star</span>
+                    <span class="text-slate-300 w-20">会员状态：</span>
+                    <div class="flex flex-col">
                     {% if current_user.is_current_vip %}
-                        <span class="vip-badge">VIP会员</span>
+                            <span class="bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-3 py-1 rounded-full text-sm font-semibold inline-block w-fit">VIP会员</span>
                         {% if current_user.vip_expires_at %}
-                            <span class="vip-expire-info">到期时间：{{ current_user.vip_expires_at.strftime('%Y-%m-%d %H:%M') }}</span>
+                                <span class="text-slate-400 text-sm mt-1">到期时间：{{ current_user.vip_expires_at.strftime('%Y-%m-%d %H:%M') }}</span>
                         {% endif %}
                     {% else %}
-                        <span class="normal-badge">普通用户</span>
+                            <span class="bg-slate-600 text-white px-3 py-1 rounded-full text-sm font-semibold inline-block w-fit">普通用户</span>
                         {% if current_user.vip_expires_at %}
-                            <span class="vip-expired-info">VIP已于 {{ current_user.vip_expires_at.strftime('%Y-%m-%d') }} 过期</span>
+                                <span class="text-red-400 text-sm mt-1">VIP已于 {{ current_user.vip_expires_at.strftime('%Y-%m-%d') }} 过期</span>
+                            {% endif %}
                         {% endif %}
-                    {% endif %}
-                </span>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-3">
+                    <span class="material-icons text-blue-400">schedule</span>
+                    <span class="text-slate-300 w-20">注册时间：</span>
+                    <span class="text-white font-medium">{{ current_user.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</span>
             </div>
-            <div class="info-item">
-                <span class="label">注册时间：</span>
-                <span class="value">{{ current_user.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</span>
             </div>
         </div>
         
-        <div class="action-buttons">
-            <button class="el-button el-button--primary" onclick="window.location.href='{{ url_for('recharge') }}';">充值视频额度</button>
-            <button class="el-button el-button--info" onclick="window.location.href='{{ url_for('my_videos') }}';">查看我的视频</button>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+            <a href="{{ url_for('recharge') }}" class="btn-primary text-white font-bold py-3 px-8 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 inline-flex items-center justify-center space-x-2 no-underline">
+                <span class="material-icons">payment</span>
+                <span>充值视频额度</span>
+            </a>
+            <a href="{{ url_for('my_videos') }}" class="bg-slate-700 hover:bg-slate-600 text-white font-bold py-3 px-8 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 inline-flex items-center justify-center space-x-2 no-underline">
+                <span class="material-icons">video_library</span>
+                <span>查看我的视频</span>
+            </a>
         </div>
     </div>
     
     <!-- 标签页 -->
-    <div class="profile-tabs">
-        <el-tabs v-model="activeTab" @tab-click="handleTabClick">
+    <div class="bg-glass rounded-2xl p-8 shadow-2xl shadow-slate-900/50">
+        <el-tabs v-model="activeTab" @tab-click="handleTabClick" class="profile-tabs">
             <el-tab-pane label="充值记录" name="recharge">
                 <div class="tab-content">
                     <el-table
                         :data="payments"
                         style="width: 100%"
                         v-if="payments.length > 0"
-                        :loading="paymentsLoading">
+                        :loading="paymentsLoading"
+                        class="dark-table">
                         <el-table-column
                             prop="created_at"
                             label="充值时间"
@@ -83,7 +100,10 @@
                     </el-table>
                     
                     <div class="empty-data" v-else-if="!paymentsLoading">
-                        <p>暂无充值记录</p>
+                        <div class="text-center py-16">
+                            <span class="material-icons text-6xl text-slate-500 mb-4 block">receipt_long</span>
+                            <p class="text-slate-400 text-lg">暂无充值记录</p>
+                        </div>
                     </div>
                 </div>
             </el-tab-pane>
@@ -94,7 +114,8 @@
                         :data="usageRecords"
                         style="width: 100%"
                         v-if="usageRecords.length > 0"
-                        :loading="usageLoading">
+                        :loading="usageLoading"
+                        class="dark-table">
                         <el-table-column
                             prop="created_at"
                             label="使用时间"
@@ -120,7 +141,7 @@
                             label="消耗额度"
                             width="100">
                             <template slot-scope="scope">
-                                <span class="credits-used">-<span v-text="scope.row.credits_used"></span> 条</span>
+                                <span class="text-red-400 font-semibold">-<span v-text="scope.row.credits_used"></span> 条</span>
                             </template>
                         </el-table-column>
                         <el-table-column
@@ -136,7 +157,10 @@
                     </el-table>
                     
                     <div class="empty-data" v-else-if="!usageLoading">
-                        <p>暂无使用记录</p>
+                        <div class="text-center py-16">
+                            <span class="material-icons text-6xl text-slate-500 mb-4 block">history</span>
+                            <p class="text-slate-400 text-lg">暂无使用记录</p>
+                        </div>
                     </div>
                 </div>
             </el-tab-pane>
@@ -216,67 +240,77 @@
 </script>
 
 <style>
-.profile-tabs {
-    background-color: #fff;
-    border-radius: var(--border-radius);
-    box-shadow: var(--box-shadow);
-    padding: 20px;
-    margin-top: 20px;
+/* Element UI Tabs 深色主题适配 */
+.profile-tabs .el-tabs__header {
+    border-bottom: 1px solid var(--slate-700) !important;
+    margin-bottom: 20px;
+}
+
+.profile-tabs .el-tabs__nav-wrap::after {
+    background-color: var(--slate-700) !important;
+}
+
+.profile-tabs .el-tabs__item {
+    color: var(--slate-400) !important;
+    font-weight: 500;
+    padding: 0 20px;
+}
+
+.profile-tabs .el-tabs__item:hover {
+    color: var(--primary-color) !important;
+}
+
+.profile-tabs .el-tabs__item.is-active {
+    color: var(--primary-color) !important;
+    font-weight: 600;
+}
+
+.profile-tabs .el-tabs__active-bar {
+    background-color: var(--primary-color) !important;
+}
+
+/* Element UI Tags 深色主题适配 */
+.el-tag--success {
+    background-color: rgba(16, 185, 129, 0.2) !important;
+    border-color: var(--success-color) !important;
+    color: var(--success-color) !important;
+}
+
+.el-tag--warning {
+    background-color: rgba(245, 158, 11, 0.2) !important;
+    border-color: var(--warning-color) !important;
+    color: var(--warning-color) !important;
+}
+
+.el-tag--danger {
+    background-color: rgba(239, 68, 68, 0.2) !important;
+    border-color: var(--danger-color) !important;
+    color: var(--danger-color) !important;
+}
+
+.el-tag--info {
+    background-color: rgba(6, 182, 212, 0.2) !important;
+    border-color: var(--info-color) !important;
+    color: var(--info-color) !important;
 }
 
 .tab-content {
     margin-top: 20px;
 }
 
-.vip-badge {
-    background: linear-gradient(45deg, #ff6b6b, #feca57);
-    color: white;
-    padding: 4px 12px;
-    border-radius: 15px;
-    font-size: 0.85rem;
-    font-weight: 600;
-    text-shadow: 0 1px 2px rgba(0,0,0,0.2);
-}
-
-.normal-badge {
-    background: #95a5a6;
-    color: white;
-    padding: 4px 12px;
-    border-radius: 15px;
-    font-size: 0.85rem;
-    font-weight: 600;
-}
-
-.credits-used {
-    color: #e74c3c;
-    font-weight: 600;
-}
-
 .empty-data {
-    text-align: center;
-    padding: 60px 20px;
-    color: #999;
-    background: #f8f9fa;
-    border-radius: 8px;
+    background: rgba(30, 41, 59, 0.3) !important;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.empty-data p {
-    margin: 0;
-    font-size: 16px;
+/* 链接样式修复 */
+a.no-underline {
+    text-decoration: none !important;
 }
 
-.vip-expire-info {
-    display: block;
-    font-size: 0.8rem;
-    color: #666;
-    margin-top: 4px;
-}
-
-.vip-expired-info {
-    display: block;
-    font-size: 0.8rem;
-    color: #e74c3c;
-    margin-top: 4px;
+a.no-underline:hover {
+    text-decoration: none !important;
 }
 </style>
 {% endblock %}

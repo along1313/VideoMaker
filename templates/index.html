@@ -5,67 +5,78 @@
 {% block content %}
 <div class="home-container">
     <!-- 标题区域 -->
-    <div class="hero-section">
-        <h1 class="main-title">百速AI一键生成短视频</h1>
-        <div class="subtitle">输入提示词或者文案，选择模板和风格，一键生成视频</div>
-        <div class="subtitle">实现视频账号快速起号，一人运营海量视频账号</div>
-    </div>
+    <section class="text-center mb-16">
+        <h1 class="text-5xl md:text-6xl font-bold text-white mb-4">
+            <span class="bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500">
+                百速AI
+            </span>
+            一键生成短视频
+        </h1>
+        <p class="text-lg text-slate-400 max-w-2xl mx-auto">输入提示词或者文案，选择模板和风格，一键生成视频</p>
+        <p class="text-lg text-slate-400 max-w-2xl mx-auto">实现视频账号快速起号，一人运营海量视频账号</p>
+    </section>
 
-    <!-- 输入区域（新位置，标题下方） -->
-    <div class="input-area-rebuild">
-        <div class="input-area-box">
-            <!-- 模式切换（移到上面） -->
-            <div class="input-mode-switch-bar">
-                <span :class="['mode-label', { 'active': inputMode === 'prompt', 'disabled': selectedTemplate === '读一本书' }]">提示词</span>
-                <el-switch
-                    v-model="inputMode"
-                    active-value="script"
-                    inactive-value="prompt"
-                    @change="onModeChange"
+    <!-- 输入区域 -->
+    <section class="bg-glass rounded-2xl p-8 max-w-4xl mx-auto shadow-2xl shadow-slate-900/50 mb-20">
+        <div class="flex border-b border-slate-700 mb-6">
+            <button :class="['py-3 px-6 font-medium border-b-2 transition-colors tab-button',
+                           inputMode === 'prompt' ? 'text-white border-blue-500' : 'text-slate-400 hover:text-white border-transparent',
+                           selectedTemplate === '读一本书' ? 'opacity-50 cursor-not-allowed' : '']"
+                    @click="selectedTemplate !== '读一本书' ? (inputMode = 'prompt') : null"
                     :disabled="selectedTemplate === '读一本书'"
-                    class="mode-toggle">
-                </el-switch>
-                <span :class="['mode-label', { 'active': inputMode === 'script', 'disabled': selectedTemplate === '读一本书' }]">文案</span>
+                    style="background: transparent !important; border-radius: 0 !important; box-shadow: none !important;">
+                提示词
+            </button>
+            <button :class="['py-3 px-6 font-medium border-b-2 transition-colors tab-button',
+                           inputMode === 'script' ? 'text-white border-blue-500' : 'text-slate-400 hover:text-white border-transparent',
+                           selectedTemplate === '读一本书' ? 'opacity-50 cursor-not-allowed' : '']"
+                    @click="selectedTemplate !== '读一本书' ? (inputMode = 'script') : null"
+                    :disabled="selectedTemplate === '读一本书'"
+                    style="background: transparent !important; border-radius: 0 !important; box-shadow: none !important;">
+                文案
+            </button>
             </div>
             
-            <!-- 输入框及齿轮 -->
-            <div class="input-box-with-gear">
+        <div class="relative">
                 <el-input
                     type="textarea"
                     :rows="inputMode === 'prompt' ? 3 : 6"
-                    :placeholder="inputMode === 'prompt' ? '请输入视频内容提示词快速生成视频，例如：生成一个关于减轻压力的心理学的视频，选择一个安徒生童话生成视频' : '请将撰写好的文案粘贴到文本框中生成视频'"
+                :placeholder="inputMode === 'prompt' ? '请输入提示词一键生成短视频，例如：生成一个解释纳什均衡的视频，视频标题为《解读纳什均衡》，开头先解释什么是纳什均衡' : '请将撰写好的文案粘贴到文本框中生成视频'"
                     v-model="prompt"
                     :class="['prompt-input', { 'small-font': prompt.length > 80 }]"
                     @input="onPromptInput">
                 </el-input>
-                <span class="gear-icon" @click="toggleSettings">
-                    <i class="fas fa-cog"></i>
+            <span class="material-icons absolute top-4 right-4 cursor-pointer hover:text-blue-400 transition-colors z-10"
+                  @click="toggleSettings"
+                  style="color: #94a3b8 !important; font-size: 1.5rem !important;">
+                settings
                 </span>
             </div>
             
             <!-- 额度预估提示 -->
-            <div v-if="shouldShowCreditsWarning" class="credits-warning">
-                <i class="fas fa-info-circle"></i>
+        <div v-if="shouldShowCreditsWarning" class="mt-4 flex items-center text-amber-400 text-sm">
+            <span class="material-icons mr-2 text-base">info</span>
                 <span>*预计会扣取<span v-text="estimatedCredits"></span>条额度（当前文案<span v-text="prompt.length"></span>字）</span>
             </div>
             
-            <!-- 读一本书额外输入 - 新布局 -->
-            <div v-if="selectedTemplate === '读一本书'" class="book-extra-section">
-                <div class="book-input-item">
-                    <span class="book-input-label">1. 请上传书籍封面</span>
-                    <label class="book-cover-upload-btn" for="bookCoverInput">
-                        <i class="fas fa-upload"></i>
+        <!-- 读一本书额外输入 -->
+        <div v-if="selectedTemplate === '读一本书'" class="mt-6 space-y-6">
+            <div class="bg-slate-800/30 rounded-xl p-6">
+                <div class="mb-4">
+                    <span class="text-white font-medium block mb-3">1. 请上传书籍封面</span>
+                    <label class="inline-flex items-center px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg cursor-pointer transition-colors" for="bookCoverInput">
+                        <span class="material-icons mr-2">upload</span>
                         选择封面
                     </label>
                     <input type="file" id="bookCoverInput" @change="handleBookCoverChange" accept="image/*" style="display: none;">
                 </div>
-                <div v-if="bookCoverUrl" class="book-cover-preview">
-                    <img :src="bookCoverUrl" alt="书籍封面">
-                    <span class="cover-name">已选择封面</span>
+                <div v-if="bookCoverUrl" class="flex items-center space-x-3 p-3 bg-slate-700/50 rounded-lg">
+                    <img :src="bookCoverUrl" alt="书籍封面" class="w-12 h-16 object-cover rounded">
+                    <span class="text-green-300">已选择封面</span>
                 </div>
                 
-                <div class="book-input-item">
-                    <span class="book-input-label">2. 请输入书名</span>
+                <div class="mt-6">
+                    <span class="text-white font-medium block mb-3">2. 请输入书名</span>
                     <el-input
                         v-model="bookTitle"
                         placeholder="请输入书本名称"
@@ -75,9 +86,9 @@
             </div>
         </div>
         
-        <!-- 生成按钮（移到输入框外的右下方） -->
-        <div class="generate-btn-container">
-            <el-button type="primary" size="medium" @click="generateVideo" :loading="isGenerating" :disabled="!canGenerate || isGenerating">
+        <div class="text-center mt-8">
+            <el-button type="primary" size="medium" @click="generateVideo" :loading="isGenerating" :disabled="!canGenerate || isGenerating"
+                       class="btn-primary text-white font-bold py-3 px-12 rounded-full text-lg shadow-lg">
                 <span v-if="isGenerating">生成中...</span>
                 <span v-else>生成视频</span>
             </el-button>
@@ -108,10 +119,10 @@
                     <div class="username-row">
                         <span class="username-label">@</span>
                         <el-input
-                            v-model="userName"
+                            :value="displayUserName"
+                            @input="handleUserNameInput"
                             :placeholder="isVipUser ? '账号名称' : ''"
                             :disabled="!isVipUser || !showUserName"
-                            :value="!isVipUser ? '百速AI' : userName"
                             class="username-input"
                             :class="{ 'disabled': !isVipUser || !showUserName }">
                         </el-input>
@@ -120,99 +131,110 @@
                 </div>
             </div>
         </el-dialog>
-    </div>
+    </section>
 
     <!-- 模板选择区域 -->
-    <div class="template-section centered">
-        <h3>选择视频模板</h3>
-        <div class="template-slider-container">
-            <div class="slider-nav slider-nav-left" @click="scrollTemplateLeft">
-                <i class="fas fa-chevron-left"></i>
-            </div>
-            <div class="template-slider" ref="templateSlider">
-                <div class="template-grid">
-                    <div class="template-card" 
-                         :class="{ 'active': selectedTemplate === '通用' }" 
+    <section class="mb-20">
+        <h2 class="text-3xl font-bold text-center text-white mb-10">选择视频模板</h2>
+        <div class="relative">
+            <button class="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-12 bg-slate-800/50 p-2 rounded-full hover:bg-slate-700 transition-colors z-10"
+                    @click="scrollTemplateLeft">
+                <span class="material-icons text-white">chevron_left</span>
+            </button>
+            <div class="template-slider overflow-x-auto scrollbar-hide" ref="templateSlider">
+                <div class="flex gap-8 min-w-max px-4">
+                    <div class="bg-glass rounded-2xl p-4 text-center cursor-pointer transition-all duration-300 card-hover flex-shrink-0 w-64"
+                         :class="{ 'border-2 border-blue-500': selectedTemplate === '通用', 'border-transparent border-2': selectedTemplate !== '通用' }" 
                          @click="selectTemplate('通用')"
                          @mouseenter="playVideo('通用')"
                          @mouseleave="pauseVideo('通用')">
-                        <video ref="video通用" muted loop>
+                        <div class="bg-slate-800 rounded-lg h-48 mb-4 flex items-center justify-center overflow-hidden">
+                            <video ref="video通用" muted loop class="w-full h-full object-cover">
                             <source src="/static/video/preview/通用_preview.mp4" type="video/mp4">
                         </video>
-                        <div class="template-info">
-                            <h4>通用</h4>
-                            <p>可以生成心理学科普，教育，解说等普通视频</p>
                         </div>
+                        <h3 class="text-xl font-semibold text-white mb-2">通用</h3>
+                        <p class="text-sm text-slate-400">可以生成心理学科普，教育，解说等普通视频</p>
                     </div>
-                    <div class="template-card" 
-                         :class="{ 'active': selectedTemplate === '读一本书' }" 
+                    
+                    <div class="bg-glass rounded-2xl p-4 text-center cursor-pointer transition-all duration-300 card-hover flex-shrink-0 w-64"
+                         :class="{ 'border-2 border-blue-500': selectedTemplate === '读一本书', 'border-transparent border-2': selectedTemplate !== '读一本书' }" 
                          @click="selectTemplate('读一本书')"
                          @mouseenter="playVideo('读一本书')"
                          @mouseleave="pauseVideo('读一本书')">
-                        <video ref="video读一本书" muted loop>
+                        <div class="bg-slate-800 rounded-lg h-48 mb-4 flex items-center justify-center overflow-hidden">
+                            <video ref="video读一本书" muted loop class="w-full h-full object-cover">
                             <source src="/static/video/preview/读一本书_preview.mp4" type="video/mp4">
                         </video>
-                        <div class="template-info">
-                            <h4>读一本书</h4>
-                            <p>用于生成读一本书视频，需要上传书本封面图片和给出书名，并且给出视频文案，仅支持文案模式</p>
                         </div>
+                        <h3 class="text-xl font-semibold text-white mb-2">读一本书</h3>
+                        <p class="text-sm text-slate-400">用于生成读一本书视频，需要上传书本封面图片和给出书名，并且给出视频文案，仅支持文案模式</p>
                     </div>
-                    <div class="template-card" 
-                         :class="{ 'active': selectedTemplate === '故事' }" 
+                    
+                    <div class="bg-glass rounded-2xl p-4 text-center cursor-pointer transition-all duration-300 card-hover flex-shrink-0 w-64"
+                         :class="{ 'border-2 border-blue-500': selectedTemplate === '故事', 'border-transparent border-2': selectedTemplate !== '故事' }" 
                          @click="selectTemplate('故事')"
                          @mouseenter="playVideo('故事')"
                          @mouseleave="pauseVideo('故事')">
-                        <video ref="video故事" muted loop>
+                        <div class="bg-slate-800 rounded-lg h-48 mb-4 flex items-center justify-center overflow-hidden">
+                            <video ref="video故事" muted loop class="w-full h-full object-cover">
                             <source src="/static/video/preview/故事_preview.mp4" type="video/mp4">
                         </video>
-                        <div class="template-info">
-                            <h4>故事</h4>
-                            <p>用于生成故事类视频</p>
                         </div>
+                        <h3 class="text-xl font-semibold text-white mb-2">故事</h3>
+                        <p class="text-sm text-slate-400">用于生成故事类视频</p>
                     </div>
-                    <div class="template-card" 
-                         :class="{ 'active': selectedTemplate === '讲经' }" 
+                    
+                    <div class="bg-glass rounded-2xl p-4 text-center cursor-pointer transition-all duration-300 card-hover flex-shrink-0 w-64"
+                         :class="{ 'border-2 border-blue-500': selectedTemplate === '讲经', 'border-transparent border-2': selectedTemplate !== '讲经' }" 
                          @click="selectTemplate('讲经')"
                          @mouseenter="playVideo('讲经')"
                          @mouseleave="pauseVideo('讲经')">
-                        <video ref="video讲经" muted loop>
+                        <div class="bg-slate-800 rounded-lg h-48 mb-4 flex items-center justify-center overflow-hidden">
+                            <video ref="video讲经" muted loop class="w-full h-full object-cover">
                             <source src="/static/video/preview/讲经_preview.mp4" type="video/mp4">
                         </video>
-                        <div class="template-info">
-                            <h4>讲经</h4>
-                            <p>用于生成解读经典，玄学等视频</p>
                         </div>
+                        <h3 class="text-xl font-semibold text-white mb-2">讲经</h3>
+                        <p class="text-sm text-slate-400">用于生成解读经典，玄学等视频</p>
                     </div>
                 </div>
             </div>
-            <div class="slider-nav slider-nav-right" @click="scrollTemplateRight">
-                <i class="fas fa-chevron-right"></i>
-            </div>
+            <button class="absolute right-0 top-1/2 -translate-y-1/2 translate-x-12 bg-slate-800/50 p-2 rounded-full hover:bg-slate-700 transition-colors z-10"
+                    @click="scrollTemplateRight">
+                <span class="material-icons text-white">chevron_right</span>
+            </button>
         </div>
-    </div>
+    </section>
 
     <!-- 风格选择区域 -->
-    <div class="style-section centered">
-        <h3>选择视频风格</h3>
-        <div class="style-slider-container">
-            <div class="slider-nav slider-nav-left" @click="scrollStyleLeft">
-                <i class="fas fa-chevron-left"></i>
-            </div>
-            <div class="style-slider" ref="styleSlider">
-                <div class="style-grid">
+    <section class="mb-20">
+        <h2 class="text-3xl font-bold text-center text-white mb-10">选择视频风格</h2>
+        <div class="relative">
+            <button class="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-12 bg-slate-800/50 p-2 rounded-full hover:bg-slate-700 transition-colors z-10"
+                    @click="scrollStyleLeft">
+                <span class="material-icons text-white">chevron_left</span>
+            </button>
+            <div class="style-slider overflow-x-auto scrollbar-hide" ref="styleSlider">
+                <div class="flex gap-8 min-w-max px-4">
                     {% for style_name, style_img in styles.items() %}
-                    <div class="style-card" :class="{ 'active': selectedStyle === '{{ style_name|safe }}' }" @click="selectStyle('{{ style_name|safe }}')">
-                        <img src="{{ style_img }}" alt="{{ style_name }}">
-                        <p>{{ style_name }}</p>
+                    <div class="bg-glass rounded-2xl p-4 text-center cursor-pointer transition-all duration-300 card-hover flex-shrink-0 w-64"
+                         :class="{ 'border-2 border-blue-500': selectedStyle === '{{ style_name|safe }}', 'border-transparent border-2': selectedStyle !== '{{ style_name|safe }}' }" 
+                         @click="selectStyle('{{ style_name|safe }}')">
+                        <div class="rounded-lg h-48 mb-4 overflow-hidden">
+                            <img src="{{ style_img }}" alt="{{ style_name }}" class="w-full h-full object-cover">
+                        </div>
+                        <h3 class="text-xl font-semibold text-white">{{ style_name }}</h3>
                     </div>
                     {% endfor %}
                 </div>
             </div>
-            <div class="slider-nav slider-nav-right" @click="scrollStyleRight">
-                <i class="fas fa-chevron-right"></i>
-            </div>
+            <button class="absolute right-0 top-1/2 -translate-y-1/2 translate-x-12 bg-slate-800/50 p-2 rounded-full hover:bg-slate-700 transition-colors z-10"
+                    @click="scrollStyleRight">
+                <span class="material-icons text-white">chevron_right</span>
+            </button>
         </div>
-    </div>
+    </section>
 
     <!-- 登录提示 -->
     <el-dialog
@@ -226,6 +248,16 @@
         </span>
     </el-dialog>
 </div>
+
+<style>
+.scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+    display: none;
+}
+</style>
 {% endblock %}
 
 {% block scripts %}
@@ -254,7 +286,7 @@
                 isGenerating: false,
                 showLoginDialog: false,
                 showSettings: false,
-                showUserName: false,
+                showUserName: true,
                 ttsModelStr: 'cosyvoice-v1',
             };
         },
@@ -294,9 +326,22 @@
             // 是否显示额度警告
             shouldShowCreditsWarning() {
                 return this.inputMode === 'script' && this.prompt && this.prompt.length > 2000;
+            },
+            // 显示的用户名
+            displayUserName() {
+                if (!this.isVipUser) {
+                    return '百速AI';
+                }
+                return this.userName;
             }
         },
         methods: {
+            handleUserNameInput(value) {
+                // 只有VIP用户才能修改用户名
+                if (this.isVipUser) {
+                    this.userName = value;
+                }
+            },
             selectTemplate(template) {
                 this.selectedTemplate = template;
                 if (template === '读一本书') {
@@ -394,10 +439,16 @@
                 formData.append('estimated_credits', this.estimatedCredits); // 传递预估额度
                 formData.append('tts_model_str', this.ttsModelStr);
                 
-                // 用户名逻辑：只有当勾选显示且有用户名时，才使用用户名，否则不显示
+                // 用户名逻辑：如果勾选显示用户名
                 let finalUserName = null; // 默认不显示
-                if (this.showUserName && this.userName && this.userName.trim() !== '') {
+                if (this.showUserName) {
+                    if (this.isVipUser && this.userName && this.userName.trim() !== '') {
+                        // VIP用户使用自定义用户名
                     finalUserName = this.userName.trim();
+                    } else if (!this.isVipUser) {
+                        // 非VIP用户使用默认名称
+                        finalUserName = '百速AI';
+                    }
                 }
                 // 只有当用户名不为null时才添加到formData中
                 if (finalUserName !== null) {

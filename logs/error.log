@@ -949,3 +949,36 @@ Traceback (most recent call last):
   File "/Users/zhusisi/CascadeProjects/VideoMaker/service/ai_service.py", line 158, in generate
     raise ValueError(f"智谱AI图片生成失败: {str(e)}")
 ValueError: 智谱AI图片生成失败: Error code: 400, with error text {"contentFilter":[{"level":1,"role":"user"}],"error":{"code":"1301","message":"系统检测到输入或生成内容可能包含不安全或敏感内容，请您避免输入易产生敏感内容的提示语，感谢您的配合。"}}
+[2025-07-13 21:23:54,266] [ERROR] [logger:61] - 应用启动失败: No module named 'service.voice_generate_service'
+Traceback (most recent call last):
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/run.py", line 86, in <module>
+    from app import app, db
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/app.py", line 38, in <module>
+    from service.work_flow_service import run_work_flow_v3_with_progress
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/service/work_flow_service.py", line 14, in <module>
+    from service.voice_generate_service import VoiceGenerateService
+ModuleNotFoundError: No module named 'service.voice_generate_service'
+[2025-07-13 21:29:11,021] [ERROR] [logger:61] - 查询视频状态出错 - 视频ID: 37, 错误: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+[2025-07-13 21:30:14,761] [ERROR] [logger:61] - 视频生成任务失败: 任务被用户主动取消
+Traceback (most recent call last):
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/app.py", line 1003, in task
+    loop.run_until_complete(run_work_flow_v3_with_progress(
+    ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        text=prompt,
+        ^^^^^^^^^^^^
+    ...<12 lines>...
+        generation_status=generation_status
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ))
+    ^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.3/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py", line 719, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/service/work_flow_service.py", line 421, in run_work_flow_v3_with_progress
+    raise e
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/service/work_flow_service.py", line 262, in run_work_flow_v3_with_progress
+    check_cancellation()
+    ~~~~~~~~~~~~~~~~~~^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/service/work_flow_service.py", line 226, in check_cancellation
+    raise Exception("任务被用户主动取消")
+Exception: 任务被用户主动取消

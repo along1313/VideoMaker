@@ -3,248 +3,349 @@
 {% block title %}管理后台 - 留言管理{% endblock %}
 
 {% block content %}
-<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-    <h1 class="h2">留言管理</h1>
-    <div class="btn-toolbar mb-2 mb-md-0">
-        <div class="btn-group me-2">
-            <span class="badge bg-info text-dark">总留言: {{ total_messages }}</span>
-            <span class="badge bg-warning text-dark">未读: {{ unread_messages }}</span>
+<!-- 页面头部 -->
+<div class="flex justify-between items-center mb-8">
+    <div>
+        <h1 class="text-3xl font-bold text-white mb-2">留言管理</h1>
+        <p class="text-slate-400">管理和回复用户留言</p>
+    </div>
+    <div class="flex gap-3">
+        <div class="bg-blue-500/20 text-blue-300 px-4 py-2 rounded-lg border border-blue-500/30">
+            <span class="material-icons text-sm mr-1">mail</span>
+            总留言: {{ total_messages }}
+        </div>
+        <div class="bg-orange-500/20 text-orange-300 px-4 py-2 rounded-lg border border-orange-500/30">
+            <span class="material-icons text-sm mr-1">mark_email_unread</span>
+            未读: {{ unread_messages }}
         </div>
     </div>
 </div>
 
 <!-- 搜索和筛选 -->
-<div class="card mb-4">
-    <div class="card-body">
-        <form class="row g-3" method="get" action="{{ url_for('admin_messages') }}">
-            <div class="col-md-4">
-                <input type="text" class="form-control" name="q" placeholder="搜索邮箱或留言内容" value="{{ request.args.get('q', '') }}">
+<div class="bg-slate-800/50 backdrop-blur-sm rounded-xl p-6 border border-slate-700 mb-8">
+    <form method="get" action="{{ url_for('admin_messages') }}" class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div class="md:col-span-2">
+            <div class="relative">
+                <span class="material-icons absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400">search</span>
+                <input type="text" 
+                       name="q" 
+                       placeholder="搜索邮箱或留言内容..." 
+                       value="{{ request.args.get('q', '') }}"
+                       class="w-full bg-slate-700/50 border border-slate-600 rounded-lg pl-10 pr-4 py-3 text-white placeholder-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all">
             </div>
-            <div class="col-md-2">
-                <select class="form-select" name="status">
+        </div>
+        <div>
+            <select name="status" 
+                    class="w-full bg-slate-700/50 border border-slate-600 rounded-lg px-4 py-3 text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all">
                     <option value="">所有状态</option>
                     <option value="unread" {% if request.args.get('status') == 'unread' %}selected{% endif %}>未读</option>
                     <option value="read" {% if request.args.get('status') == 'read' %}selected{% endif %}>已读</option>
                 </select>
             </div>
-            <div class="col-auto">
-                <button type="submit" class="btn btn-primary">
-                    <i class="bi bi-search"></i> 搜索
+        <div class="flex gap-2">
+            <button type="submit" 
+                    class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-3 rounded-lg transition-colors inline-flex items-center gap-2 flex-1 justify-center">
+                <span class="material-icons text-sm">search</span>
+                搜索
                 </button>
-                <a href="{{ url_for('admin_messages') }}" class="btn btn-outline-secondary">
-                    <i class="bi bi-arrow-counterclockwise"></i> 重置
+            <a href="{{ url_for('admin_messages') }}" 
+               class="bg-slate-600 hover:bg-slate-500 text-white px-4 py-3 rounded-lg transition-colors inline-flex items-center justify-center">
+                <span class="material-icons text-sm">refresh</span>
                 </a>
             </div>
         </form>
-    </div>
 </div>
 
 <!-- 留言列表 -->
-<div class="card">
-    <div class="card-body p-0">
-        <div class="table-responsive">
-            <table class="table table-hover mb-0">
-                <thead class="table-light">
-                    <tr>
-                        <th>ID</th>
-                        <th>联系方式</th>
-                        <th>留言内容</th>
-                        <th>状态</th>
-                        <th>时间</th>
-                        <th>操作</th>
+<div class="bg-slate-800/50 backdrop-blur-sm rounded-xl border border-slate-700 overflow-hidden">
+    <div class="p-6 border-b border-slate-700">
+        <h3 class="text-lg font-semibold text-white flex items-center gap-2">
+            <span class="material-icons text-green-400">message</span>
+            留言列表
+        </h3>
+    </div>
+    
+    <div class="overflow-x-auto">
+        <table class="w-full">
+            <thead>
+                <tr class="border-b border-slate-700">
+                    <th class="text-left px-6 py-4 text-slate-300 font-medium">ID</th>
+                    <th class="text-left px-6 py-4 text-slate-300 font-medium">联系方式</th>
+                    <th class="text-left px-6 py-4 text-slate-300 font-medium">留言内容</th>
+                    <th class="text-left px-6 py-4 text-slate-300 font-medium">状态</th>
+                    <th class="text-left px-6 py-4 text-slate-300 font-medium">创建时间</th>
+                    <th class="text-left px-6 py-4 text-slate-300 font-medium">操作</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for message in messages %}
-                    <tr class="{% if not message.is_read %}table-warning{% endif %}">
-                        <td>{{ message.id }}</td>
-                        <td>
-                            <div class="mb-1">
-                                <i class="bi bi-envelope"></i> {{ message.email }}
+                <tr class="border-b border-slate-700/50 hover:bg-slate-700/30 transition-colors {% if not message.is_read %}bg-blue-500/5{% endif %}">
+                    <td class="px-6 py-4 text-slate-300 font-mono text-sm">{{ message.id }}</td>
+                    <td class="px-6 py-4">
+                        <div class="space-y-1">
+                            <div class="text-white font-medium flex items-center gap-1">
+                                <span class="material-icons text-sm text-green-400">email</span>
+                                {{ message.email }}
                             </div>
                             {% if message.wechat %}
-                            <div class="mb-1">
-                                <i class="bi bi-wechat text-success"></i> {{ message.wechat }}
-                            </div>
-                            {% endif %}
-                            {% if message.qq %}
-                            <div class="mb-1">
-                                <i class="bi bi-chat-square"></i> {{ message.qq }}
+                            <div class="text-slate-400 text-sm flex items-center gap-1">
+                                <span class="material-icons text-xs text-green-400">chat</span>
+                                {{ message.wechat }}
                             </div>
                             {% endif %}
                             {% if message.phone %}
-                            <div class="mb-1">
-                                <i class="bi bi-telephone"></i> {{ message.phone }}
+                            <div class="text-slate-400 text-sm flex items-center gap-1">
+                                <span class="material-icons text-xs text-blue-400">phone</span>
+                                {{ message.phone }}
                             </div>
                             {% endif %}
-                        </td>
-                        <td>
-                            <div class="message-content">
-                                {{ message.content[:100] }}{% if message.content|length > 100 %}...{% endif %}
+                            {% if message.qq %}
+                            <div class="text-slate-400 text-sm flex items-center gap-1">
+                                <span class="material-icons text-xs text-purple-400">forum</span>
+                                QQ: {{ message.qq }}
                             </div>
+                            {% endif %}
+                        </div>
+                    </td>
+                    <td class="px-6 py-4">
+                        <div class="text-slate-300 max-w-md">
+                            <p class="line-clamp-3">{{ message.content }}</p>
                             {% if message.content|length > 100 %}
-                            <a href="#" class="text-primary small" data-bs-toggle="modal" data-bs-target="#messageModal{{ message.id }}">
-                                查看完整内容
-                            </a>
+                            <button onclick="showFullMessage({{ message.id }})" 
+                                    class="text-blue-400 hover:text-blue-300 text-sm mt-1">
+                                查看完整内容...
+                            </button>
                             {% endif %}
+                        </div>
                         </td>
-                        <td>
+                    <td class="px-6 py-4">
                             {% if message.is_read %}
-                                <span class="badge bg-success">已读</span>
-                                {% if message.replied_at %}
-                                <small class="text-muted d-block">{{ message.replied_at.strftime('%m-%d %H:%M') }}</small>
-                                {% endif %}
+                            <span class="bg-green-500/20 text-green-300 px-2 py-1 rounded-full text-xs flex items-center gap-1 w-fit">
+                                <span class="material-icons text-xs">check_circle</span>
+                                已读
+                            </span>
                             {% else %}
-                                <span class="badge bg-warning">未读</span>
+                            <span class="bg-orange-500/20 text-orange-300 px-2 py-1 rounded-full text-xs flex items-center gap-1 w-fit">
+                                <span class="material-icons text-xs">mark_email_unread</span>
+                                未读
+                            </span>
                             {% endif %}
                         </td>
-                        <td>
-                            <div>{{ message.created_at.strftime('%Y-%m-%d') }}</div>
-                            <small class="text-muted">{{ message.created_at.strftime('%H:%M') }}</small>
+                    <td class="px-6 py-4 text-slate-400 text-sm">
+                        {{ message.created_at.strftime('%Y-%m-%d %H:%M') }}
                         </td>
-                        <td>
-                            <div class="btn-group-vertical btn-group-sm">
+                    <td class="px-6 py-4">
+                        <div class="flex gap-2">
                                 {% if not message.is_read %}
-                                <form method="POST" action="{{ url_for('admin_mark_message_read', message_id=message.id) }}" style="display:inline;">
-                                    <button type="submit" class="btn btn-outline-success btn-sm" title="标记为已读">
-                                        <i class="bi bi-check"></i>
+                            <button onclick="markAsRead({{ message.id }})" 
+                                    class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-sm transition-colors inline-flex items-center gap-1">
+                                <span class="material-icons text-sm">mark_email_read</span>
+                                标记已读
                                     </button>
-                                </form>
                                 {% endif %}
-                                <form method="POST" action="{{ url_for('admin_delete_message', message_id=message.id) }}" 
-                                      style="display:inline;" onsubmit="return confirm('确定要删除这条留言吗？');">
-                                    <button type="submit" class="btn btn-outline-danger btn-sm" title="删除">
-                                        <i class="bi bi-trash"></i>
+                            <button onclick="replyMessage({{ message.id }}, '{{ message.email }}')" 
+                                    class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm transition-colors inline-flex items-center gap-1">
+                                <span class="material-icons text-sm">reply</span>
+                                回复
+                            </button>
+                            <button onclick="deleteMessage({{ message.id }})" 
+                                    class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm transition-colors inline-flex items-center gap-1">
+                                <span class="material-icons text-sm">delete</span>
+                                删除
                                     </button>
-                                </form>
+                        </div>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="6" class="px-6 py-12 text-center text-slate-400">
+                        <div class="flex flex-col items-center gap-3">
+                            <span class="material-icons text-4xl text-slate-600">mail_outline</span>
+                            <p>暂无留言数据</p>
                             </div>
                         </td>
                     </tr>
                     {% endfor %}
                 </tbody>
             </table>
-        </div>
     </div>
     
-    <!-- 分页 -->
-    {% if pagination.pages > 1 %}
-    <div class="card-footer">
-        <nav aria-label="留言分页">
-            <ul class="pagination justify-content-center mb-0">
-                {% if pagination.has_prev %}
-                    <li class="page-item">
-                        <a class="page-link" href="{{ url_for('admin_messages', page=pagination.prev_num, q=request.args.get('q', ''), status=request.args.get('status', '')) }}">上一页</a>
-                    </li>
-                {% endif %}
-                
-                {% for page_num in pagination.iter_pages() %}
-                    {% if page_num %}
-                        {% if page_num != pagination.page %}
-                            <li class="page-item">
-                                <a class="page-link" href="{{ url_for('admin_messages', page=page_num, q=request.args.get('q', ''), status=request.args.get('status', '')) }}">{{ page_num }}</a>
-                            </li>
-                        {% else %}
-                            <li class="page-item active">
-                                <span class="page-link">{{ page_num }}</span>
-                            </li>
-                        {% endif %}
-                    {% else %}
-                        <li class="page-item disabled">
-                            <span class="page-link">...</span>
-                        </li>
-                    {% endif %}
-                {% endfor %}
-                
-                {% if pagination.has_next %}
-                    <li class="page-item">
-                        <a class="page-link" href="{{ url_for('admin_messages', page=pagination.next_num, q=request.args.get('q', ''), status=request.args.get('status', '')) }}">下一页</a>
-                    </li>
-                {% endif %}
-            </ul>
-        </nav>
+    {% if messages %}
+    <!-- 分页信息 -->
+    <div class="p-6 border-t border-slate-700 flex justify-between items-center">
+        <div class="text-slate-400 text-sm">
+            显示第 1-{{ messages|length }} 条，共 {{ total_messages }} 条记录
+        </div>
+        <div class="flex gap-2">
+            <button class="bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded-lg transition-colors text-sm">
+                上一页
+            </button>
+            <button class="bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded-lg transition-colors text-sm">
+                下一页
+            </button>
+        </div>
     </div>
     {% endif %}
 </div>
 
-<!-- 留言详情模态框 -->
-{% for message in messages %}
-<div class="modal fade" id="messageModal{{ message.id }}" tabindex="-1" aria-labelledby="messageModalLabel{{ message.id }}" aria-hidden="true">
+<!-- 完整留言内容模态框 -->
+<div class="modal fade" id="fullMessageModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="messageModalLabel{{ message.id }}">留言详情 #{{ message.id }}</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="关闭"></button>
+        <div class="modal-content bg-slate-800/95 backdrop-blur-sm border border-slate-600">
+            <div class="modal-header border-b border-slate-600">
+                <h5 class="modal-title text-white flex items-center gap-2">
+                    <span class="material-icons text-blue-400">message</span>
+                    留言详情
+                </h5>
+                <button type="button" class="btn-close text-white" data-bs-dismiss="modal" aria-label="Close">
+                    <span class="material-icons">close</span>
+                </button>
             </div>
-            <div class="modal-body">
-                <div class="row mb-3">
-                    <div class="col-md-6">
-                        <h6>联系方式</h6>
-                        <p class="mb-1"><i class="bi bi-envelope"></i> {{ message.email }}</p>
-                        {% if message.wechat %}
-                        <p class="mb-1"><i class="bi bi-wechat text-success"></i> {{ message.wechat }}</p>
-                        {% endif %}
-                        {% if message.qq %}
-                        <p class="mb-1"><i class="bi bi-chat-square"></i> {{ message.qq }}</p>
-                        {% endif %}
-                        {% if message.phone %}
-                        <p class="mb-1"><i class="bi bi-telephone"></i> {{ message.phone }}</p>
-                        {% endif %}
-                    </div>
-                    <div class="col-md-6">
-                        <h6>留言信息</h6>
-                        <p class="mb-1"><i class="bi bi-calendar"></i> {{ message.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</p>
-                        <p class="mb-1">
-                            <i class="bi bi-check-circle"></i> 
-                            {% if message.is_read %}
-                                <span class="text-success">已读</span>
-                                {% if message.replied_at %}
-                                ({{ message.replied_at.strftime('%Y-%m-%d %H:%M') }})
-                                {% endif %}
-                            {% else %}
-                                <span class="text-warning">未读</span>
-                            {% endif %}
-                        </p>
-                    </div>
-                </div>
-                <div class="mb-3">
-                    <h6>留言内容</h6>
-                    <div class="bg-light p-3 rounded">
-                        {{ message.content|nl2br|safe }}
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                {% if not message.is_read %}
-                <form method="POST" action="{{ url_for('admin_mark_message_read', message_id=message.id) }}" style="display:inline;">
-                    <button type="submit" class="btn btn-success">
-                        <i class="bi bi-check"></i> 标记为已读
-                    </button>
-                </form>
-                {% endif %}
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
+            <div class="modal-body p-6">
+                <div id="fullMessageContent" class="text-slate-300 whitespace-pre-wrap"></div>
             </div>
         </div>
     </div>
 </div>
-{% endfor %}
 
-<style>
-.message-content {
-    max-width: 300px;
-    word-wrap: break-word;
-    line-height: 1.4;
+<!-- 回复留言模态框 -->
+<div class="modal fade" id="replyModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content bg-slate-800/95 backdrop-blur-sm border border-slate-600">
+            <div class="modal-header border-b border-slate-600">
+                <h5 class="modal-title text-white flex items-center gap-2">
+                    <span class="material-icons text-green-400">reply</span>
+                    回复留言
+                </h5>
+                <button type="button" class="btn-close text-white" data-bs-dismiss="modal" aria-label="Close">
+                    <span class="material-icons">close</span>
+                </button>
+            </div>
+            <form id="replyForm">
+                <div class="modal-body p-6">
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-slate-300 font-medium mb-2">收件人</label>
+                            <input type="email" id="replyEmail" readonly 
+                                   class="w-full bg-slate-700/50 border border-slate-600 rounded-lg px-4 py-3 text-slate-400">
+                        </div>
+                        <div>
+                            <label class="block text-slate-300 font-medium mb-2">邮件主题</label>
+                            <input type="text" name="subject" placeholder="回复主题" 
+                                   class="w-full bg-slate-700/50 border border-slate-600 rounded-lg px-4 py-3 text-white placeholder-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20">
+                        </div>
+                        <div>
+                            <label class="block text-slate-300 font-medium mb-2">回复内容</label>
+                            <textarea name="content" rows="8" placeholder="请输入回复内容..." 
+                                      class="w-full bg-slate-700/50 border border-slate-600 rounded-lg px-4 py-3 text-white placeholder-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 resize-none"></textarea>
+                    </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-t border-slate-600 p-6">
+                    <div class="flex gap-3 justify-end w-full">
+                        <button type="button" 
+                                class="bg-slate-600 hover:bg-slate-500 text-white px-6 py-2 rounded-lg transition-colors inline-flex items-center gap-2" 
+                                data-bs-dismiss="modal">
+                            <span class="material-icons text-sm">close</span>
+                            取消
+                        </button>
+                        <button type="submit" 
+                                class="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg transition-colors inline-flex items-center gap-2">
+                            <span class="material-icons text-sm">send</span>
+                            发送回复
+                        </button>
+                    </div>
+                </div>
+                </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function markAsRead(messageId) {
+    fetch('/admin/messages/' + messageId + '/read', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            location.reload();
+        } else {
+            alert('操作失败：' + data.message);
+}
+    })
+    .catch(error => {
+        alert('操作失败，请重试');
+    });
 }
 
-.table-warning {
-    background-color: #fff3cd !important;
+function showFullMessage(messageId) {
+    fetch('/admin/messages/' + messageId + '/content')
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            document.getElementById('fullMessageContent').textContent = data.content;
+            new bootstrap.Modal(document.getElementById('fullMessageModal')).show();
+        }
+    })
+    .catch(error => {
+        alert('获取留言内容失败');
+    });
 }
 
-.btn-group-vertical .btn {
-    margin-bottom: 2px;
+function replyMessage(messageId, email) {
+    document.getElementById('replyEmail').value = email;
+    new bootstrap.Modal(document.getElementById('replyModal')).show();
 }
 
-.btn-group-vertical .btn:last-child {
-    margin-bottom: 0;
+function deleteMessage(messageId) {
+    if (confirm('确定要删除这条留言吗？此操作不可恢复！')) {
+        fetch('/admin/messages/' + messageId, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                location.reload();
+            } else {
+                alert('删除失败：' + data.message);
 }
-</style>
+        })
+        .catch(error => {
+            alert('删除失败，请重试');
+        });
+    }
+}
+
+// 回复表单提交
+document.getElementById('replyForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const formData = new FormData(this);
+    
+    fetch('/admin/messages/reply', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('回复已发送！');
+            bootstrap.Modal.getInstance(document.getElementById('replyModal')).hide();
+        } else {
+            alert('发送失败：' + data.message);
+        }
+    })
+    .catch(error => {
+        alert('发送失败，请重试');
+    });
+});
+</script>
 {% endblock %} 

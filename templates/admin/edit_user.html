@@ -2,61 +2,576 @@
 
 {% block title %}管理后台 - 编辑用户{% endblock %}
 
+{% block extra_css %}
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+<style>
+    body {
+        background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
+        min-height: 100vh;
+        color: #e2e8f0;
+        position: relative;
+    }
+    
+    body::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+                    radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.15) 0%, transparent 50%),
+                    radial-gradient(circle at 40% 40%, rgba(120, 200, 255, 0.1) 0%, transparent 50%);
+        pointer-events: none;
+        z-index: -1;
+    }
+    
+    .glass-card {
+        background: rgba(30, 41, 59, 0.4);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(148, 163, 184, 0.15);
+        border-radius: 20px;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        transition: all 0.4s ease;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .glass-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    }
+    
+    .glass-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 35px 70px -12px rgba(0, 0, 0, 0.6);
+        border-color: rgba(59, 130, 246, 0.3);
+    }
+    
+    .stat-card {
+        background: linear-gradient(135deg, 
+            rgba(59, 130, 246, 0.15) 0%, 
+            rgba(147, 51, 234, 0.15) 50%,
+            rgba(236, 72, 153, 0.15) 100%);
+        border: 1px solid rgba(59, 130, 246, 0.25);
+        border-radius: 16px;
+        padding: 2rem;
+        text-align: center;
+        transition: all 0.4s ease;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .stat-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+        transition: left 0.5s ease;
+    }
+    
+    .stat-card:hover::before {
+        left: 100%;
+    }
+    
+    .stat-card:hover {
+        transform: translateY(-8px) scale(1.02);
+        border-color: rgba(59, 130, 246, 0.5);
+        box-shadow: 0 20px 40px rgba(59, 130, 246, 0.2);
+    }
+    
+    .stat-icon {
+        background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+        display: block;
+    }
+    
+    .activity-item {
+        background: linear-gradient(135deg, rgba(30, 41, 59, 0.6) 0%, rgba(51, 65, 85, 0.4) 100%);
+        border: 1px solid rgba(148, 163, 184, 0.15);
+        border-radius: 12px;
+        padding: 1.25rem;
+        margin-bottom: 1rem;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .activity-item::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 4px;
+        background: linear-gradient(180deg, #3b82f6, #8b5cf6);
+        transform: scaleY(0);
+        transition: transform 0.3s ease;
+    }
+    
+    .activity-item:hover::before {
+        transform: scaleY(1);
+    }
+    
+    .activity-item:hover {
+        background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(51, 65, 85, 0.6) 100%);
+        border-color: rgba(59, 130, 246, 0.3);
+        transform: translateX(8px);
+    }
+    
+    .form-control {
+        background: linear-gradient(135deg, rgba(30, 41, 59, 0.6) 0%, rgba(51, 65, 85, 0.4) 100%);
+        border: 2px solid rgba(148, 163, 184, 0.2);
+        color: #e2e8f0;
+        border-radius: 12px;
+        padding: 0.875rem 1.25rem;
+        transition: all 0.3s ease;
+        font-size: 0.95rem;
+    }
+    
+    .form-control:focus {
+        background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(51, 65, 85, 0.6) 100%);
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2), 0 0 20px rgba(59, 130, 246, 0.1);
+        color: #e2e8f0;
+        transform: translateY(-2px);
+    }
+    
+    .form-control::placeholder {
+        color: #94a3b8;
+        opacity: 0.8;
+    }
+    
+    .form-label {
+        color: #e2e8f0;
+        font-weight: 600;
+        margin-bottom: 0.75rem;
+        font-size: 0.95rem;
+        letter-spacing: 0.025em;
+    }
+    
+    .form-text {
+        color: #94a3b8;
+        font-size: 0.85rem;
+        margin-top: 0.5rem;
+    }
+    
+    .btn-primary {
+        background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 50%, #ec4899 100%);
+        border: none;
+        border-radius: 12px;
+        padding: 1rem 2rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(59, 130, 246, 0.3);
+    }
+    
+    .btn-primary::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+        transition: left 0.6s ease;
+    }
+    
+    .btn-primary:hover::before {
+        left: 100%;
+    }
+    
+    .btn-primary:hover {
+        transform: translateY(-3px) scale(1.05);
+        box-shadow: 0 20px 40px rgba(59, 130, 246, 0.4);
+    }
+    
+    .btn-outline-secondary {
+        background: linear-gradient(135deg, rgba(30, 41, 59, 0.6) 0%, rgba(51, 65, 85, 0.4) 100%);
+        border: 2px solid rgba(148, 163, 184, 0.3);
+        color: #e2e8f0;
+        border-radius: 12px;
+        padding: 1rem 2rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        position: relative;
+    }
+    
+    .btn-outline-secondary:hover {
+        background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(51, 65, 85, 0.6) 100%);
+        border-color: rgba(148, 163, 184, 0.6);
+        color: #e2e8f0;
+        transform: translateY(-2px);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+    }
+    
+    .btn-outline-danger {
+        background: linear-gradient(135deg, rgba(239, 68, 68, 0.15) 0%, rgba(220, 38, 127, 0.15) 100%);
+        border: 2px solid rgba(239, 68, 68, 0.4);
+        color: #ef4444;
+        border-radius: 12px;
+        padding: 1rem 2rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        position: relative;
+    }
+    
+    .btn-outline-danger:hover {
+        background: linear-gradient(135deg, rgba(239, 68, 68, 0.25) 0%, rgba(220, 38, 127, 0.25) 100%);
+        border-color: rgba(239, 68, 68, 0.7);
+        color: #ef4444;
+        transform: translateY(-2px);
+        box-shadow: 0 15px 30px rgba(239, 68, 68, 0.3);
+    }
+    
+    .badge {
+        padding: 0.6rem 1rem;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 0.8rem;
+        letter-spacing: 0.025em;
+    }
+    
+    .badge.bg-success {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+        box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+    }
+    
+    .badge.bg-secondary {
+        background: linear-gradient(135deg, rgba(107, 114, 128, 0.8) 0%, rgba(75, 85, 99, 0.8) 100%) !important;
+    }
+    
+    .form-check-input:checked {
+        background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+        border-color: #3b82f6;
+        box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
+    }
+    
+    .form-check-label {
+        font-weight: 500;
+        letter-spacing: 0.025em;
+    }
+    
+    .modal-content {
+        background: linear-gradient(135deg, rgba(30, 41, 59, 0.95) 0%, rgba(51, 65, 85, 0.95) 100%);
+        backdrop-filter: blur(25px);
+        border: 1px solid rgba(148, 163, 184, 0.3);
+        border-radius: 20px;
+        color: #e2e8f0;
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.6);
+    }
+    
+    .modal-header {
+        border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+        padding: 1.5rem 2rem;
+    }
+    
+    .modal-body {
+        padding: 2rem;
+    }
+    
+    .modal-footer {
+        border-top: 1px solid rgba(148, 163, 184, 0.2);
+        padding: 1.5rem 2rem;
+    }
+    
+    .btn-close {
+        filter: invert(1);
+        opacity: 0.8;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-close:hover {
+        transform: scale(1.1);
+        opacity: 1;
+    }
+    
+    .alert-warning {
+        background: linear-gradient(135deg, rgba(245, 158, 11, 0.15) 0%, rgba(251, 191, 36, 0.15) 100%);
+        border: 2px solid rgba(245, 158, 11, 0.4);
+        color: #f59e0b;
+        border-radius: 12px;
+        padding: 1rem 1.25rem;
+    }
+    
+    .alert-danger {
+        background: linear-gradient(135deg, rgba(239, 68, 68, 0.15) 0%, rgba(220, 38, 127, 0.15) 100%);
+        border: 2px solid rgba(239, 68, 68, 0.4);
+        color: #ef4444;
+        border-radius: 12px;
+        padding: 1rem 1.25rem;
+    }
+    
+    .page-header {
+        background: linear-gradient(135deg, rgba(30, 41, 59, 0.6) 0%, rgba(51, 65, 85, 0.4) 100%);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(148, 163, 184, 0.15);
+        border-radius: 20px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .page-header::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: linear-gradient(90deg, #3b82f6, #8b5cf6, #ec4899);
+    }
+    
+    .section-header {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 2rem;
+        padding-bottom: 1rem;
+        border-bottom: 2px solid rgba(148, 163, 184, 0.15);
+        position: relative;
+    }
+    
+    .section-header::after {
+        content: '';
+        position: absolute;
+        bottom: -2px;
+        left: 0;
+        width: 60px;
+        height: 2px;
+        background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+    }
+    
+    .section-icon {
+        background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        font-size: 1.75rem;
+    }
+    
+    .user-avatar {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #3b82f6, #8b5cf6, #ec4899);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 1rem;
+        position: relative;
+    }
+    
+    .user-avatar::before {
+        content: '';
+        position: absolute;
+        inset: 3px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, rgba(30, 41, 59, 0.9) 0%, rgba(51, 65, 85, 0.9) 100%);
+    }
+    
+    .user-avatar .material-icons {
+        color: #e2e8f0;
+        font-size: 2.5rem;
+        z-index: 1;
+    }
+    
+    .form-floating {
+        position: relative;
+    }
+    
+    .form-floating label {
+        position: absolute;
+        top: 0;
+        left: 1.25rem;
+        transform: translateY(1rem);
+        color: #94a3b8;
+        transition: all 0.3s ease;
+        pointer-events: none;
+        background: linear-gradient(135deg, rgba(30, 41, 59, 0.6) 0%, rgba(51, 65, 85, 0.4) 100%);
+        padding: 0 0.5rem;
+        border-radius: 4px;
+    }
+    
+    .form-floating input:focus + label,
+    .form-floating input:not(:placeholder-shown) + label {
+        transform: translateY(-0.5rem) scale(0.85);
+        color: #3b82f6;
+    }
+    
+    @media (max-width: 768px) {
+        .page-header {
+            padding: 1.5rem;
+        }
+        
+        .glass-card {
+            margin-bottom: 1.5rem;
+        }
+        
+        .stat-card {
+            padding: 1.5rem;
+        }
+        
+        .activity-item {
+            padding: 1rem;
+        }
+        
+        .btn-primary, .btn-outline-secondary, .btn-outline-danger {
+            padding: 0.875rem 1.5rem;
+        }
+    }
+    
+    .loading-shimmer {
+        background: linear-gradient(90deg, 
+            rgba(148, 163, 184, 0.1) 25%, 
+            rgba(148, 163, 184, 0.3) 50%, 
+            rgba(148, 163, 184, 0.1) 75%);
+        background-size: 200% 100%;
+        animation: shimmer 2s infinite;
+    }
+    
+    @keyframes shimmer {
+        0% { background-position: -200% 0; }
+        100% { background-position: 200% 0; }
+    }
+    
+    .status-online {
+        position: relative;
+    }
+    
+    .status-online::after {
+        content: '';
+        position: absolute;
+        top: -4px;
+        right: -4px;
+        width: 12px;
+        height: 12px;
+        background: #10b981;
+        border-radius: 50%;
+        border: 2px solid rgba(30, 41, 59, 0.9);
+        animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+        0%, 100% { transform: scale(1); opacity: 1; }
+        50% { transform: scale(1.1); opacity: 0.8; }
+    }
+</style>
+{% endblock %}
+
 {% block content %}
-<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-    <h1 class="h2">
-        <a href="{{ url_for('admin_users') }}" class="text-decoration-none text-muted">
-            <i class="bi bi-arrow-left"></i>
+<div class="container-fluid py-4">
+    <!-- 页面头部 -->
+    <div class="page-header">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+            <div class="d-flex align-items-center gap-4">
+                <a href="{{ url_for('admin_users') }}" class="btn btn-outline-secondary d-flex align-items-center gap-2">
+                    <span class="material-icons">arrow_back</span>
+                    返回用户列表
+                </a>
+                <div class="d-flex align-items-center gap-3">
+                    <div class="user-avatar">
+                        <span class="material-icons">person</span>
+                    </div>
+                    <div>
+                        <h1 class="h3 mb-1 text-white">编辑用户: {{ user.username }}</h1>
+                        <p class="text-muted mb-0 d-flex align-items-center gap-2">
+                            <span class="material-icons" style="font-size: 1rem;">email</span>
+                            {{ user.email }}
+                            {% if user.is_current_vip %}
+                                <span class="badge bg-success ms-2">VIP用户</span>
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="d-flex gap-3 flex-wrap">
+                <a href="{{ url_for('admin_users') }}" class="btn btn-outline-secondary d-flex align-items-center gap-2">
+                    <span class="material-icons">close</span>
+                    取消
         </a>
-        编辑用户
-    </h1>
-    <div class="btn-toolbar mb-2 mb-md-0">
-        <a href="{{ url_for('admin_users') }}" class="btn btn-outline-secondary me-2">
-            <i class="bi bi-x-lg"></i> 取消
-        </a>
-        <button type="submit" form="userForm" class="btn btn-primary">
-            <i class="bi bi-save"></i> 保存更改
+                <button type="submit" form="userForm" class="btn btn-primary d-flex align-items-center gap-2">
+                    <span class="material-icons">save</span>
+                    保存更改
         </button>
+            </div>
     </div>
 </div>
 
-<div class="row">
+    <div class="row g-4">
+        <!-- 主要内容区域 -->
     <div class="col-lg-8">
-        <div class="card mb-4">
-            <div class="card-header">
-                <h6 class="mb-0">基本信息</h6>
+            <!-- 基本信息 -->
+            <div class="glass-card p-4 mb-4">
+                <div class="section-header">
+                    <span class="material-icons section-icon">person_outline</span>
+                    <h5 class="mb-0 text-white">基本信息</h5>
+                    <div class="ms-auto">
+                        <span class="badge bg-secondary">ID: {{ user.id }}</span>
+                    </div>
             </div>
-            <div class="card-body">
+                
                 <form id="userForm" method="post" action="{{ url_for('admin_edit_user', user_id=user.id) }}">
-                    <div class="row g-3">
+                    <div class="row g-4">
                         <div class="col-md-6">
-                            <label class="form-label">用户名</label>
-                            <input type="text" class="form-control" name="username" value="{{ user.username }}" required>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">邮箱</label>
-                            <input type="email" class="form-control" name="email" value="{{ user.email }}" required>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">新密码</label>
-                            <input type="password" class="form-control" name="password" placeholder="留空则不修改">
-                            <div class="form-text">密码至少6个字符</div>
+                            <label class="form-label d-flex align-items-center gap-2">
+                                <span class="material-icons" style="font-size: 1.2rem;">account_circle</span>
+                                用户名
+                            </label>
+                            <input type="text" class="form-control" name="username" value="{{ user.username }}" required placeholder="请输入用户名">
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label">确认新密码</label>
-                            <input type="password" class="form-control" name="password_confirm">
+                            <label class="form-label d-flex align-items-center gap-2">
+                                <span class="material-icons" style="font-size: 1.2rem;">email</span>
+                                邮箱地址
+                            </label>
+                            <input type="email" class="form-control" name="email" value="{{ user.email }}" required placeholder="请输入邮箱地址">
                         </div>
-                        <div class="col-md-4">
-                            <label class="form-label">视频额度</label>
-                            <input type="number" class="form-control" name="credits" value="{{ user.credits }}" min="0" required>
+                        <div class="col-md-6">
+                            <label class="form-label d-flex align-items-center gap-2">
+                                <span class="material-icons" style="font-size: 1.2rem;">lock</span>
+                                新密码
+                            </label>
+                            <input type="password" class="form-control" name="password" placeholder="留空则不修改密码">
+                            <div class="form-text">密码至少需要6个字符</div>
                         </div>
-                        <div class="col-md-8">
-                            <label class="form-label">
+                        <div class="col-md-6">
+                            <label class="form-label d-flex align-items-center gap-2">
+                                <span class="material-icons" style="font-size: 1.2rem;">lock_outline</span>
+                                确认新密码
+                            </label>
+                            <input type="password" class="form-control" name="password_confirm" placeholder="请再次输入新密码">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label d-flex align-items-center gap-2">
+                                <span class="material-icons" style="font-size: 1.2rem;">videocam</span>
+                                视频额度
+                            </label>
+                            <input type="number" class="form-control" name="credits" value="{{ user.credits }}" min="0" required placeholder="剩余视频生成次数">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label d-flex align-items-center gap-2">
+                                <span class="material-icons" style="font-size: 1.2rem;">star</span>
                                 VIP到期时间
                                 {% if user.is_current_vip %}
-                                    <span class="badge bg-success ms-1">当前VIP</span>
+                                    <span class="badge bg-success ms-2">当前VIP</span>
                                 {% else %}
-                                    <span class="badge bg-secondary ms-1">非VIP</span>
+                                    <span class="badge bg-secondary ms-2">非VIP</span>
                                 {% endif %}
                             </label>
                             <input type="datetime-local" class="form-control" name="vip_expires_at" 
@@ -64,103 +579,163 @@
                             <div class="form-text">留空表示非VIP用户，设置未来时间表示VIP到期日</div>
                         </div>
                         <div class="col-12">
-                            <div class="form-check form-switch">
+                            <div class="row g-4">
+                                <div class="col-md-6">
+                                    <div class="form-check form-switch d-flex align-items-center gap-3 p-3" style="background: rgba(59, 130, 246, 0.1); border-radius: 12px; border: 1px solid rgba(59, 130, 246, 0.2);">
                                 <input class="form-check-input" type="checkbox" id="isActive" name="is_active" {% if user.is_active %}checked{% endif %}>
-                                <label class="form-check-label" for="isActive">启用账户</label>
+                                        <label class="form-check-label d-flex align-items-center gap-2 flex-grow-1" for="isActive">
+                                            <span class="material-icons" style="font-size: 1.5rem;">toggle_on</span>
+                                            <div>
+                                                <div class="fw-bold">启用账户</div>
+                                                <div class="small text-muted">允许用户登录和使用系统</div>
+                                            </div>
+                                        </label>
+                                    </div>
                             </div>
-                            <div class="form-check form-switch">
+                                <div class="col-md-6">
+                                    <div class="form-check form-switch d-flex align-items-center gap-3 p-3" style="background: rgba(147, 51, 234, 0.1); border-radius: 12px; border: 1px solid rgba(147, 51, 234, 0.2);">
                                 <input class="form-check-input" type="checkbox" id="isAdmin" name="is_admin" {% if user.is_admin %}checked{% endif %}>
-                                <label class="form-check-label" for="isAdmin">设为管理员</label>
+                                        <label class="form-check-label d-flex align-items-center gap-2 flex-grow-1" for="isAdmin">
+                                            <span class="material-icons" style="font-size: 1.5rem;">admin_panel_settings</span>
+                                            <div>
+                                                <div class="fw-bold">设为管理员</div>
+                                                <div class="small text-muted">赋予管理后台访问权限</div>
+                                            </div>
+                                        </label>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </form>
             </div>
+            
+            <!-- 用户统计 -->
+            <div class="glass-card p-4">
+                <div class="section-header">
+                    <span class="material-icons section-icon">analytics</span>
+                    <h5 class="mb-0 text-white">用户统计信息</h5>
         </div>
         
-        <div class="card">
-            <div class="card-header">
-                <h6 class="mb-0">用户统计</h6>
-            </div>
-            <div class="card-body">
-                <div class="row g-3">
+                <div class="row g-4">
                     <div class="col-md-4">
-                        <div class="border rounded p-3 text-center">
-                            <div class="text-muted small mb-1">创建时间</div>
-                            <div class="h5 mb-0">{{ user.created_at.strftime('%Y-%m-%d %H:%M') }}</div>
+                        <div class="stat-card">
+                            <span class="material-icons stat-icon">person_add</span>
+                            <div class="text-muted small mb-2">注册时间</div>
+                            <div class="h4 mb-1 text-white">{{ user.created_at.strftime('%Y-%m-%d') }}</div>
+                            <div class="small text-muted">{{ user.created_at.strftime('%H:%M') }}</div>
                         </div>
                     </div>
                     <div class="col-md-4">
-                        <div class="border rounded p-3 text-center">
-                            <div class="text-muted small mb-1">最后登录</div>
-                            <div class="h5 mb-0">
+                        <div class="stat-card">
+                            <span class="material-icons stat-icon">schedule</span>
+                            <div class="text-muted small mb-2">最后登录</div>
+                            <div class="h4 mb-1 text-white">
                                 {% if user.last_login_at %}
-                                    {{ user.last_login_at.strftime('%Y-%m-%d %H:%M') }}
+                                    {{ user.last_login_at.strftime('%m-%d') }}
                                 {% else %}
                                     从未登录
                                 {% endif %}
                             </div>
                             {% if user.last_login_ip %}
-                                <div class="small text-muted">{{ user.last_login_ip }}</div>
+                                <div class="small text-muted d-flex align-items-center gap-1">
+                                    <span class="material-icons" style="font-size: 0.9rem;">location_on</span>
+                                    {{ user.last_login_ip }}
+                                </div>
                             {% endif %}
                         </div>
                     </div>
                     <div class="col-md-4">
-                        <div class="border rounded p-3 text-center">
-                            <div class="text-muted small mb-1">登录次数</div>
-                            <div class="h5 mb-0">{{ user.login_logs|length }}</div>
-                        </div>
+                        <div class="stat-card">
+                            <span class="material-icons stat-icon">login</span>
+                            <div class="text-muted small mb-2">登录次数</div>
+                            <div class="h4 mb-1 text-white">{{ user.login_logs|length }}</div>
+                            <div class="small text-muted">总计</div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
     
+        <!-- 侧边栏 -->
     <div class="col-lg-4">
-        <div class="card mb-4">
-            <div class="card-header d-flex justify-content-between align-items-center">
-                <h6 class="mb-0">最近活动</h6>
-                <a href="{{ url_for('admin_user_logs', user_id=user.id) }}" class="btn btn-sm btn-outline-primary">
+            <!-- 最近活动 -->
+            <div class="glass-card p-4 mb-4">
+                <div class="section-header">
+                    <span class="material-icons section-icon">history</span>
+                    <h5 class="mb-0 text-white">最近活动</h5>
+                    <div class="ms-auto">
+                        <a href="{{ url_for('admin_user_logs', user_id=user.id) }}" class="btn btn-outline-secondary btn-sm d-flex align-items-center gap-1">
+                            <span class="material-icons" style="font-size: 1rem;">open_in_new</span>
                     查看全部
                 </a>
             </div>
-            <div class="list-group list-group-flush">
+                </div>
+                
+                {% if recent_logs %}
+                    <div style="max-height: 400px; overflow-y: auto;">
                 {% for log in recent_logs %}
-                <div class="list-group-item">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <div class="fw-bold">{{ log.login_ip }}</div>
-                            <div class="small text-muted">{{ log.user_agent|truncate(30) }}</div>
+                        <div class="activity-item">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div class="flex-grow-1">
+                                    <div class="d-flex align-items-center gap-2 mb-2">
+                                        <span class="material-icons text-primary status-online" style="font-size: 1.3rem;">computer</span>
+                                        <strong class="text-white">{{ log.login_ip }}</strong>
+                                    </div>
+                                    <div class="small text-muted d-flex align-items-center gap-1">
+                                        <span class="material-icons" style="font-size: 0.9rem;">devices</span>
+                                        {{ log.user_agent|truncate(35) }}
+                                    </div>
                         </div>
                         <div class="text-end">
                             <div class="small text-muted">{{ log.created_at.strftime('%m-%d %H:%M') }}</div>
-                            <span class="badge bg-light text-dark">{{ log.created_at|humanize() }}</span>
+                                    <span class="badge bg-secondary small">{{ log.created_at|humanize() }}</span>
+                                </div>
+                            </div>
                         </div>
-                    </div>
+                        {% endfor %}
                 </div>
                 {% else %}
-                <div class="text-center py-4 text-muted">
-                    <i class="bi bi-activity fs-4 d-block mb-2"></i>
-                    暂无活动记录
+                    <div class="text-center py-5">
+                        <span class="material-icons text-muted" style="font-size: 4rem; opacity: 0.5;">history</span>
+                        <div class="text-muted mt-3 h6">暂无活动记录</div>
+                        <div class="small text-muted">用户还没有登录过系统</div>
                 </div>
-                {% endfor %}
+                {% endif %}
             </div>
+            
+            <!-- 危险操作 -->
+            <div class="glass-card p-4">
+                <div class="section-header">
+                    <span class="material-icons section-icon text-danger">warning</span>
+                    <h5 class="mb-0 text-white">危险操作</h5>
         </div>
         
-        <div class="card">
-            <div class="card-header">
-                <h6 class="mb-0">危险操作</h6>
-            </div>
-            <div class="card-body">
-                <div class="d-grid gap-2">
-                    <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#resetPasswordModal">
-                        <i class="bi bi-key"></i> 重置密码
+                <div class="d-grid gap-3">
+                    <button type="button" class="btn btn-outline-danger d-flex align-items-center justify-content-center gap-2" 
+                            data-bs-toggle="modal" data-bs-target="#resetPasswordModal">
+                        <span class="material-icons">key</span>
+                        重置密码为默认值
                     </button>
                     {% if current_user.id != user.id %}
-                    <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteUserModal">
-                        <i class="bi bi-trash"></i> 删除用户
+                    <button type="button" class="btn btn-outline-danger d-flex align-items-center justify-content-center gap-2" 
+                            data-bs-toggle="modal" data-bs-target="#deleteUserModal">
+                        <span class="material-icons">delete_forever</span>
+                        永久删除用户
                     </button>
                     {% endif %}
+                </div>
+                
+                <div class="mt-4 p-3" style="background: rgba(239, 68, 68, 0.1); border-radius: 12px; border: 1px solid rgba(239, 68, 68, 0.2);">
+                    <div class="d-flex align-items-center gap-2 text-danger mb-2">
+                        <span class="material-icons">info</span>
+                        <strong>注意事项</strong>
+                    </div>
+                    <div class="small text-muted">
+                        • 重置密码将设为默认值 123456<br>
+                        • 删除用户将无法恢复所有数据<br>
+                        • 操作前请确认用户同意
+                    </div>
                 </div>
             </div>
         </div>
@@ -169,22 +744,36 @@
 
 <!-- 重置密码确认模态框 -->
 <div class="modal fade" id="resetPasswordModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">重置密码</h5>
+                <h5 class="modal-title d-flex align-items-center gap-2">
+                    <span class="material-icons">key</span>
+                    重置用户密码
+                </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <p>确定要将用户 <strong>{{ user.username }}</strong> 的密码重置为 <code>123456</code> 吗？</p>
-                <div class="alert alert-warning">
-                    <i class="bi bi-exclamation-triangle-fill"></i> 用户下次登录时必须修改密码！
+                <div class="text-center mb-4">
+                    <span class="material-icons text-warning" style="font-size: 4rem;">lock_reset</span>
+                </div>
+                <p class="text-center">确定要将用户 <strong class="text-primary">{{ user.username }}</strong> 的密码重置为默认值吗？</p>
+                <div class="alert alert-warning d-flex align-items-center gap-2">
+                    <span class="material-icons">warning</span>
+                    <div>
+                        <strong>重要提醒：</strong><br>
+                        • 新密码将设置为：<code>123456</code><br>
+                        • 用户下次登录时建议修改密码
+                    </div>
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">取消操作</button>
                 <form method="post" action="{{ url_for('admin_reset_password', user_id=user.id) }}">
-                    <button type="submit" class="btn btn-danger">确认重置</button>
+                    <button type="submit" class="btn btn-outline-danger d-flex align-items-center gap-2">
+                        <span class="material-icons">key</span>
+                        确认重置密码
+                    </button>
                 </form>
             </div>
         </div>
@@ -194,22 +783,37 @@
 <!-- 删除用户确认模态框 -->
 {% if current_user.id != user.id %}
 <div class="modal fade" id="deleteUserModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">确认删除</h5>
+                <h5 class="modal-title d-flex align-items-center gap-2">
+                    <span class="material-icons">delete_forever</span>
+                    删除用户确认
+                </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <p>确定要删除用户 <strong>{{ user.username }}</strong> 吗？此操作无法撤销！</p>
-                <div class="alert alert-danger">
-                    <i class="bi bi-exclamation-triangle-fill"></i> 警告：这将永久删除该用户及其所有数据！
+                <div class="text-center mb-4">
+                    <span class="material-icons text-danger" style="font-size: 4rem;">delete_forever</span>
+                </div>
+                <p class="text-center">确定要永久删除用户 <strong class="text-primary">{{ user.username }}</strong> 吗？</p>
+                <div class="alert alert-danger d-flex align-items-center gap-2">
+                    <span class="material-icons">warning</span>
+                    <div>
+                        <strong>危险操作：</strong><br>
+                        • 将永久删除该用户及其所有数据<br>
+                        • 包括用户生成的视频和历史记录<br>
+                        • 此操作无法撤销！
+                    </div>
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">取消操作</button>
                 <form method="post" action="{{ url_for('admin_delete_user', user_id=user.id) }}">
-                    <button type="submit" class="btn btn-danger">确认删除</button>
+                    <button type="submit" class="btn btn-outline-danger d-flex align-items-center gap-2">
+                        <span class="material-icons">delete_forever</span>
+                        确认删除用户
+                    </button>
                 </form>
             </div>
         </div>
@@ -221,27 +825,101 @@
 
 {% block extra_js %}
 <script>
-// 表单验证
-var userForm = document.getElementById('userForm');
+// 表单验证和交互效果
+document.addEventListener('DOMContentLoaded', function() {
+    const userForm = document.getElementById('userForm');
+    
 if (userForm) {
+        // 表单提交验证
     userForm.addEventListener('submit', function(event) {
-        var password = userForm.querySelector('input[name="password"]').value;
-        var passwordConfirm = userForm.querySelector('input[name="password_confirm"]').value;
+            const password = userForm.querySelector('input[name="password"]').value;
+            const passwordConfirm = userForm.querySelector('input[name="password_confirm"]').value;
         
         if (password || passwordConfirm) {
             if (password !== passwordConfirm) {
                 event.preventDefault();
-                alert('两次输入的密码不一致！');
+                    showAlert('两次输入的密码不一致！', 'danger');
                 return false;
             }
             
             if (password.length < 6) {
                 event.preventDefault();
-                alert('密码长度不能少于6个字符！');
+                    showAlert('密码长度不能少于6个字符！', 'danger');
                 return false;
             }
         }
+            
+            // 显示保存中状态
+            const submitBtn = userForm.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<span class="material-icons">hourglass_top</span> 保存中...';
+            submitBtn.disabled = true;
+            
+            // 模拟延迟恢复按钮（实际会重定向）
+            setTimeout(() => {
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }, 2000);
+        });
+        
+        // 实时密码确认验证
+        const passwordInput = userForm.querySelector('input[name="password"]');
+        const passwordConfirmInput = userForm.querySelector('input[name="password_confirm"]');
+        
+        function validatePasswordMatch() {
+            if (passwordInput.value && passwordConfirmInput.value) {
+                if (passwordInput.value === passwordConfirmInput.value) {
+                    passwordConfirmInput.style.borderColor = '#10b981';
+                } else {
+                    passwordConfirmInput.style.borderColor = '#ef4444';
+                }
+            } else {
+                passwordConfirmInput.style.borderColor = '';
+            }
+        }
+        
+        passwordInput.addEventListener('input', validatePasswordMatch);
+        passwordConfirmInput.addEventListener('input', validatePasswordMatch);
+    }
+    
+    // 添加加载动画效果
+    const cards = document.querySelectorAll('.glass-card');
+    cards.forEach((card, index) => {
+        card.style.animationDelay = `${index * 0.1}s`;
+        card.style.animation = 'slideInUp 0.6s ease forwards';
     });
+});
+
+// 显示警告信息的函数
+function showAlert(message, type = 'info') {
+    const alertDiv = document.createElement('div');
+    alertDiv.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
+    alertDiv.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+    alertDiv.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    document.body.appendChild(alertDiv);
+    
+    setTimeout(() => {
+        alertDiv.remove();
+    }, 5000);
 }
+
+// 添加卡片进入动画
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes slideInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+`;
+document.head.appendChild(style);
 </script>
 {% endblock %}

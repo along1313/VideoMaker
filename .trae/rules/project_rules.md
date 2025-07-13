@@ -1,1 +1,0 @@
-如果要在终端运行，请先使用source .venv/bin/activate激活虚拟环境

@@ -11,7 +11,6 @@ from service.ai_service import LLMService, ImageModelService, TTSModelService, V
 from service.script_service import ScriptService
 from service.picture_prompt_service import PicturePromptService
 from service.picture_generate_service import PictureGenerateService
-from service.voice_generate_service import VoiceGenerateService
 from utility import parse_json, func_and_retry_parse_json
 from workflow import generate_picture_from_json, generate_audio, add_time, generate_video, generate_cover
 from static.style_config import TEMPLATE_CONFIG

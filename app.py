@@ -1245,6 +1245,128 @@ def delete_video(video_id):
         'message': '视频已删除'
     })
 
+def cleanup_video_files(video):
+    """
+    清理视频相关的所有文件和目录
+    返回清理结果的详细信息
+    """
+    cleanup_result = {
+        'video_file': False,
+        'cover_file': False,
+        'project_dir': False,
+        'errors': []
+    }
+    
+    try:
+        # 获取项目ID和用户ID
+        project_id = video.title
+        user_id = video.user_id
+        
+        # 删除视频文件
+        if video.video_path and os.path.exists(video.video_path):
+            try:
+                os.remove(video.video_path)
+                cleanup_result['video_file'] = True
+                log_info(f"已删除视频文件: {video.video_path}", "video")
+            except Exception as e:
+                error_msg = f"删除视频文件失败: {str(e)}"
+                cleanup_result['errors'].append(error_msg)
+                log_error(error_msg, "video")
+        
+        # 删除封面文件
+        if video.cover_path and os.path.exists(video.cover_path):
+            try:
+                os.remove(video.cover_path)
+                cleanup_result['cover_file'] = True
+                log_info(f"已删除封面文件: {video.cover_path}", "video")
+            except Exception as e:
+                error_msg = f"删除封面文件失败: {str(e)}"
+                cleanup_result['errors'].append(error_msg)
+                log_error(error_msg, "video")
+        
+        # 删除整个项目目录
+        if project_id and user_id:
+            # 尝试多种可能的项目目录路径
+            possible_project_dirs = [
+                os.path.join("./workstore", str(user_id), project_id),
+                os.path.join("./workstore", f"user{user_id}", project_id)
+            ]
+            
+            for project_dir in possible_project_dirs:
+                if os.path.exists(project_dir):
+                    try:
+                        import shutil
+                        shutil.rmtree(project_dir)
+                        cleanup_result['project_dir'] = True
+                        log_info(f"已删除项目目录: {project_dir}", "video")
+                        break
+                    except Exception as e:
+                        error_msg = f"删除项目目录失败: {str(e)}"
+                        cleanup_result['errors'].append(error_msg)
+                        log_error(error_msg, "video")
+    
+    except Exception as e:
+        error_msg = f"清理文件时发生未知错误: {str(e)}"
+        cleanup_result['errors'].append(error_msg)
+        log_error(error_msg, "video")
+    
+    return cleanup_result
+
+# API：停止视频生成并删除文件
+@app.route('/api/stop-generation/<int:video_id>', methods=['POST'])
+@login_required
+def stop_generation(video_id):
+    """停止视频生成并删除相关文件"""
+    try:
+        # 检查视频权限
+        video = Video.query.filter_by(id=video_id, user_id=current_user.id).first()
+        if not video:
+            return jsonify({'success': False, 'message': '视频不存在或无权限访问'})
+        
+        # 只允许停止正在处理中的视频
+        if video.status not in ['pending', 'processing']:
+            return jsonify({'success': False, 'message': '该视频不在生成过程中，无法停止'})
+        
+        log_info(f"用户 {current_user.username} 请求停止视频生成，视频ID: {video_id}", "video")
+        
+        # 查找对应的任务并标记为取消
+        task_cancelled = False
+        cancelled_task_id = None
+        for task_id, task_data in generation_status.items():
+            if task_data.get('video_id') == video_id:
+                generation_status[task_id]['status'] = 'cancelled'
+                generation_status[task_id]['message'] = '用户主动停止生成'
+                task_cancelled = True
+                cancelled_task_id = task_id
+                log_info(f"已标记任务为取消状态，任务ID: {task_id}", "video")
+                break
+        
+        # 清理已创建的文件和目录
+        cleanup_result = cleanup_video_files(video)
+        
+        # 返还用户额度
+        credits_to_return = video.credits_used or 1
+        current_user.credits += credits_to_return
+        
+        # 删除数据库记录
+        db.session.delete(video)
+        db.session.commit()
+        
+        log_info(f"用户 {current_user.username} 停止生成成功，返还 {credits_to_return} 额度，当前余额: {current_user.credits}", "video")
+        
+        return jsonify({
+            'success': True, 
+            'message': f'已停止生成并清理文件，返还 {credits_to_return} 个额度',
+            'task_cancelled': task_cancelled,
+            'files_cleaned': cleanup_result,
+            'credits_returned': credits_to_return,
+            'current_credits': current_user.credits
+        })
+        
+    except Exception as e:
+        log_error(f"停止生成失败，用户: {current_user.username}, 视频ID: {video_id}, 错误: {str(e)}", "video", exc_info=True)
+        return jsonify({'success': False, 'message': f'停止失败: {str(e)}'})
+
 # API：获取充值记录
 @app.route('/api/payment-history')
 @login_required
@@ -1521,6 +1643,61 @@ def admin_delete_user(user_id):
     
     flash('用户已删除', 'success')
     return redirect(url_for('admin_users'))
+
+# 切换用户状态
+@app.route('/admin/users/<int:user_id>/toggle', methods=['POST'])
+@login_required
+@admin_required
+def admin_toggle_user_status(user_id):
+    """切换用户状态（启用/禁用）"""
+    try:
+        user = User.query.get_or_404(user_id)
+        
+        # 不能禁用管理员
+        if user.is_admin:
+            return jsonify({'success': False, 'message': '不能禁用管理员账户'})
+        
+        # 不能禁用当前登录用户
+        if current_user.id == user_id:
+            return jsonify({'success': False, 'message': '不能禁用当前登录的账户'})
+        
+        # 切换状态
+        user.is_active = not user.is_active
+        db.session.commit()
+        
+        action = '启用' if user.is_active else '禁用'
+        return jsonify({'success': True, 'message': f'用户已{action}'})
+        
+    except Exception as e:
+        return jsonify({'success': False, 'message': str(e)})
+
+# 删除用户（API版本）
+@app.route('/admin/users/<int:user_id>', methods=['DELETE'])
+@login_required
+@admin_required
+def admin_delete_user_api(user_id):
+    """删除用户（API版本）"""
+    try:
+        if current_user.id == user_id:
+            return jsonify({'success': False, 'message': '不能删除当前登录的管理员账户'})
+        
+        user = User.query.get_or_404(user_id)
+        
+        # 不能删除管理员
+        if user.is_admin:
+            return jsonify({'success': False, 'message': '不能删除管理员账户'})
+        
+        # 删除相关数据（根据实际需求调整）
+        UserLoginLog.query.filter_by(user_id=user_id).delete()
+        
+        # 删除用户
+        db.session.delete(user)
+        db.session.commit()
+        
+        return jsonify({'success': True, 'message': '用户已删除'})
+        
+    except Exception as e:
+        return jsonify({'success': False, 'message': str(e)})
 
 # 重置用户密码
 @app.route('/admin/user/<int:user_id>/reset-password', methods=['POST'])
@@ -1931,6 +2108,22 @@ def admin_delete_video(video_id):
         flash(f'删除视频失败: {str(e)}', 'danger')
     
     return redirect(url_for('admin_videos'))
+
+# 管理员下载视频
+@app.route('/admin/videos/<int:video_id>/download', methods=['POST'])
+@login_required
+@admin_required
+def admin_download_video(video_id):
+    """管理员下载视频"""
+    video = Video.query.get_or_404(video_id)
+    
+    if not video.video_path or not os.path.exists(video.video_path):
+        return jsonify({'success': False, 'message': '视频文件不存在'}), 404
+    
+    try:
+        return send_file(video.video_path, as_attachment=True, download_name=f'video_{video_id}.mp4')
+    except Exception as e:
+        return jsonify({'success': False, 'message': f'下载失败: {str(e)}'}), 500
 
 @app.route('/test-progress')
 def test_progress():

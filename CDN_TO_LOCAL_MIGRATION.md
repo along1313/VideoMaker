@@ -124,4 +124,105 @@ static/vendor/
 - **完全的网络独立性**
 - **显著的用户体验改善**
 
-这次迁移为项目提供了更好的性能和稳定性，特别是在国内网络环境下，效果更加明显。 
+这次迁移为项目提供了更好的性能和稳定性，特别是在国内网络环境下，效果更加明显。
+
+---
+
+## 🆕 新增本地化资源 (2024年更新)
+
+### 新增资源概览
+在网站风格更新后，发现并本地化了以下新的国际CDN资源：
+
+| 资源名称 | 原CDN | 本地化状态 | 文件大小 |
+|---------|-------|-----------|----------|
+| Tailwind CSS | `https://cdn.tailwindcss.com` | ✅ 已本地化 | 28.5KB |
+| Material Icons | `https://fonts.googleapis.com/icon?family=Material+Icons` | ✅ 已本地化 | 348.8KB |
+| Noto Sans SC | `https://fonts.googleapis.com/css2?family=Noto+Sans+SC` | ✅ 已本地化 | 30.5MB |
+
+### 新增资源详情
+
+#### 5. Tailwind CSS
+- **原CDN**: `https://cdn.tailwindcss.com`
+- **本地路径**: `/static/vendor/tailwindcss/tailwind.min.css`
+- **文件大小**: 28.5KB
+- **备注**: 使用国内CDN镜像下载
+
+#### 6. Google Fonts - Material Icons
+- **原CDN**: `https://fonts.googleapis.com/icon?family=Material+Icons`
+- **本地路径**: 
+  - CSS: `/static/vendor/google-fonts/css/material-icons.css`
+  - 字体: `/static/vendor/google-fonts/fonts/material-icons.ttf`
+- **文件大小**: 348.8KB
+
+#### 7. Google Fonts - Noto Sans SC
+- **原CDN**: `https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap`
+- **本地路径**: 
+  - CSS: `/static/vendor/google-fonts/css/noto-sans-sc.css`
+  - 字体文件:
+    - `/static/vendor/google-fonts/fonts/noto-sans-sc-400.ttf` (10.5MB)
+    - `/static/vendor/google-fonts/fonts/noto-sans-sc-500.ttf` (10.5MB)
+    - `/static/vendor/google-fonts/fonts/noto-sans-sc-700.ttf` (10.5MB)
+
+### 更新的模板文件
+1. **templates/base.html**
+   - 替换Tailwind CSS CDN为本地引用
+   - 替换Material Icons CDN为本地引用
+   - 替换Noto Sans SC CDN为本地引用
+
+2. **templates/admin/base.html**
+   - 替换Tailwind CSS CDN为本地引用
+   - 替换Material Icons CDN为本地引用
+   - 替换Noto Sans SC CDN为本地引用
+
+3. **templates/admin/edit_user.html**
+   - 替换Material Icons CDN为本地引用
+
+### 更新后的目录结构
+```
+static/vendor/
+├── vue/
+│   └── vue.min.js
+├── element-ui/
+│   ├── index.css
+│   ├── index.js
+│   └── fonts/
+│       ├── element-icons.woff
+│       └── element-icons.ttf
+├── axios/
+│   └── axios.min.js
+├── font-awesome/
+│   ├── css/
+│   │   └── all.min.css
+│   └── webfonts/
+│       ├── fa-solid-900.woff2
+│       ├── fa-regular-400.woff2
+│       └── fa-brands-400.woff2
+├── tailwindcss/          # 新增
+│   └── tailwind.min.css
+└── google-fonts/         # 新增
+    ├── css/
+    │   ├── material-icons.css
+    │   └── noto-sans-sc.css
+    └── fonts/
+        ├── material-icons.ttf
+        ├── noto-sans-sc-400.ttf
+        ├── noto-sans-sc-500.ttf
+        └── noto-sans-sc-700.ttf
+```
+
+### 本地化策略
+1. **Tailwind CSS**: 使用国内CDN镜像 `https://cdn.bootcdn.net/ajax/libs/tailwindcss/3.4.0/tailwind.min.css`
+2. **Google Fonts**: 直接从Google服务器下载字体文件，并修改CSS中的路径为相对路径
+3. **路径修改**: 将所有外部URL替换为Flask的 `url_for` 函数调用
+
+### 性能收益
+- **减少外部依赖**: 完全消除了对Google Fonts和Tailwind CDN的依赖
+- **提升加载速度**: 特别在国内网络环境下，避免了访问海外服务器的延迟
+- **增强稳定性**: 不再受外部CDN服务可用性影响
+
+### 维护建议
+1. **定期更新**: 关注Tailwind CSS的版本更新
+2. **字体优化**: 考虑使用字体子集化减少文件大小
+3. **缓存策略**: 为字体文件配置长期缓存策略
+
+这次新增的本地化资源进一步提升了网站的加载性能和稳定性，特别适合国内的网络环境。 

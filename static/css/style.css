@@ -349,8 +349,8 @@ body {
 }
 
 .value.credits {
-    color: var(--secondary-color);
-    font-weight: 700;
+    color: var(--dark-color);
+    font-weight: 500;
 }
 
 .action-buttons {

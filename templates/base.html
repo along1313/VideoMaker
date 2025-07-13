@@ -36,7 +36,8 @@
             "register": "{{ url_for('register') }}",
             "logout": "{{ url_for('logout') }}",
             "profile": "{{ url_for('profile') }}",
-            "myVideos": "{{ url_for('my_videos') }}"
+            "myVideos": "{{ url_for('my_videos') }}",
+            "contact": "{{ url_for('contact') }}"
             {% if current_user.is_authenticated and current_user.is_admin %},
             "adminDashboard": "{{ url_for('admin_dashboard') }}"
             {% endif %}
@@ -64,11 +65,13 @@
                         {% if current_user.is_admin %}
                             <a href="{{ url_for('admin_dashboard') }}">管理后台</a>
                         {% endif %}
+                        <a href="{{ url_for('contact') }}">联系我们</a>
                         <a href="{{ url_for('logout') }}">退出登录</a>
                         <span class="credits">剩余额度: {{ current_user.credits }}条</span>
                     {% else %}
                         <a href="{{ url_for('login') }}">登录</a>
                         <a href="{{ url_for('register') }}">注册</a>
+                        <a href="{{ url_for('contact') }}">联系我们</a>
                     {% endif %}
                 </div>
             </nav>

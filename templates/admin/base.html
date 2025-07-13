@@ -84,6 +84,11 @@
                             </a>
                         </li>
                         <li class="nav-item">
+                            <a class="nav-link {% if request.endpoint == 'admin_messages' %}active{% endif %}" href="{{ url_for('admin_messages') }}">
+                                <i class="bi bi-chat-left-text me-2"></i>留言管理
+                            </a>
+                        </li>
+                        <li class="nav-item">
                             <a class="nav-link" href="#">
                                 <i class="bi bi-credit-card"></i> 充值记录
                             </a>

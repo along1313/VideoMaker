@@ -175,6 +175,19 @@ class Payment(db.Model):
     credits = db.Column(db.Integer, nullable=False)
     status = db.Column(db.String(20), default='completed')
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+# 留言模型
+class Message(db.Model):
+    """留言模型，存储用户留言信息"""
+    id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(100), nullable=False)  # 邮箱
+    wechat = db.Column(db.String(100), nullable=True)  # 微信号
+    qq = db.Column(db.String(50), nullable=True)  # QQ号
+    phone = db.Column(db.String(20), nullable=True)  # 手机号码
+    content = db.Column(db.Text, nullable=False)  # 留言内容
+    is_read = db.Column(db.Boolean, default=False)  # 是否已读
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)  # 创建时间
+    replied_at = db.Column(db.DateTime, nullable=True)  # 回复时间
     # 移除重复的 user 关系，因为已经在 User 模型中定义了 backref
 
 @login_manager.user_loader
@@ -1827,6 +1840,13 @@ def humanize_time(dt):
     else:
         return dt.strftime('%Y-%m-%d')
 
+@app.template_filter('nl2br')
+def nl2br(text):
+    """将文本中的换行符转换为HTML的<br>标签"""
+    if not text:
+        return ''
+    return text.replace('\n', '<br>\n')
+
 # 上下文处理器：添加模板全局变量
 @app.context_processor
 def inject_now():
@@ -1951,6 +1971,130 @@ def admin_refresh_monthly_credits():
         flash(f'刷新失败：{str(e)}', 'danger')
     
     return redirect(url_for('admin_users'))
+
+# 联系我们页面
+@app.route('/contact', methods=['GET', 'POST'])
+def contact():
+    """联系我们页面"""
+    if request.method == 'POST':
+        try:
+            # 获取表单数据
+            email = request.form.get('email', '').strip()
+            wechat = request.form.get('wechat', '').strip()
+            qq = request.form.get('qq', '').strip()
+            phone = request.form.get('phone', '').strip()
+            content = request.form.get('content', '').strip()
+            
+            # 验证必填字段
+            if not email or not content:
+                return jsonify({'success': False, 'message': '邮箱和留言内容不能为空'})
+            
+            # 创建留言记录
+            message = Message(
+                email=email,
+                wechat=wechat if wechat else None,
+                qq=qq if qq else None,
+                phone=phone if phone else None,
+                content=content
+            )
+            
+            db.session.add(message)
+            db.session.commit()
+            
+            # 记录日志
+            log_info(f"新留言：{email} - {content[:50]}...")
+            
+            return jsonify({'success': True, 'message': '留言提交成功！我们会尽快回复您。'})
+            
+        except Exception as e:
+            db.session.rollback()
+            log_error(f"留言提交失败：{str(e)}")
+            return jsonify({'success': False, 'message': '提交失败，请稍后重试'})
+    
+    return render_template('contact.html')
+
+# 管理员留言管理
+@app.route('/admin/messages')
+@login_required
+@admin_required
+def admin_messages():
+    """管理员留言管理"""
+    page = request.args.get('page', 1, type=int)
+    per_page = 20
+    query = Message.query
+    
+    # 搜索功能
+    search = request.args.get('q', '').strip()
+    if search:
+        query = query.filter(
+            or_(
+                Message.email.like(f'%{search}%'),
+                Message.content.like(f'%{search}%')
+            )
+        )
+    
+    # 状态筛选
+    status = request.args.get('status', '')
+    if status == 'read':
+        query = query.filter_by(is_read=True)
+    elif status == 'unread':
+        query = query.filter_by(is_read=False)
+    
+    # 排序
+    query = query.order_by(Message.created_at.desc())
+    
+    # 分页
+    pagination = query.paginate(page=page, per_page=per_page, error_out=False)
+    messages = pagination.items
+    
+    # 统计数据
+    total_messages = Message.query.count()
+    unread_messages = Message.query.filter_by(is_read=False).count()
+    
+    return render_template('admin/messages.html',
+                         messages=messages,
+                         pagination=pagination,
+                         total_messages=total_messages,
+                         unread_messages=unread_messages)
+
+# 标记留言为已读
+@app.route('/admin/message/<int:message_id>/mark-read', methods=['POST'])
+@login_required
+@admin_required
+def admin_mark_message_read(message_id):
+    """标记留言为已读"""
+    try:
+        message = Message.query.get_or_404(message_id)
+        message.is_read = True
+        message.replied_at = datetime.utcnow()
+        db.session.commit()
+        
+        flash('留言已标记为已读', 'success')
+        
+    except Exception as e:
+        db.session.rollback()
+        flash(f'操作失败：{str(e)}', 'danger')
+    
+    return redirect(url_for('admin_messages'))
+
+# 删除留言
+@app.route('/admin/message/<int:message_id>/delete', methods=['POST'])
+@login_required
+@admin_required
+def admin_delete_message(message_id):
+    """删除留言"""
+    try:
+        message = Message.query.get_or_404(message_id)
+        db.session.delete(message)
+        db.session.commit()
+        
+        flash('留言已删除', 'success')
+        
+    except Exception as e:
+        db.session.rollback()
+        flash(f'删除失败：{str(e)}', 'danger')
+    
+    return redirect(url_for('admin_messages'))
 
 if __name__ == '__main__':
     # 确保数据库表存在

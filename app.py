@@ -366,6 +366,44 @@ def google_verification():
     """Google Search Console验证文件"""
     return "google-site-verification: google0d5274732e0bb492.html"
 
+# Favicon和网站图标路由
+@app.route('/favicon.ico')
+def favicon():
+    """Favicon.ico 文件"""
+    return send_from_directory('.', 'favicon.ico', mimetype='image/vnd.microsoft.icon')
+
+@app.route('/favicon.png')
+def favicon_png():
+    """Favicon PNG 文件"""
+    return send_from_directory('.', 'favicon.png', mimetype='image/png')
+
+@app.route('/apple-touch-icon.png')
+def apple_touch_icon():
+    """Apple Touch Icon 文件"""
+    return send_from_directory('.', 'apple-touch-icon.png', mimetype='image/png')
+
+@app.route('/site.webmanifest')
+def site_webmanifest():
+    """网站清单文件"""
+    return send_from_directory('.', 'site.webmanifest', mimetype='application/manifest+json')
+
+@app.route('/favicon-<int:size>x<int:size2>.png')
+def favicon_sized(size, size2):
+    """不同尺寸的favicon PNG文件"""
+    if size == size2 and f'favicon-{size}x{size}.png' in os.listdir('.'):
+        return send_from_directory('.', f'favicon-{size}x{size}.png', mimetype='image/png')
+    return abort(404)
+
+@app.route('/sitemap.xml')
+def sitemap():
+    """站点地图文件"""
+    return send_from_directory('.', 'sitemap.xml', mimetype='application/xml')
+
+@app.route('/robots.txt')
+def robots():
+    """搜索引擎爬虫规则文件"""
+    return send_from_directory('.', 'robots.txt', mimetype='text/plain')
+
 # 路由：登录
 @app.route('/login', methods=['GET', 'POST'])
 def login():

@@ -1,0 +1,33 @@
+User-agent: *
+Allow: /
+Allow: /register
+Allow: /register-with-email
+Allow: /login
+Allow: /contact
+Allow: /forgot-password
+Allow: /reset-password
+
+# 禁止访问私人和敏感目录
+Disallow: /admin/
+Disallow: /api/
+Disallow: /video/
+Disallow: /workstore/
+Disallow: /covers/
+Disallow: /my-videos
+Disallow: /profile
+Disallow: /recharge
+Disallow: /generate/
+Disallow: /download-video/
+
+# 禁止访问技术文件
+Disallow: /static/
+Disallow: /instance/
+Disallow: /logs/
+Disallow: *.py
+Disallow: *.log
+
+# 站点地图位置
+Sitemap: https://baisuai.com/sitemap.xml
+
+# 爬取延迟设置（可选）
+Crawl-delay: 1 

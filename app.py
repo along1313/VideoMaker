@@ -360,6 +360,12 @@ def index():
     
     return render_template('index.html', styles=styles)
 
+# Google Search Console验证文件
+@app.route('/google0d5274732e0bb492.html')
+def google_verification():
+    """Google Search Console验证文件"""
+    return "google-site-verification: google0d5274732e0bb492.html"
+
 # 路由：登录
 @app.route('/login', methods=['GET', 'POST'])
 def login():

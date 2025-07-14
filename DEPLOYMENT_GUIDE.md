@@ -285,6 +285,187 @@ cd VideoMaker
 systemctl start videomaker
 ```
 
+## 🚨 常见部署问题与解决方案
+
+### 问题1：CDN本地化文件缺失导致样式异常
+
+**症状表现**：
+- 网站显示不正常，缺少样式和交互效果
+- 页面只显示基础HTML内容和箭头图标
+- Vue.js应用未正确初始化
+
+**问题原因**：
+服务器缺少CDN本地化文件（TailwindCSS、Google Fonts等）
+
+**诊断命令**：
+```bash
+# 检查CDN本地化文件是否存在
+ls -la /root/VideoMaker/static/vendor/tailwindcss/
+ls -la /root/VideoMaker/static/vendor/google-fonts/
+
+# 测试文件访问
+curl -I https://baisuai.com/static/vendor/vue/vue.min.js
+```
+
+**解决方案**：
+```bash
+# 1. 从本地上传CDN文件
+scp -i /path/to/key.pem -r static/vendor/tailwindcss/* root@server:/root/VideoMaker/static/vendor/tailwindcss/
+scp -i /path/to/key.pem -r static/vendor/google-fonts/* root@server:/root/VideoMaker/static/vendor/google-fonts/
+
+# 2. 设置正确权限
+chown -R www:www /root/VideoMaker/static/vendor/
+chmod -R 755 /root/VideoMaker/static/vendor/
+```
+
+### 问题2：服务器代码版本过旧
+
+**症状表现**：
+- 模板文件中仍使用CDN链接而非本地路径
+- 最新功能和修复未生效
+
+**问题原因**：
+服务器git代码停留在旧版本，缺少CDN本地化相关提交
+
+**诊断命令**：
+```bash
+# 检查服务器代码版本
+cd /root/VideoMaker && git log --oneline -5
+
+# 检查模板文件中的引用
+grep 'tailwindcss' /root/VideoMaker/templates/base.html
+```
+
+**解决方案**：
+```bash
+# 强制更新到最新版本
+cd /root/VideoMaker
+git stash
+git fetch origin  
+git reset --hard origin/master
+git stash pop  # 恢复本地配置
+
+# 重启服务
+systemctl restart videomaker
+```
+
+### 问题3：静态文件403 Forbidden错误
+
+**症状表现**：
+- 所有静态文件返回403错误
+- JavaScript/CSS文件无法加载
+- 浏览器控制台显示资源加载失败
+
+**问题原因**：
+nginx worker进程以`www`用户运行，无法访问`/root/`目录
+
+**诊断命令**：
+```bash
+# 检查nginx进程用户
+ps aux | grep nginx
+
+# 测试文件访问权限
+curl -I https://baisuai.com/static/vendor/vue/vue.min.js
+
+# 检查目录权限
+ls -la /root/VideoMaker/static/vendor/
+```
+
+**解决方案**：
+```bash
+# 修复目录权限
+chmod 755 /root
+chmod -R 755 /root/VideoMaker
+chown -R www:www /root/VideoMaker/static/
+
+# 确保所有文件有正确权限
+find /root/VideoMaker/static/vendor/ -type f -name '*.js' -o -name '*.css' | xargs chmod 644
+
+# 重新加载nginx
+systemctl reload nginx
+```
+
+### 问题4：端口配置不一致
+
+**症状表现**：
+- 502 Bad Gateway错误
+- 服务无法正常访问
+
+**诊断命令**：
+```bash
+# 检查应用实际监听端口
+netstat -tlnp | grep python
+
+# 检查nginx代理配置
+grep proxy_pass /www/server/panel/vhost/nginx/videomaker.conf
+
+# 检查环境变量配置
+grep PORT /root/VideoMaker/.env
+```
+
+**解决方案**：
+确保以下配置一致：
+- nginx配置：`proxy_pass http://127.0.0.1:5001;`
+- gunicorn配置：`bind = '0.0.0.0:5001'`
+- 环境变量：PORT=5001（如果设置）
+
+### 问题5：服务启动失败
+
+**症状表现**：
+- systemctl status显示failed状态
+- 应用无法启动
+
+**诊断命令**：
+```bash
+# 检查服务状态和错误信息
+systemctl status videomaker -l
+journalctl -u videomaker -n 50
+
+# 检查Python环境和依赖
+source /root/VideoMaker/.venv/bin/activate
+pip check
+```
+
+**解决方案**：
+```bash
+# 重新安装依赖
+cd /root/VideoMaker
+source .venv/bin/activate
+pip install --upgrade pip
+pip install -r requirements.txt
+
+# 重启服务
+systemctl daemon-reload
+systemctl restart videomaker
+```
+
+### 部署后验证清单
+
+**必须验证的项目**：
+```bash
+# 1. 服务状态检查
+systemctl is-active videomaker
+systemctl is-active nginx
+
+# 2. CDN本地化文件访问测试
+curl -o /dev/null -s -w "%{http_code}" https://baisuai.com/static/vendor/vue/vue.min.js
+curl -o /dev/null -s -w "%{http_code}" https://baisuai.com/static/vendor/tailwindcss/tailwindcss.min.js
+curl -o /dev/null -s -w "%{http_code}" https://baisuai.com/static/vendor/element-ui/index.js
+
+# 3. 网站功能测试
+curl -s https://baisuai.com/ | grep -c "home-container"
+
+# 4. 日志检查
+tail -20 /root/VideoMaker/logs/app.log
+journalctl -u videomaker -n 10
+```
+
+**预期结果**：
+- 所有服务状态：active
+- 所有CDN文件：200状态码
+- 网站包含Vue应用容器
+- 日志无ERROR级别错误
+
 ## 📞 联系支持
 
 如遇到无法解决的问题，请检查：

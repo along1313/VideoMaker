@@ -1300,3 +1300,9 @@ WHERE video.id = ?]
 [2025-07-13 22:53:56,312] [INFO] [logger:55] - 正在初始化数据库...
 [2025-07-13 22:53:57,075] [INFO] [logger:55] - 数据库初始化完成
 [2025-07-13 22:53:57,075] [INFO] [logger:55] - 百速一键AI视频生成应用服务器已启动，监听端口: 5002
+[2025-07-14 11:08:33,822] [INFO] [logger:55] - 用户 admin 查看我的视频页面，共 5 个视频
+[2025-07-14 11:08:34,445] [INFO] [app:1941] - 请求 workstore 文件: user1/小红帽的森林奇遇/covers/cover_4:3.png
+[2025-07-14 11:08:34,447] [INFO] [app:1941] - 请求 workstore 文件: user1/停止按钮背后的故事/covers/cover_4:3.png
+[2025-07-14 11:08:34,449] [INFO] [app:1941] - 请求 workstore 文件: user1/纳什均衡解析/covers/cover_4:3.png
+[2025-07-14 11:08:34,449] [INFO] [app:1941] - 请求 workstore 文件: user1/《金刚经》第八品 依法出生分/covers/cover_4:3.png
+[2025-07-14 11:08:34,449] [INFO] [app:1941] - 请求 workstore 文件: user1/白雪公主的童话/covers/cover_4:3.png

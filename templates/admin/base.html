@@ -5,16 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}管理后台{% endblock %}</title>
     
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Tailwind CSS 本地版本 -->
+    <script src="{{ url_for('static', filename='vendor/tailwindcss/tailwindcss.min.js') }}"></script>
     
-    <!-- Material Icons -->
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- Material Icons 本地版本 -->
+    <link href="{{ url_for('static', filename='vendor/google-fonts/css/material-icons.css') }}" rel="stylesheet">
     
-    <!-- Noto Sans SC 字体 -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Noto Sans SC 字体 本地版本 -->
+    <link href="{{ url_for('static', filename='vendor/google-fonts/css/noto-sans-sc.css') }}" rel="stylesheet">
     
     <!-- 引入Element UI -->
     <link rel="stylesheet" href="{{ url_for('static', filename='vendor/element-ui/index.css') }}">

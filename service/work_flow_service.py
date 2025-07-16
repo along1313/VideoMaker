@@ -173,7 +173,7 @@ async def run_work_flow_v3(
 async def run_work_flow_v3_with_progress(
     text: str, 
     result_dir: str, 
-    user_id: str, 
+    user_id: str,  #使用用户的id作为项目目录的名称
     style: str, 
     template: str,
     llm_model_str: str = "deepseek-reasoner", 

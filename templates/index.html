@@ -40,13 +40,13 @@
         <div class="relative">
                 <el-input
                     type="textarea"
-                    :rows="inputMode === 'prompt' ? 3 : 6"
+                    :rows="inputMode === 'prompt' ? 5 : 6"
                 :placeholder="inputMode === 'prompt' ? '请输入提示词一键生成短视频，例如：生成一个解释纳什均衡的视频，视频标题为《解读纳什均衡》，开头先解释什么是纳什均衡' : '请将撰写好的文案粘贴到文本框中生成视频'"
                     v-model="prompt"
                     :class="['prompt-input', { 'small-font': prompt.length > 80 }]"
                     @input="onPromptInput">
                 </el-input>
-            <span class="material-icons absolute top-4 right-4 cursor-pointer hover:text-blue-400 transition-colors z-10"
+            <span class="material-icons absolute bottom-4 right-4 cursor-pointer hover:text-blue-400 transition-colors z-10"
                   @click="toggleSettings"
                   style="color: #94a3b8 !important; font-size: 1.5rem !important;">
                 settings
@@ -297,6 +297,9 @@
             console.log('User authenticated:', this.isAuthenticated);
             console.log('User info from $global:', this.$global?.user);
             console.log('User info from window:', window.AppConfig.globalData?.user);
+            
+            // 加载保存的设置
+            this.loadSettings();
         },
         computed: {
             // 使用计算属性获取用户信息，直接从window.AppConfig获取
@@ -469,7 +472,10 @@
                 })
                 .then(response => {
                     if (response.data.success) {
-                        window.location.href = `/generate/${response.data.video_id}`;
+                        // 显示成功消息
+                        this.$message.success(response.data.message || '任务已创建');
+                        // 跳转到统一的任务中心页面
+                        window.location.href = response.data.redirect_url || '/my-tasks';
                     } else {
                         this.$message.error(response.data.message || '生成失败');
                         this.isGenerating = false;
@@ -500,6 +506,46 @@
             onPromptInput() {
                 // 实现输入框内容变化时的处理逻辑
                 console.log('Prompt input changed:', this.prompt);
+            },
+            
+            // 设置持久化方法
+            loadSettings() {
+                try {
+                    const savedSettings = localStorage.getItem('videoSettings');
+                    if (savedSettings) {
+                        const settings = JSON.parse(savedSettings);
+                        
+                        // 恢复设置，使用默认值作为后备
+                        this.isDisplayTitle = settings.isDisplayTitle !== undefined ? settings.isDisplayTitle : true;
+                        this.showUserName = settings.showUserName !== undefined ? settings.showUserName : true;
+                        this.ttsModelStr = settings.ttsModelStr || 'cosyvoice-v1';
+                        
+                        // 恢复用户名（如果存在）
+                        if (settings.userName) {
+                            this.userName = settings.userName;
+                        }
+                        
+                        console.log('Settings loaded:', settings);
+                    }
+                } catch (error) {
+                    console.error('Failed to load settings:', error);
+                }
+            },
+            
+            saveSettings() {
+                try {
+                    const settings = {
+                        isDisplayTitle: this.isDisplayTitle,
+                        showUserName: this.showUserName,
+                        ttsModelStr: this.ttsModelStr,
+                        userName: this.userName
+                    };
+                    
+                    localStorage.setItem('videoSettings', JSON.stringify(settings));
+                    console.log('Settings saved:', settings);
+                } catch (error) {
+                    console.error('Failed to save settings:', error);
+                }
             },
             // 模板滑动方法
             scrollTemplateLeft() {
@@ -538,6 +584,21 @@
                         behavior: 'smooth'
                     });
                 }
+            }
+        },
+        watch: {
+            // 监听设置变化并自动保存
+            isDisplayTitle() {
+                this.saveSettings();
+            },
+            showUserName() {
+                this.saveSettings();
+            },
+            ttsModelStr() {
+                this.saveSettings();
+            },
+            userName() {
+                this.saveSettings();
             }
         }
         });

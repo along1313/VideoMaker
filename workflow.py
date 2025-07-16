@@ -651,7 +651,7 @@ def generate_video(
 
     # 输出视频文件
     output_path = os.path.join(result_dir, "output.mp4")
-    final_clip.write_videofile(output_path, fps=24, codec="libx264", audio_codec="aac")
+    final_clip.write_videofile(output_path, fps=24, preset="superfast",threads=2, codec="libx264", audio_codec="aac")
 
 def generate_cover(work_flow_record, project_dir, **kwargs):   
     text = work_flow_record['title']

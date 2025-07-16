@@ -38,6 +38,7 @@ from service.ai_service import LLMService, ImageModelService, TTSModelService
 from service.work_flow_service import run_work_flow_v3_with_progress
 from service.email_service import email_service
 from static.style_config import STYLE_CONFIG
+from path_manager import path_manager
 
 # 初始化Flask应用
 app = Flask(__name__, static_folder='static', template_folder='templates')
@@ -64,6 +65,282 @@ login_manager.login_view = 'login'
 
 # 全局变量存储生成状态
 generation_status = {}
+
+def migrate_video_paths():
+    """迁移旧的视频路径到新的统一路径格式"""
+    try:
+        with app.app_context():
+            log_info("开始迁移视频路径...")
+            
+            # 查找所有视频记录
+            videos = Video.query.all()
+            migrated_count = 0
+            
+            for video in videos:
+                try:
+                    # 获取用户信息
+                    user = User.query.get(video.user_id)
+                    if not user:
+                        continue
+                        
+                    # 检查视频路径是否需要迁移
+                    if video.video_path:
+                        # 如果路径包含数字用户ID或"user"前缀，需要迁移
+                        path_parts = video.video_path.split('/')
+                        if len(path_parts) >= 2:
+                            user_dir = path_parts[1]  # workstore/user_dir/project/...
+                            expected_user_dir = user.username
+                            
+                            if user_dir != expected_user_dir:
+                                log_info(f"迁移视频 {video.id}: {user_dir} -> {expected_user_dir}")
+                                
+                                # 构建新的视频路径
+                                new_video_path = video.video_path.replace(f"workstore/{user_dir}/", f"workstore/{expected_user_dir}/")
+                                
+                                # 检查新路径是否存在
+                                if os.path.exists(new_video_path):
+                                    video.video_path = new_video_path
+                                    
+                                    # 同时更新封面路径
+                                    if video.cover_path:
+                                        new_cover_path = video.cover_path.replace(f"workstore/{user_dir}/", f"workstore/{expected_user_dir}/")
+                                        if os.path.exists(new_cover_path):
+                                            video.cover_path = new_cover_path
+                                    
+                                    migrated_count += 1
+                                    log_info(f"成功迁移视频 {video.id} 的路径")
+                                else:
+                                    log_warning(f"新路径不存在，跳过迁移视频 {video.id}: {new_video_path}")
+                    
+                except Exception as e:
+                    log_error(f"迁移视频 {video.id} 失败: {str(e)}")
+                    
+            # 提交所有更改
+            db.session.commit()
+            log_info(f"视频路径迁移完成，共迁移 {migrated_count} 个视频")
+            
+    except Exception as e:
+        log_error(f"迁移视频路径失败: {str(e)}")
+
+
+def recover_interrupted_tasks():
+    """服务器启动时恢复中断的任务"""
+    try:
+        with app.app_context():
+            log_info("检查服务器启动时是否有中断的任务需要恢复...")
+            
+            # 先尝试迁移旧的视频路径
+            migrate_video_paths()
+            
+            # 查找所有处于processing状态的任务
+            interrupted_tasks = TaskQueue.query.filter_by(status='processing').all()
+            
+            if not interrupted_tasks:
+                log_info("没有发现中断的任务")
+                return
+            
+            log_info(f"发现 {len(interrupted_tasks)} 个中断的任务，开始恢复...")
+            
+            for task in interrupted_tasks:
+                try:
+                    # 重置任务状态为waiting
+                    task.status = 'waiting'
+                    task.started_at = None
+                    
+                    # 如果已经创建了视频记录，将其状态重置为pending
+                    if task.video_id:
+                        video = Video.query.get(task.video_id)
+                        if video:
+                            video.status = 'pending'
+                            log_info(f"重置视频ID {task.video_id} 状态为pending")
+                    
+                    db.session.commit()
+                    log_info(f"恢复任务 {task.id}，用户 {task.user_id}，标题: {task.title[:30]}...")
+                    
+                    # 启动任务处理
+                    import threading
+                    thread = threading.Thread(target=process_next_queue_task, args=(task.user_id,))
+                    thread.daemon = True
+                    thread.start()
+                    
+                    log_info(f"任务 {task.id} 已重新启动")
+                    
+                except Exception as e:
+                    log_error(f"恢复任务 {task.id} 失败: {str(e)}")
+                    # 如果恢复失败，标记为失败状态
+                    task.status = 'failed'
+                    task.completed_at = datetime.utcnow()
+                    if task.video_id:
+                        video = Video.query.get(task.video_id)
+                        if video:
+                            video.status = 'failed'
+                    db.session.commit()
+            
+            log_info("任务恢复完成")
+            
+    except Exception as e:
+        log_error(f"恢复中断任务时发生错误: {str(e)}")
+
+def process_next_queue_task(user_id):
+    """处理用户队列中的下一个任务"""
+    try:
+        with app.app_context():
+            # 查找用户队列中等待的任务
+            next_task = TaskQueue.query.filter_by(
+                user_id=user_id,
+                status='waiting'
+            ).order_by(TaskQueue.created_at).first()
+            
+            if not next_task:
+                # 没有等待的任务，结束
+                return
+            
+            # 获取用户信息并检查当前额度
+            user = User.query.get(user_id)
+            if not user:
+                return
+            user_name = user.username  # 用用户名作为目录名
+            
+            # 检查用户当前额度是否足够（额度<=0时不处理任务）
+            if user.credits <= 0:
+                log_warning(f"用户 {user.username} 当前额度不足({user.credits})，暂停处理队列任务")
+                return
+            
+            # 创建视频记录
+            video = Video(
+                title=next_task.title,
+                user_id=user_id,
+                style=next_task.style,
+                prompt=next_task.prompt,
+                status='pending',
+                mode=next_task.mode,
+                credits_used=next_task.estimated_credits
+            )
+            db.session.add(video)
+            db.session.commit()
+            
+            # 更新任务状态
+            next_task.status = 'processing'
+            next_task.video_id = video.id
+            next_task.started_at = datetime.utcnow()
+            db.session.commit()
+            
+            log_info(f"开始处理用户 {user.username} 的队列任务，任务ID: {next_task.id}, 视频ID: {video.id}")
+            
+            # 启动视频生成任务
+            import threading
+            import uuid
+            
+            task_id = str(uuid.uuid4())
+            generation_status[task_id] = {
+                'video_id': video.id,
+                'user_id': user_id,
+                'status': 'processing',
+                'progress': 0,
+                'message': '初始化生成任务...',
+                'logs': ['任务开始: 初始化生成环境'],
+                'current_step': 1
+            }
+            
+            def queue_task():
+                try:
+                    result_dir = 'workstore'
+                    user_dir_name = user_name
+                    
+                    # 更新视频状态为处理中
+                    with app.app_context():
+                        current_video = Video.query.get(video.id)
+                        if current_video:
+                            current_video.status = 'processing'
+                            db.session.commit()
+                    
+                    # 调用视频生成流程
+                    from service.work_flow_service import run_work_flow_v3_with_progress
+                    
+                    def status_callback(message):
+                        if task_id in generation_status:
+                            generation_status[task_id]['message'] = message
+                    
+                    # 生成视频
+                    import asyncio
+                    result = asyncio.run(run_work_flow_v3_with_progress(
+                        text=next_task.prompt,
+                        result_dir=result_dir,
+                        user_id=user_dir_name,  # 传用户名
+                        style=next_task.style,
+                        template=next_task.template,
+                        tts_model_str=next_task.tts_model_str,
+                        is_prompt_mode=(next_task.mode == 'prompt'),
+                        uploaded_title_picture_path=next_task.book_cover_path,
+                        input_title_voice_text=next_task.book_title,
+                        user_name=next_task.user_name,
+                        is_display_title=next_task.is_display_title,
+                        task_id=task_id,
+                        generation_status=generation_status
+                    ))
+                    
+                    # 任务完成后的处理
+                    with app.app_context():
+                        current_video = Video.query.get(video.id)
+                        task = TaskQueue.query.get(next_task.id)
+                        if current_video and task:
+                            # 自动获取最终项目名（目录名）
+                            user_dir = os.path.join('workstore', user_name)
+                            project_dirs = [d for d in os.listdir(user_dir) if os.path.isdir(os.path.join(user_dir, d))]
+                            project_dirs.sort(key=lambda d: os.path.getmtime(os.path.join(user_dir, d)), reverse=True)
+                            if project_dirs:
+                                final_project_title = project_dirs[0]
+                                sanitized_title = path_manager.sanitize_project_name(final_project_title)
+                                video_path = path_manager.get_video_path(user_name, sanitized_title)
+                                cover_path = path_manager.get_cover_path(user_name, sanitized_title, "4:3")
+                                current_video.title = final_project_title  # 保证数据库title和目录一致
+                                if os.path.exists(video_path):
+                                    current_video.video_path = video_path
+                                    log_info(f"更新视频路径: {video_path}")
+                                else:
+                                    current_video.video_path = video_path
+                                    log_warning(f"视频文件不存在: {video_path}")
+                                if os.path.exists(cover_path):
+                                    current_video.cover_path = cover_path
+                                    log_info(f"更新封面路径: {cover_path}")
+                                else:
+                                    current_video.cover_path = cover_path
+                                    log_warning(f"封面文件不存在: {cover_path}")
+                            else:
+                                log_warning(f"未找到任何项目目录，无法更新视频路径")
+                            current_video.status = 'completed'
+                            task.status = 'completed'
+                            task.completed_at = datetime.utcnow()
+                            db.session.commit()
+                            log_info(f"队列任务完成，任务ID: {next_task.id}, 视频ID: {video.id}")
+                
+                except Exception as e:
+                    log_error(f'队列视频生成任务失败: {str(e)}', 'video')
+                    with app.app_context():
+                        current_video = Video.query.get(video.id)
+                        task = TaskQueue.query.get(next_task.id)
+                        if current_video:
+                            current_video.status = 'failed'
+                            db.session.commit()
+                        if task:
+                            task.status = 'failed'
+                            task.completed_at = datetime.utcnow()
+                            db.session.commit()
+                    
+                    if task_id in generation_status:
+                        generation_status[task_id]['status'] = 'failed'
+                        generation_status[task_id]['message'] = f'生成失败: {str(e)}'
+                
+                finally:
+                    # 处理下一个队列任务
+                    process_next_queue_task(user_id)
+            
+            thread = threading.Thread(target=queue_task)
+            thread.daemon = True
+            thread.start()
+    
+    except Exception as e:
+        log_error(f"处理队列任务失败: {str(e)}")
 
 # 管理员权限装饰器
 def admin_required(f):
@@ -190,6 +467,33 @@ class Message(db.Model):
     replied_at = db.Column(db.DateTime, nullable=True)  # 回复时间
     # 移除重复的 user 关系，因为已经在 User 模型中定义了 backref
 
+# 任务队列模型
+class TaskQueue(db.Model):
+    """任务队列模型，存储等待处理的视频生成任务"""
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    video_id = db.Column(db.Integer, db.ForeignKey('video.id'), nullable=True)  # 关联的视频ID，如果任务已开始
+    title = db.Column(db.String(200), nullable=False)
+    prompt = db.Column(db.Text, nullable=False)
+    style = db.Column(db.String(50), nullable=False)
+    template = db.Column(db.String(50), nullable=False, default='通用')
+    mode = db.Column(db.String(20), default='prompt')  # prompt(提示词模式) 或 script(文案模式)
+    estimated_credits = db.Column(db.Integer, default=1)  # 预估消耗的额度
+    is_display_title = db.Column(db.Boolean, default=True)
+    user_name = db.Column(db.String(100), nullable=True)  # 用户名显示
+    tts_model_str = db.Column(db.String(50), default='cosyvoice-v1')
+    book_title = db.Column(db.String(200), nullable=True)  # 书本标题（仅读书模板使用）
+    book_cover_path = db.Column(db.String(200), nullable=True)  # 书本封面路径
+    status = db.Column(db.String(20), default='waiting')  # waiting, processing, completed, failed, cancelled
+    queue_position = db.Column(db.Integer, default=0)  # 队列位置
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    started_at = db.Column(db.DateTime, nullable=True)  # 开始处理时间
+    completed_at = db.Column(db.DateTime, nullable=True)  # 完成时间
+    
+    # 关系
+    user = db.relationship('User', backref='task_queue', lazy=True)
+    video = db.relationship('Video', backref='task_queue_item', lazy=True)
+
 @login_manager.user_loader
 def load_user(user_id):
     """加载用户"""
@@ -263,33 +567,28 @@ def generate_video_task(prompt, style, user_id, video_id, mode='prompt'):
         # 设置结果目录
         result_dir = "./workstore"
         
-        # 根据模式选择不同的生成方式
-        if mode == 'script':
-            # 使用文案模式
-            log_info(f"[任务 {task_id}] 使用文案模式生成视频")
-            run_work_flow_with_script(
-                script=prompt,
-                result_dir=result_dir,
-                user_id=str(user_id),
-                style=style,
-                llm=llm,
-                image_model=image_model,
-                tts_model=tts_model,
-                user_name="百速AI视频"
-            )
-        else:
-            # 使用提示词模式
-            log_info(f"[任务 {task_id}] 使用提示词模式生成视频")
-            run_work_flow_v1(
-                text=prompt,
-                result_dir=result_dir,
-                user_id=str(user_id),
-                style=style,
-                llm=llm,
-                image_model=image_model,
-                tts_model=tts_model,
-                user_name="百速AI视频"
-            )
+        # 获取用户名用于目录命名
+        with app.app_context():
+            user = User.query.get(user_id)
+            user_name = user.username if user else str(user_id)
+        
+        # 调用统一的工作流函数
+        log_info(f"[任务 {task_id}] 开始生成视频，模式: {mode}")
+        
+        # 使用异步工作流函数
+        import asyncio
+        result = asyncio.run(run_work_flow_v3_with_progress(
+            text=prompt,
+            result_dir=result_dir,
+            user_id=user_name,
+            style=style,
+            template="通用",  # 默认模板
+            llm_model_str="deepseek-reasoner",
+            image_model_str="cogview-3-flash",
+            tts_model_str="cosyvoice-v1",
+            is_prompt_mode=(mode == 'prompt'),
+            status_callback=status_callback
+        ))
         
         # 恢复原始print函数
         builtins.print = original_print
@@ -464,6 +763,12 @@ def register():
         email = request.form.get('email')
         password = request.form.get('password')
         
+        # 用户名合法性校验
+        import re
+        username_pattern = r'^[A-Za-z0-9_-]+$'
+        if not re.match(username_pattern, username or ''):
+            return render_template('register.html', error='用户名仅支持字母、数字、-、_')
+        
         # 检查用户名和邮箱是否已存在
         if User.query.filter_by(username=username).first():
             return render_template('register.html', error='用户名已存在')
@@ -588,6 +893,12 @@ def register_with_verification():
         username = data.get('username', '').strip()
         email = data.get('email', '').strip().lower()
         password = data.get('password', '').strip()
+        
+        # 用户名合法性校验
+        import re
+        username_pattern = r'^[A-Za-z0-9_-]+$'
+        if not re.match(username_pattern, username or ''):
+            return jsonify({'success': False, 'message': '用户名仅支持字母、数字、-、_'})
         
         if not all([username, email, password]):
             return jsonify({'success': False, 'message': '请填写完整信息'})
@@ -791,6 +1102,32 @@ def my_videos():
                              videos_json='[]',
                              error=f'加载视频列表失败: {str(e)}')
 
+@app.route('/my-tasks')
+@login_required
+def my_tasks():
+    """统一的任务管理页面"""
+    # 查找用户当前正在处理的任务
+    current_processing_task = TaskQueue.query.filter_by(
+        user_id=current_user.id, 
+        status='processing'
+    ).first()
+    
+    # 创建当前任务的视频对象（用于进度显示）
+    current_video = None
+    if current_processing_task and current_processing_task.video_id:
+        current_video = Video.query.get(current_processing_task.video_id)
+    
+    # 如果没有当前视频，创建一个假的video对象用于模板兼容
+    if not current_video:
+        class MockVideo:
+            def __init__(self):
+                self.id = 0
+                self.title = "任务管理中心"
+                self.status = "idle"
+        current_video = MockVideo()
+    
+    return render_template('generate.html', video=current_video)
+
 @app.route('/generate/<int:video_id>')
 @login_required
 def generate_page(video_id):
@@ -880,7 +1217,7 @@ def generate_video_api():
 @app.route('/api/generate-video-v3', methods=['POST'])
 @login_required
 def generate_video_v3():
-    """新版视频生成API - 支持模板、会员等功能"""
+    """新版视频生成API - 统一队列管理"""
     try:
         prompt = request.form.get('prompt')
         style = request.form.get('style')
@@ -894,16 +1231,6 @@ def generate_video_v3():
 
         if not prompt or not style or not template:
             return jsonify({'success': False, 'message': '请提供完整信息'})
-        
-        # 检查用户当前正在进行的任务数量
-        current_processing_count = 0
-        for task_id, task_data in generation_status.items():
-            if (task_data.get('status') == 'processing' and 
-                task_data.get('user_id') == current_user.id):
-                current_processing_count += 1
-        
-        if current_processing_count >= 3:
-            return jsonify({'success': False, 'message': '您当前有3个视频正在生成中，请等待完成后再启动新任务'})
         
         # 计算需要扣除的额度（文案模式根据字数计算）
         estimated_credits = int(request.form.get('estimated_credits', 1))
@@ -950,203 +1277,63 @@ def generate_video_v3():
                 book_cover.save(save_path)
                 uploaded_title_picture_path = save_path
 
-        # 检查用户视频数量，如果超过25个则删除最老的
-        user_videos = Video.query.filter_by(user_id=current_user.id).order_by(Video.created_at.asc()).all()
-        videos_to_delete = []
-        
-        if len(user_videos) >= 25:
-            # 计算需要删除的视频数量（保留24个，为新视频留出空间）
-            videos_to_delete = user_videos[:len(user_videos) - 24]
-            
-            for old_video in videos_to_delete:
-                # 删除视频文件
-                if old_video.video_path and os.path.exists(old_video.video_path):
-                    try:
-                        os.remove(old_video.video_path)
-                        log_info(f"已删除旧视频文件: {old_video.video_path}", "video")
-                    except Exception as e:
-                        log_error(f"删除旧视频文件失败: {str(e)}", "video")
-                
-                # 删除封面文件
-                if old_video.cover_path and os.path.exists(old_video.cover_path):
-                    try:
-                        os.remove(old_video.cover_path)
-                        log_info(f"已删除旧封面文件: {old_video.cover_path}", "video")
-                    except Exception as e:
-                        log_error(f"删除旧封面文件失败: {str(e)}", "video")
-                
-                # 删除整个项目目录
-                if old_video.title:
-                    project_dir = os.path.join("./workstore", f"user{current_user.id}", old_video.title)
-                    if os.path.exists(project_dir):
-                        try:
-                            import shutil
-                            shutil.rmtree(project_dir)
-                            log_info(f"已删除旧项目目录: {project_dir}", "video")
-                        except Exception as e:
-                            log_error(f"删除旧项目目录失败: {str(e)}", "video")
-                
-                # 删除数据库记录
-                db.session.delete(old_video)
-            
-            if videos_to_delete:
-                log_info(f"用户 {current_user.username} 视频数量超限，自动删除了 {len(videos_to_delete)} 个旧视频", "video")
-
-        # 创建视频记录
-        video = Video(
-            title=prompt[:30] if prompt else 'AI视频',
-            user_id=current_user.id,
-            style=style,
-            prompt=prompt,
-            status='pending',
-            mode=mode,
-            credits_used=credits_to_deduct
-        )
-        db.session.add(video)
-        db.session.commit()
-        video_id = video.id
-
-        # 扣除积分
+        # 扣除积分（提前扣除，避免重复扣除）
         current_user.credits -= credits_to_deduct
         db.session.commit()
         log_info(f"用户 {current_user.username} 生成视频扣除了 {credits_to_deduct} 条额度，剩余 {current_user.credits} 条")
 
-        # 在线程外获取用户ID，避免在线程内访问current_user
-        user_id_for_thread = current_user.id
+        # 所有任务都先创建TaskQueue记录
+        task_queue = TaskQueue(
+            user_id=current_user.id,
+            title=prompt[:30] if prompt else 'AI视频',
+            prompt=prompt,
+            style=style,
+            template=template,
+            mode=mode,
+            estimated_credits=credits_to_deduct,
+            is_display_title=is_display_title,
+            user_name=user_name,
+            tts_model_str=request.form.get('tts_model_str', 'cosyvoice-v1'),
+            book_title=request.form.get('book_title') if template == '读一本书' else None,
+            book_cover_path=uploaded_title_picture_path if template == '读一本书' else None,
+            status='waiting'
+        )
+        db.session.add(task_queue)
+        db.session.commit()
         
-        # 初始化状态记录
-        task_id = str(uuid.uuid4())
-        generation_status[task_id] = {
-            'video_id': video_id,
-            'user_id': user_id_for_thread,  # 添加用户ID用于任务数量限制
-            'status': 'processing',
-            'progress': 0,
-            'message': '初始化生成任务...',
-            'logs': ['任务开始: 初始化生成环境'],
-            'current_step': 1
-        }
+        log_info(f"用户 {current_user.username} 的任务已加入队列，任务ID: {task_queue.id}")
         
-        # 启动后台任务
-        def task():
-            try:
-                result_dir = 'workstore'
-                user_id = f'user{user_id_for_thread}'
-                
-                # 更新视频状态为处理中
-                with app.app_context():
-                    video = Video.query.get(video_id)
-                    if video:
-                        video.status = 'processing'
-                        db.session.commit()
-                
-                # 创建事件循环
-                loop = asyncio.new_event_loop()
-                asyncio.set_event_loop(loop)
-                
-                # 调用run_work_flow_v3，并传递状态回调
-                loop.run_until_complete(run_work_flow_v3_with_progress(
-                    text=prompt,
-                    result_dir=result_dir,
-                    user_id=user_id,
-                    style=style,
-                    template=template,
-                    llm_model_str="deepseek-reasoner",
-                    is_prompt_mode=(mode == 'prompt'),
-                    uploaded_title_picture_path=uploaded_title_picture_path,
-                    input_title_voice_text=input_title_voice_text,
-                    user_name=user_name,
-                    is_display_title=is_display_title,
-                    is_need_ad_end=is_need_ad_end,
-                    task_id=task_id,
-                    generation_status=generation_status
-                ))
-                
-                # 更新视频状态
-                with app.app_context():
-                    video = Video.query.get(video_id)
-                    if video:
-                        # 查找最新生成的项目目录
-                        user_dir = os.path.join(result_dir, user_id)
-                        if os.path.exists(user_dir):
-                            # 找到最新的项目目录（按修改时间排序）
-                            project_folders = [f for f in os.listdir(user_dir) 
-                                             if os.path.isdir(os.path.join(user_dir, f)) and f != '__pycache__']
-                            if project_folders:
-                                # 按修改时间排序，取最新的
-                                project_folders.sort(key=lambda x: os.path.getmtime(os.path.join(user_dir, x)), reverse=True)
-                                latest_project = project_folders[0]
-                                project_dir = os.path.join(user_dir, latest_project)
-                                
-                                # 检查视频文件
-                                video_file = os.path.join(project_dir, 'output.mp4')
-                                if os.path.exists(video_file):
-                                    video.video_path = video_file
-                                    video.title = latest_project  # 更新为实际的项目名称
-                                    video.status = 'completed'
-                                    
-                                    # 查找封面文件
-                                    covers_dir = os.path.join(project_dir, 'covers')
-                                    if os.path.exists(covers_dir):
-                                        cover_files = [f for f in os.listdir(covers_dir) if f.endswith('.png')]
-                                        if cover_files:
-                                            # 优先选择4:3的封面，或者第一个封面
-                                            cover_file = None
-                                            for cf in cover_files:
-                                                if 'cover_4:3' in cf:
-                                                    cover_file = cf
-                                                    break
-                                            if not cover_file:
-                                                cover_file = cover_files[0]
-                                            video.cover_path = os.path.join(covers_dir, cover_file)
-                                    
-                                    db.session.commit()
-                                    log_info(f"视频生成完成 - 项目: {latest_project}, 视频: {video_file}")
-                                    
-                                    # 更新状态为完成
-                                    generation_status[task_id]['status'] = 'completed'
-                                    generation_status[task_id]['progress'] = 100
-                                    generation_status[task_id]['message'] = '视频生成完成！'
-                                    generation_status[task_id]['current_step'] = 7
-                                else:
-                                    video.status = 'failed'
-                                    db.session.commit()
-                                    log_error(f"视频文件不存在: {video_file}")
-                                    generation_status[task_id]['status'] = 'failed'
-                                    generation_status[task_id]['message'] = '视频文件生成失败'
-                            else:
-                                video.status = 'failed'
-                                db.session.commit()
-                                log_error(f"用户目录中没有找到项目文件夹: {user_dir}")
-                                generation_status[task_id]['status'] = 'failed'
-                                generation_status[task_id]['message'] = '项目文件夹创建失败'
-                        else:
-                            video.status = 'failed'
-                            db.session.commit()
-                            log_error(f"用户目录不存在: {user_dir}")
-                            generation_status[task_id]['status'] = 'failed'
-                            generation_status[task_id]['message'] = '用户目录创建失败'
-                        
-            except Exception as e:
-                log_error(f'视频生成任务失败: {str(e)}', 'video')
-                with app.app_context():
-                    video = Video.query.get(video_id)
-                    if video:
-                        video.status = 'failed'
-                        db.session.commit()
-                
-                # 更新状态为失败
-                generation_status[task_id]['status'] = 'failed'
-                generation_status[task_id]['message'] = f'生成失败: {str(e)}'
+        # 检查是否有正在处理的任务
+        existing_processing_task = TaskQueue.query.filter_by(
+            user_id=current_user.id,
+            status='processing'
+        ).first()
+        
+        # 如果没有正在处理的任务，立即开始处理这个任务
+        if not existing_processing_task:
+            # 在后台线程中处理任务
+            import threading
+            thread = threading.Thread(target=process_next_queue_task, args=(current_user.id,))
+            thread.daemon = True
+            thread.start()
+            
+            # 返回成功信息，统一跳转到任务中心
+            return jsonify({
+                'success': True,
+                'message': '任务已开始处理',
+                'redirect_url': '/my-tasks'
+            })
+        else:
+            # 返回队列信息，统一跳转到任务中心
+            queue_position = TaskQueue.query.filter_by(user_id=current_user.id, status='waiting').count()
+            return jsonify({
+                'success': True,
+                'message': f'您有视频正在生成中，新任务已加入队列（排队位置：{queue_position}）',
+                'redirect_url': '/my-tasks'
+            })
 
-        import threading
-        thread = threading.Thread(target=task)
-        thread.daemon = True
-        thread.start()
-
-        return jsonify({'success': True, 'video_id': video_id})
-        
     except Exception as e:
-        log_error(f'生成视频V3 API错误: {str(e)}', 'api')
+        log_error(f"视频生成失败: {str(e)}")
         return jsonify({'success': False, 'message': '生成失败，请重试'})
 
 @app.route('/api/video-status/<int:video_id>')
@@ -1199,6 +1386,163 @@ def video_status(video_id):
         return jsonify({
             'success': False,
             'message': f'获取视频状态失败: {str(e)}'
+        }), 500
+
+# 任务队列API接口
+@app.route('/api/task-queue')
+@login_required
+def get_task_queue():
+    """获取用户的任务队列"""
+    try:
+        # 获取等待中和处理中的任务
+        waiting_tasks = TaskQueue.query.filter_by(
+            user_id=current_user.id
+        ).filter(TaskQueue.status.in_(['waiting', 'processing'])).order_by(TaskQueue.created_at).all()
+        
+        # 获取已完成的任务
+        completed_tasks = TaskQueue.query.filter_by(
+            user_id=current_user.id
+        ).filter(TaskQueue.status.in_(['completed', 'failed', 'cancelled'])).order_by(TaskQueue.completed_at.desc()).limit(20).all()
+        
+        def serialize_task(task):
+            return {
+                'id': task.id,
+                'title': task.title,
+                'prompt': task.prompt,
+                'style': task.style,
+                'template': task.template,
+                'estimated_credits': task.estimated_credits,
+                'status': task.status,
+                'video_id': task.video_id,
+                'created_at': task.created_at.isoformat() if task.created_at else None,
+                'started_at': task.started_at.isoformat() if task.started_at else None,
+                'completed_at': task.completed_at.isoformat() if task.completed_at else None
+            }
+        
+        return jsonify({
+            'success': True,
+            'waiting_tasks': [serialize_task(task) for task in waiting_tasks],
+            'completed_tasks': [serialize_task(task) for task in completed_tasks]
+        })
+    
+    except Exception as e:
+        log_error(f"获取任务队列失败: {str(e)}")
+        return jsonify({
+            'success': False,
+            'message': f'获取任务队列失败: {str(e)}'
+        }), 500
+
+@app.route('/api/task-queue/<int:task_id>', methods=['PUT'])
+@login_required
+def update_task(task_id):
+    """更新任务信息"""
+    try:
+        task = TaskQueue.query.filter_by(id=task_id, user_id=current_user.id).first()
+        if not task:
+            return jsonify({'success': False, 'message': '任务不存在'}), 404
+        
+        if task.status != 'waiting':
+            return jsonify({'success': False, 'message': '只能编辑等待中的任务'}), 400
+        
+        data = request.get_json()
+        
+        # 更新任务信息
+        if 'prompt' in data:
+            task.prompt = data['prompt']
+        if 'template' in data:
+            task.template = data['template']
+        if 'style' in data:
+            task.style = data['style']
+        if 'mode' in data:
+            task.mode = data['mode']
+        if 'tts_model_str' in data:
+            task.tts_model_str = data['tts_model_str']
+        if 'is_display_title' in data:
+            task.is_display_title = data['is_display_title']
+        if 'book_title' in data:
+            task.book_title = data['book_title']
+        
+        db.session.commit()
+        
+        return jsonify({'success': True, 'message': '任务更新成功'})
+    
+    except Exception as e:
+        db.session.rollback()
+        log_error(f"更新任务失败: {str(e)}")
+        return jsonify({
+            'success': False,
+            'message': f'更新任务失败: {str(e)}'
+        }), 500
+
+@app.route('/api/task-queue/<int:task_id>', methods=['DELETE'])
+@login_required
+def delete_task(task_id):
+    """删除任务"""
+    try:
+        task = TaskQueue.query.filter_by(id=task_id, user_id=current_user.id).first()
+        if not task:
+            return jsonify({'success': False, 'message': '任务不存在'}), 404
+        
+        if task.status == 'processing':
+            return jsonify({'success': False, 'message': '不能删除正在处理的任务'}), 400
+        
+        # 如果是已完成的任务，还需要检查是否有关联的视频需要删除
+        if task.video_id and task.status == 'completed':
+            video = Video.query.get(task.video_id)
+            if video:
+                cleanup_video_files(video)
+                db.session.delete(video)
+        
+        db.session.delete(task)
+        db.session.commit()
+        
+        return jsonify({'success': True, 'message': '任务删除成功'})
+    
+    except Exception as e:
+        db.session.rollback()
+        log_error(f"删除任务失败: {str(e)}")
+        return jsonify({
+            'success': False,
+            'message': f'删除任务失败: {str(e)}'
+        }), 500
+
+@app.route('/api/task-queue/<int:task_id>/move-to-front', methods=['POST'])
+@login_required
+def move_task_to_front(task_id):
+    """将任务移动到队列最前面"""
+    try:
+        task = TaskQueue.query.filter_by(id=task_id, user_id=current_user.id).first()
+        if not task:
+            return jsonify({'success': False, 'message': '任务不存在'}), 404
+        
+        # 只能移动等待中的任务
+        if task.status != 'waiting':
+            return jsonify({'success': False, 'message': '只能移动等待中的任务'}), 400
+        
+        # 获取当前最早的任务时间
+        earliest_task = TaskQueue.query.filter_by(
+            user_id=current_user.id,
+            status='waiting'
+        ).order_by(TaskQueue.created_at).first()
+        
+        if earliest_task and earliest_task.id != task_id:
+            # 将当前任务的创建时间设置为比最早任务更早1秒
+            from datetime import timedelta
+            task.created_at = earliest_task.created_at - timedelta(seconds=1)
+            db.session.commit()
+            
+            log_info(f"用户 {current_user.username} 将任务 {task_id} 移动到队列最前面")
+            
+            return jsonify({'success': True, 'message': '任务已移动到队列最前面'})
+        else:
+            return jsonify({'success': False, 'message': '任务已经在队列最前面'})
+        
+    except Exception as e:
+        db.session.rollback()
+        log_error(f"移动任务失败: {str(e)}")
+        return jsonify({
+            'success': False,
+            'message': f'移动任务失败: {str(e)}'
         }), 500
 
 # API：获取视频信息
@@ -1328,26 +1672,24 @@ def cleanup_video_files(video):
                 cleanup_result['errors'].append(error_msg)
                 log_error(error_msg, "video")
         
-        # 删除整个项目目录
+        # 删除整个项目目录 - 使用统一路径管理器
         if project_id and user_id:
-            # 尝试多种可能的项目目录路径
-            possible_project_dirs = [
-                os.path.join("./workstore", str(user_id), project_id),
-                os.path.join("./workstore", f"user{user_id}", project_id)
-            ]
-            
-            for project_dir in possible_project_dirs:
-                if os.path.exists(project_dir):
-                    try:
-                        import shutil
-                        shutil.rmtree(project_dir)
-                        cleanup_result['project_dir'] = True
-                        log_info(f"已删除项目目录: {project_dir}", "video")
-                        break
-                    except Exception as e:
-                        error_msg = f"删除项目目录失败: {str(e)}"
-                        cleanup_result['errors'].append(error_msg)
-                        log_error(error_msg, "video")
+            try:
+                cleanup_result_from_manager = path_manager.cleanup_project_files(user_id, project_id)
+                
+                if cleanup_result_from_manager['project_dir_removed']:
+                    cleanup_result['project_dir'] = True
+                    log_info(f"已使用路径管理器删除项目目录: {project_id}", "video")
+                
+                # 记录错误
+                if cleanup_result_from_manager['errors']:
+                    cleanup_result['errors'].extend(cleanup_result_from_manager['errors'])
+                    for error in cleanup_result_from_manager['errors']:
+                        log_error(error, "video")
+            except Exception as e:
+                error_msg = f"删除项目目录失败: {str(e)}"
+                cleanup_result['errors'].append(error_msg)
+                log_error(error_msg, "video")
     
     except Exception as e:
         error_msg = f"清理文件时发生未知错误: {str(e)}"
@@ -2130,42 +2472,82 @@ def admin_videos():
 @login_required
 @admin_required
 def admin_delete_video(video_id):
-    """删除视频"""
+    """删除视频和相关项目文件"""
+    import shutil
+    from pathlib import Path
+    
     video = Video.query.get_or_404(video_id)
     
     try:
-        # 删除视频文件
+        # 删除整个项目目录
         if video.video_path and os.path.exists(video.video_path):
-            os.remove(video.video_path)
-        
-        # 删除封面文件
-        if video.cover_path and os.path.exists(video.cover_path):
-            os.remove(video.cover_path)
+            video_path = Path(video.video_path)
+            project_dir = video_path.parent
+            
+            if project_dir.exists():
+                shutil.rmtree(project_dir)
+                log_info(f'删除项目目录: {project_dir}')
         
         # 删除数据库记录
         db.session.delete(video)
         db.session.commit()
         
-        flash('视频已删除', 'success')
+        return jsonify({'success': True, 'message': '视频和相关文件已删除'})
     except Exception as e:
         db.session.rollback()
-        flash(f'删除视频失败: {str(e)}', 'danger')
-    
-    return redirect(url_for('admin_videos'))
+        log_error(f'删除视频失败: {str(e)}')
+        return jsonify({'success': False, 'message': f'删除视频失败: {str(e)}'}), 500
 
 # 管理员下载视频
 @app.route('/admin/videos/<int:video_id>/download', methods=['POST'])
 @login_required
 @admin_required
 def admin_download_video(video_id):
-    """管理员下载视频"""
+    """管理员下载视频项目文件（包含所有相关文件的压缩包）"""
+    import tempfile
+    import shutil
+    from pathlib import Path
+    
     video = Video.query.get_or_404(video_id)
     
     if not video.video_path or not os.path.exists(video.video_path):
         return jsonify({'success': False, 'message': '视频文件不存在'}), 404
     
     try:
-        return send_file(video.video_path, as_attachment=True, download_name=f'video_{video_id}.mp4')
+        # 确定项目目录路径
+        video_path = Path(video.video_path)
+        project_dir = video_path.parent
+        
+        if not project_dir.exists():
+            return jsonify({'success': False, 'message': '项目目录不存在'}), 404
+        
+        # 创建临时zip文件
+        temp_dir = tempfile.mkdtemp()
+        zip_path = Path(temp_dir) / f'video_project_{video_id}.zip'
+        
+        # 创建zip文件
+        with zipfile.ZipFile(zip_path, 'w', zipfile.ZIP_DEFLATED) as zip_file:
+            # 遍历项目目录下的所有文件
+            for file_path in project_dir.rglob('*'):
+                if file_path.is_file():
+                    # 计算相对路径
+                    rel_path = file_path.relative_to(project_dir)
+                    zip_file.write(file_path, rel_path)
+        
+        # 清理函数：删除临时文件
+        def cleanup():
+            try:
+                shutil.rmtree(temp_dir)
+            except:
+                pass
+        
+        # 返回zip文件
+        return send_file(
+            zip_path, 
+            as_attachment=True, 
+            download_name=f'video_project_{video.title}_{video_id}.zip'
+        )
+    
     except Exception as e:
         return jsonify({'success': False, 'message': f'下载失败: {str(e)}'}), 500
 
@@ -2349,6 +2731,13 @@ if __name__ == '__main__':
             db.session.add(admin)
             db.session.commit()
             print("已创建默认管理员账户: admin / admin123")
+        
+        # 恢复中断的任务
+        print("正在检查并恢复中断的任务...")
+        log_info("正在检查并恢复中断的任务...")
+        recover_interrupted_tasks()
+        print("任务恢复检查完成")
+        log_info("任务恢复检查完成")
     
     # 启动Flask应用 (端口从环境变量读取，默认5001)
     port = int(os.environ.get('PORT', 5001))

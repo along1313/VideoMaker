@@ -90,6 +90,14 @@ if __name__ == '__main__':
             db.create_all()
             print("数据库初始化完成")
             log_info("数据库初始化完成")
+            
+            # 恢复中断的任务
+            print("正在检查并恢复中断的任务...")
+            log_info("正在检查并恢复中断的任务...")
+            from app import recover_interrupted_tasks
+            recover_interrupted_tasks()
+            print("任务恢复检查完成")
+            log_info("任务恢复检查完成")
         
         # 启动Web服务器
         print("启动百速一键AI视频生成应用...")

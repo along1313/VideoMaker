@@ -3,146 +3,257 @@
 {% block title %}正在生成视频 - {{ video.title }}{% endblock %}
 
 {% block content %}
-<div class="generate-container">
+<div class="generate-container" id="generate-app">
     <!-- 标题区域 -->
     <div class="header-section">
-        <h1>正在生成您的视频</h1>
+        <h1>我的任务中心</h1>
+        <p>管理您的视频生成任务，查看进度和队列状态</p>
+    </div>
+
+    <!-- 当前正在生成的视频进度 -->
+    <div class="current-task-section" v-if="hasCurrentTask" id="current-task">
+        <h2>正在生成：{{ currentTaskTitle }}</h2>
         <p>根据视频长度不同大概需要10-20分钟，请耐心等待</p>
-    </div>
-
-    <!-- 进度条区域 -->
-    <div class="progress-container">
-        <div class="steps-wrapper">
-            <!-- 步骤 0: 开始 -->
-            <div class="step-item completed" data-step="0">
-                <div class="step-circle">
-                    <i class="fas fa-check check-icon"></i>
+        
+        <!-- 进度条区域 -->
+        <div class="progress-container">
+            <div class="steps-wrapper">
+                <!-- 步骤 0: 开始 -->
+                <div class="step-item completed" data-step="0">
+                    <div class="step-circle">
+                        <i class="fas fa-check check-icon"></i>
+                    </div>
+                    <span class="step-label">开始</span>
                 </div>
-                <span class="step-label">开始</span>
+
+                <!-- 步骤 1: 撰写脚本 -->
+                <div class="step-item" data-step="1">
+                    <div class="step-circle">
+                        <i class="fas fa-check check-icon"></i>
+                    </div>
+                    <span class="step-label">撰写脚本</span>
+                </div>
+
+                <!-- 步骤 2: 制作图片 -->
+                <div class="step-item" data-step="2">
+                    <div class="step-circle">
+                        <i class="fas fa-check check-icon"></i>
+                    </div>
+                    <span class="step-label">制作图片</span>
+                </div>
+
+                <!-- 步骤 3: 录制语音 -->
+                <div class="step-item" data-step="3">
+                    <div class="step-circle">
+                        <i class="fas fa-check check-icon"></i>
+                    </div>
+                    <span class="step-label">录制语音</span>
+                </div>
+
+                <!-- 步骤 4: 剪辑视频 -->
+                <div class="step-item" data-step="4">
+                    <div class="step-circle">
+                        <i class="fas fa-check check-icon"></i>
+                    </div>
+                    <span class="step-label">剪辑视频</span>
+                </div>
+
+                <!-- 步骤 5: 制作封面 -->
+                <div class="step-item" data-step="5">
+                    <div class="step-circle">
+                        <i class="fas fa-check check-icon"></i>
+                    </div>
+                    <span class="step-label">制作封面</span>
+                </div>
+
+                <!-- 步骤 6: 结束 -->
+                <div class="step-item" data-step="6">
+                    <div class="step-circle">
+                        <i class="fas fa-check check-icon"></i>
+                    </div>
+                    <span class="step-label">结束</span>
+                </div>
             </div>
 
-            <!-- 步骤 1: 撰写脚本 -->
-            <div class="step-item" data-step="1">
-                <div class="step-circle">
-                    <i class="fas fa-check check-icon"></i>
+            <!-- 状态信息 -->
+            <div class="status-section">
+                <div class="status-message" id="status-message">
+                    <div class="loading-spinner" id="loading-spinner">
+                        <div class="spinner"></div>
+                    </div>
+                    <span id="status-text">正在撰写脚本</span>
                 </div>
-                <span class="step-label">撰写脚本</span>
-            </div>
-
-            <!-- 步骤 2: 制作图片 -->
-            <div class="step-item" data-step="2">
-                <div class="step-circle">
-                    <i class="fas fa-check check-icon"></i>
-                </div>
-                <span class="step-label">制作图片</span>
-            </div>
-
-            <!-- 步骤 3: 录制语音 -->
-            <div class="step-item" data-step="3">
-                <div class="step-circle">
-                    <i class="fas fa-check check-icon"></i>
-                </div>
-                <span class="step-label">录制语音</span>
-            </div>
-
-            <!-- 步骤 4: 剪辑视频 -->
-            <div class="step-item" data-step="4">
-                <div class="step-circle">
-                    <i class="fas fa-check check-icon"></i>
-                </div>
-                <span class="step-label">剪辑视频</span>
-            </div>
-
-            <!-- 步骤 5: 制作封面 -->
-            <div class="step-item" data-step="5">
-                <div class="step-circle">
-                    <i class="fas fa-check check-icon"></i>
-                </div>
-                <span class="step-label">制作封面</span>
-            </div>
-
-            <!-- 步骤 6: 结束 -->
-            <div class="step-item" data-step="6">
-                <div class="step-circle">
-                    <i class="fas fa-check check-icon"></i>
-                </div>
-                <span class="step-label">结束</span>
             </div>
         </div>
 
-        <!-- 状态信息 -->
-        <div class="status-section">
-            <div class="status-message" id="status-message">
-                <div class="loading-spinner" id="loading-spinner">
-                    <div class="spinner"></div>
-                </div>
-                <span id="status-text">正在撰写脚本</span>
-            </div>
-        </div>
-    </div>
-
-    <!-- 停止按钮区域 -->
-    <div class="stop-section" id="stop-section" style="display: none;">
-        <div class="stop-container">
+        <!-- 简化的停止按钮（无外框） -->
+        <div class="stop-section" id="stop-section" style="display: none;">
             <button class="btn-stop" onclick="stopGeneration()">
                 <i class="fas fa-stop"></i> 停止并删除
             </button>
         </div>
-    </div>
 
-    <!-- 完成后的视频展示 -->
-    <div class="result-section" id="result-section" style="display: none;">
-        <div class="success-header">
-            <i class="fas fa-check-circle"></i>
-            <h2>视频生成完成！</h2>
-        </div>
-        
-        <div class="video-wrapper">
-            <div id="video-container">
-                <div class="video-loading">
-                    <i class="fas fa-video"></i>
-                    <p>正在加载视频...</p>
+        <!-- 完成后的视频展示 -->
+        <div class="result-section" id="result-section" style="display: none;">
+            <div class="success-header">
+                <i class="fas fa-check-circle"></i>
+                <h2>视频生成完成！</h2>
+            </div>
+            
+            <div class="video-wrapper">
+                <div id="video-container">
+                    <div class="video-loading">
+                        <i class="fas fa-video"></i>
+                        <p>正在加载视频...</p>
+                    </div>
                 </div>
             </div>
-        </div>
-        
-        <div class="action-buttons">
-            <a href="{{ url_for('index') }}" class="btn-success">
-                <i class="fas fa-plus-circle"></i> 返回首页继续生成
-            </a>
-            {% if video.video_path %}
-                <a href="/download-video/{{ video.id }}" class="btn-primary">
-                    <i class="fas fa-download"></i> 下载视频
+            
+            <div class="action-buttons">
+                <a href="{{ url_for('index') }}" class="btn-success">
+                    <i class="fas fa-plus-circle"></i> 再生成一个新视频
                 </a>
-            {% endif %}
-            <a href="{{ url_for('my_videos') }}" class="btn-secondary">
-                <i class="fas fa-list"></i> 我的视频
-            </a>
-            <button class="btn-danger" onclick="deleteVideo({{ video.id }})">
-                <i class="fas fa-trash"></i> 删除视频
-            </button>
+                <a href="{{ url_for('my_videos') }}" class="btn-secondary">
+                    <i class="fas fa-list"></i> 我的视频
+                </a>
+            </div>
         </div>
-        
-        <!-- 责任声明 -->
-        <div class="responsibility-notice">
-            <p class="notice-text">
-                <i class="fas fa-exclamation-triangle"></i>
-                您为视频的创作人，请仔细检查视频，并对视频内容负责。
-            </p>
+
+        <!-- 错误信息 -->
+        <div class="error-section" id="error-section" style="display: none;">
+            <div class="error-header">
+                <i class="fas fa-exclamation-circle"></i>
+                <h2>生成失败</h2>
+            </div>
+            <p id="error-text"></p>
+            <button class="btn-primary" onclick="retryGeneration()">
+                <i class="fas fa-redo"></i> 重新生成
+            </button>
         </div>
     </div>
 
-    <!-- 错误信息 -->
-    <div class="error-section" id="error-section" style="display: none;">
-        <div class="error-header">
-            <i class="fas fa-exclamation-circle"></i>
-            <h2>生成失败</h2>
+    <!-- 任务列表区域 -->
+    <div class="task-list-section">
+        <div class="section-header">
+            <h2>
+                <i class="fas fa-clock"></i> 等待队列 (<span v-text="waitingCount"></span>)
+            </h2>
+            <p>当前任务完成后，将按顺序处理以下任务</p>
         </div>
-        <p id="error-text"></p>
-        <button class="btn-primary" onclick="retryGeneration()">
-            <i class="fas fa-redo"></i> 重新生成
-        </button>
+
+        <!-- 等待队列 -->
+        <div class="waiting-queue">
+            <div class="task-queue" v-if="waitingTasks.length > 0">
+                <div class="task-item" v-for="(task, index) in waitingTasks" :key="task.id" :class="{'current-processing': task.status === 'processing'}">
+                    <div class="task-info">
+                        <div class="task-title">
+                            <h4>第 <span v-text="index + 1"></span> 个任务
+                                <span class="task-mode-badge" :class="task.mode">
+                                    <span v-if="task.mode === 'prompt'">提示词</span>
+                                    <span v-else>文案</span>模式
+                                </span>
+                            </h4>
+                            <span class="task-status" :class="task.status">
+                                <i class="fas fa-circle" v-if="task.status === 'processing'"></i>
+                                <i class="fas fa-clock" v-else></i>
+                                <span v-text="getStatusText(task.status)"></span>
+                            </span>
+                        </div>
+                        <div class="task-details">
+                            <span class="task-template">模板：<span v-text="task.template"></span></span>
+                            <span class="task-style">风格：<span v-text="task.style"></span></span>
+                            <span class="task-credits">额度：<span v-text="task.estimated_credits"></span>条</span>
+                            <span class="task-time">创建时间：<span v-text="formatTime(task.created_at)"></span></span>
+                        </div>
+                        <div class="task-prompt">
+                            <p v-text="task.prompt && task.prompt.length > 100 ? task.prompt.substring(0, 100) + '...' : task.prompt"></p>
+                        </div>
+                    </div>
+                    <div class="task-actions" v-if="task.status === 'waiting'">
+                        <button class="btn-edit" @click="editTask(task)" :disabled="task.status !== 'waiting'">
+                            <i class="fas fa-edit"></i> 编辑
+                        </button>
+                        <button class="btn-priority" @click="moveTaskToFront(task.id)" :disabled="task.status !== 'waiting' || index === 0" v-if="index > 0">
+                            <i class="fas fa-arrow-up"></i> 移到最前
+                        </button>
+                        <button class="btn-delete" @click="deleteTask(task.id)" :disabled="task.status !== 'waiting'">
+                            <i class="fas fa-trash"></i> 删除
+                        </button>
+                    </div>
+                                            <div class="queue-position" v-if="task.status === 'waiting' && index > 0">
+                            队列位置：第 <span v-text="index + 1"></span> 个
+                    </div>
+                </div>
+            </div>
+            <div class="empty-state" v-else>
+                <i class="fas fa-inbox"></i>
+                <p>暂无等待中的任务</p>
+                <a href="{{ url_for('index') }}" class="btn-primary">
+                    <i class="fas fa-plus"></i> 开始生成视频
+                </a>
+            </div>
+        </div>
+
+
     </div>
+
+    <!-- 编辑任务弹窗 -->
+    <el-dialog
+        title="编辑任务"
+        :visible.sync="showEditDialog"
+        width="50%">
+        <div class="edit-task-form" v-if="editingTask">
+            <div class="form-group">
+                <label>提示词/文案</label>
+                <el-input type="textarea" v-model="editingTask.prompt" 
+                          :rows="4" placeholder="请输入提示词或文案"></el-input>
+            </div>
+            <div class="form-group">
+                <label>模式</label>
+                <el-select v-model="editingTask.mode" placeholder="请选择模式">
+                    <el-option label="提示词模式" value="prompt"></el-option>
+                    <el-option label="文案模式" value="script"></el-option>
+                </el-select>
+            </div>
+            <div class="form-group">
+                <label>模板</label>
+                <el-select v-model="editingTask.template" placeholder="请选择模板">
+                    <el-option label="通用" value="通用"></el-option>
+                    <el-option label="读一本书" value="读一本书"></el-option>
+                    <el-option label="故事" value="故事"></el-option>
+                    <el-option label="讲经" value="讲经"></el-option>
+                </el-select>
+            </div>
+            <div class="form-group">
+                <label>风格</label>
+                <el-select v-model="editingTask.style" placeholder="请选择风格">
+                    <el-option label="绘本" value="绘本"></el-option>
+                    <el-option label="3D动画" value="3D动画"></el-option>
+                    <el-option label="写实" value="写实"></el-option>
+                    <el-option label="插画" value="插画"></el-option>
+                </el-select>
+            </div>
+            <div class="form-group">
+                <label>TTS模型</label>
+                <el-select v-model="editingTask.tts_model_str" placeholder="请选择TTS模型">
+                    <el-option label="CosyVoice" value="cosyvoice-v1"></el-option>
+                    <el-option label="智谱TTS" value="zhipu-tts"></el-option>
+                </el-select>
+            </div>
+            <div class="form-group">
+                <label>显示标题</label>
+                <el-switch v-model="editingTask.is_display_title" active-text="显示" inactive-text="不显示"></el-switch>
+            </div>
+            <div class="form-group" v-if="editingTask.template === '读一本书'">
+                <label>书本标题</label>
+                <el-input v-model="editingTask.book_title" placeholder="请输入书本标题"></el-input>
+            </div>
+        </div>
+        <span slot="footer" class="dialog-footer">
+            <el-button @click="showEditDialog = false">取消</el-button>
+            <el-button type="primary" @click="saveEditTask" :loading="isUpdating">保存</el-button>
+        </span>
+    </el-dialog>
 </div>
 
 <style>
@@ -153,12 +264,14 @@
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     background: #0f172a;
     color: #e2e8f0;
+    max-width: 1200px;
+    margin: 0 auto;
 }
 
 /* 标题区域 */
 .header-section {
     text-align: center;
-    margin-bottom: 60px;
+    margin-bottom: 40px;
 }
 
 .header-section h1 {
@@ -174,10 +287,25 @@
     margin: 0;
 }
 
+/* 当前任务区域 */
+.current-task-section {
+    background: rgba(30, 41, 59, 0.5);
+    border-radius: 16px;
+    padding: 30px;
+    margin-bottom: 40px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.current-task-section h2 {
+    color: #f1f5f9;
+    font-size: 24px;
+    margin-bottom: 8px;
+}
+
 /* 进度容器 */
 .progress-container {
     max-width: 1000px;
-    margin: 0 auto;
+    margin: 30px auto;
 }
 
 /* 步骤包装器 */
@@ -258,107 +386,62 @@
 }
 
 .step-item.active .step-label {
-    color: #6750a4;
+    color: #a855f7;
     font-weight: 600;
 }
 
+/* 脉冲动画 */
 @keyframes pulse {
-    0% {
-        box-shadow: 0 0 0 0 rgba(103, 80, 164, 0.4);
+    0%, 100% {
+        box-shadow: 0 0 0 0 rgba(103, 80, 164, 0.7);
     }
-    70% {
-        box-shadow: 0 0 0 10px rgba(103, 80, 164, 0);
-    }
-    100% {
-        box-shadow: 0 0 0 0 rgba(103, 80, 164, 0);
+    50% {
+        box-shadow: 0 0 0 20px rgba(103, 80, 164, 0);
     }
 }
 
 /* 状态信息 */
 .status-section {
     text-align: center;
+    margin-bottom: 30px;
 }
 
 .status-message {
-    padding: 20px 30px;
-    font-size: 16px;
-    color: #cbd5e1;
-    max-width: 500px;
-    margin: 0 auto;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 12px;
+    gap: 16px;
 }
 
-.status-message.error {
-    color: #f87171;
-}
-
-.status-message.error .loading-spinner {
-    display: none;
-}
-
-/* Loading 组件 */
 .loading-spinner {
-    display: flex;
-    align-items: center;
+    position: relative;
 }
 
 .spinner {
-    width: 20px;
-    height: 20px;
-    border: 2px solid #374151;
-    border-top: 2px solid #6750a4;
+    width: 24px;
+    height: 24px;
+    border: 3px solid rgba(168, 85, 247, 0.3);
+    border-top-color: #a855f7;
     border-radius: 50%;
     animation: spin 1s linear infinite;
 }
 
 @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+    to {
+        transform: rotate(360deg);
+    }
 }
 
-/* 停止按钮区域 */
+#status-text {
+    font-size: 18px;
+    font-weight: 500;
+    color: #e2e8f0;
+}
+
+/* 简化的停止按钮（无外框） */
 .stop-section {
     text-align: center;
-    max-width: 600px;
-    margin: 40px auto;
-}
-
-.stop-container {
-    background: rgba(239, 68, 68, 0.1);
-    border: 2px solid rgba(239, 68, 68, 0.3);
-    border-radius: 16px;
-    padding: 30px;
-    text-align: center;
-}
-
-.stop-header {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 12px;
-    margin-bottom: 16px;
-}
-
-.stop-header i {
-    font-size: 24px;
-    color: #f87171;
-}
-
-.stop-header h3 {
-    margin: 0;
-    color: #f1f5f9;
-    font-size: 20px;
-    font-weight: 600;
-}
-
-.stop-description {
-    color: #94a3b8;
-    font-size: 16px;
-    margin: 16px 0 24px 0;
-    line-height: 1.5;
+    margin: 30px 0;
 }
 
 .btn-stop {
@@ -374,91 +457,259 @@
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    margin-bottom: 16px;
 }
 
 .btn-stop:hover {
     background: linear-gradient(135deg, #dc2626, #b91c1c);
+    transform: translateY(-1px);
 }
 
 .btn-stop:disabled {
     background: #6b7280;
     cursor: not-allowed;
+    transform: none;
 }
 
-.stop-warning {
-    font-size: 14px;
-    color: #fbbf24;
+/* 任务列表区域 */
+.task-list-section {
+    background: rgba(30, 41, 59, 0.5);
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    overflow: hidden;
+}
+
+/* 标签页 */
+.task-tabs {
+    display: flex;
+    background: rgba(15, 23, 42, 0.8);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* 等待队列样式 */
+.waiting-queue {
+    padding: 20px;
+}
+
+/* 任务队列 */
+.task-queue {
+    space-y: 16px;
+}
+
+/* 任务项 */
+.task-item {
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 16px;
+    transition: all 0.2s ease;
+}
+
+.task-item:hover {
+    border-color: rgba(255, 255, 255, 0.2);
+    background: rgba(15, 23, 42, 0.8);
+}
+
+.task-item.current-processing {
+    border-color: #6750a4;
+    background: rgba(103, 80, 164, 0.1);
+}
+
+.task-item.completed {
+    border-color: rgba(16, 185, 129, 0.3);
+    background: rgba(16, 185, 129, 0.05);
+}
+
+/* 任务信息 */
+.task-info {
+    flex: 1;
+}
+
+.task-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.task-title h4 {
+    color: #f1f5f9;
+    font-size: 18px;
+    font-weight: 600;
     margin: 0;
     display: flex;
     align-items: center;
-    justify-content: center;
-    gap: 8px;
-    line-height: 1.4;
-}
-
-/* 结果区域 */
-.result-section {
-    text-align: center;
-    max-width: 600px;
-    margin: 60px auto 0;
-    padding: 40px;
-}
-
-.success-header {
-    margin-bottom: 30px;
-}
-
-.success-header i {
-    font-size: 48px;
-    color: #10b981;
-    margin-bottom: 16px;
-    display: block;
-}
-
-.success-header h2 {
-    font-size: 24px;
-    font-weight: 600;
-    color: #f1f5f9;
-    margin: 0;
-}
-
-/* 视频包装器 */
-.video-wrapper {
-    margin-bottom: 30px;
-    border-radius: 12px;
-    overflow: hidden;
-    background: #000;
-}
-
-.video-wrapper video {
-    width: 100%;
-    max-height: 400px;
-    object-fit: contain;
-}
-
-.video-loading {
-    padding: 60px 20px;
-    color: #94a3b8;
-    background: #1f2937;
-}
-
-.video-loading i {
-    font-size: 48px;
-    margin-bottom: 16px;
-    display: block;
-    color: #6b7280;
-}
-
-/* 按钮 */
-.action-buttons {
-    display: flex;
     gap: 12px;
-    justify-content: center;
+}
+
+.task-mode-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.task-mode-badge.prompt {
+    background: rgba(59, 130, 246, 0.2);
+    color: #60a5fa;
+}
+
+.task-mode-badge.script {
+    background: rgba(16, 185, 129, 0.2);
+    color: #34d399;
+}
+
+.task-status {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.task-status.waiting {
+    background: rgba(251, 191, 36, 0.2);
+    color: #fbbf24;
+}
+
+.task-status.processing {
+    background: rgba(168, 85, 247, 0.2);
+    color: #a855f7;
+}
+
+.task-status.completed {
+    background: rgba(16, 185, 129, 0.2);
+    color: #10b981;
+}
+
+.task-status.failed {
+    background: rgba(239, 68, 68, 0.2);
+    color: #ef4444;
+}
+
+/* 任务详情 */
+.task-details {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 12px;
     flex-wrap: wrap;
 }
 
-.btn-primary, .btn-secondary, .btn-danger, .btn-success {
+.task-details span {
+    color: #94a3b8;
+    font-size: 14px;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 4px 8px;
+    border-radius: 6px;
+}
+
+/* 任务提示词 */
+.task-prompt p {
+    color: #cbd5e1;
+    font-size: 14px;
+    line-height: 1.5;
+    margin: 0;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 12px;
+    border-radius: 8px;
+}
+
+/* 任务操作 */
+.task-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 16px;
+}
+
+.btn-edit, .btn-delete, .btn-view, .btn-priority {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    text-decoration: none;
+}
+
+.btn-edit {
+    background: rgba(59, 130, 246, 0.2);
+    color: #60a5fa;
+}
+
+.btn-edit:hover {
+    background: rgba(59, 130, 246, 0.3);
+}
+
+.btn-delete {
+    background: rgba(239, 68, 68, 0.2);
+    color: #f87171;
+}
+
+.btn-delete:hover {
+    background: rgba(239, 68, 68, 0.3);
+}
+
+.btn-view {
+    background: rgba(16, 185, 129, 0.2);
+    color: #34d399;
+}
+
+.btn-view:hover {
+    background: rgba(16, 185, 129, 0.3);
+}
+
+.btn-priority {
+    background: rgba(168, 85, 247, 0.2);
+    color: #a78bfa;
+}
+
+.btn-priority:hover {
+    background: rgba(168, 85, 247, 0.3);
+}
+
+.btn-edit:disabled, .btn-delete:disabled, .btn-priority:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* 队列位置 */
+.queue-position {
+    margin-top: 12px;
+    color: #94a3b8;
+    font-size: 12px;
+    text-align: right;
+}
+
+/* 空状态 */
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: #64748b;
+}
+
+.empty-state i {
+    font-size: 48px;
+    margin-bottom: 16px;
+    color: #475569;
+}
+
+.empty-state p {
+    font-size: 16px;
+    margin-bottom: 20px;
+}
+
+/* 通用按钮样式 */
+.btn-primary, .btn-success, .btn-secondary {
     padding: 12px 24px;
     border: none;
     border-radius: 8px;
@@ -466,105 +717,106 @@
     font-weight: 500;
     cursor: pointer;
     transition: all 0.2s ease;
-    display: flex;
+    display: inline-flex;
     align-items: center;
     gap: 8px;
     text-decoration: none;
-    min-width: 120px;
-    justify-content: center;
+    margin: 4px;
 }
 
 .btn-primary {
-    background: #6750a4;
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
     color: white;
 }
 
 .btn-primary:hover {
-    background: #5a45a0;
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    transform: translateY(-1px);
 }
 
 .btn-success {
-    background: #10b981;
+    background: linear-gradient(135deg, #10b981, #059669);
     color: white;
 }
 
 .btn-success:hover {
-    background: #059669;
+    background: linear-gradient(135deg, #059669, #047857);
+    transform: translateY(-1px);
 }
 
 .btn-secondary {
-    background: #374151;
-    color: #d1d5db;
-    border: 1px solid #4b5563;
+    background: rgba(100, 116, 139, 0.2);
+    color: #cbd5e1;
+    border: 1px solid rgba(100, 116, 139, 0.3);
 }
 
 .btn-secondary:hover {
-    background: #4b5563;
+    background: rgba(100, 116, 139, 0.3);
+    border-color: rgba(100, 116, 139, 0.5);
 }
 
-.btn-danger {
-    background: #dc2626;
-    color: white;
-}
-
-.btn-danger:hover {
-    background: #b91c1c;
-}
-
-/* 责任声明 */
-.responsibility-notice {
-    margin-top: 30px;
-    padding: 16px 20px;
-    background: rgba(245, 158, 11, 0.1);
-    border: 1px solid rgba(245, 158, 11, 0.3);
-    border-radius: 8px;
+/* 成功和错误区域 */
+.result-section, .error-section {
     text-align: center;
+    padding: 40px 20px;
 }
 
-.notice-text {
-    color: #fbbf24;
-    font-size: 14px;
-    font-weight: 500;
-    margin: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
+.success-header, .error-header {
+    margin-bottom: 30px;
 }
 
-.notice-text i {
-    color: #fbbf24;
-    font-size: 16px;
-}
-
-/* 错误区域 */
-.error-section {
-    text-align: center;
-    max-width: 500px;
-    margin: 60px auto 0;
-    padding: 40px;
-    background: rgba(239, 68, 68, 0.1);
-    border: 1px solid rgba(239, 68, 68, 0.3);
-    border-radius: 16px;
+.success-header i {
+    font-size: 48px;
+    color: #10b981;
+    margin-bottom: 16px;
 }
 
 .error-header i {
     font-size: 48px;
-    color: #f87171;
+    color: #ef4444;
     margin-bottom: 16px;
-    display: block;
 }
 
-.error-header h2 {
+.success-header h2, .error-header h2 {
+    color: #f1f5f9;
     font-size: 24px;
-    font-weight: 600;
-    color: #f87171;
-    margin: 0 0 16px 0;
+    margin: 0;
 }
 
-.error-section p {
-    color: #fca5a5;
-    margin-bottom: 30px;
+.video-wrapper {
+    margin: 30px 0;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.video-loading {
+    color: #94a3b8;
+    padding: 40px;
+}
+
+.video-loading i {
+    font-size: 32px;
+    margin-bottom: 12px;
+}
+
+.action-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+/* 编辑表单 */
+.edit-task-form .form-group {
+    margin-bottom: 20px;
+}
+
+.edit-task-form label {
+    display: block;
+    margin-bottom: 8px;
+    color: #e2e8f0;
+    font-weight: 500;
 }
 
 /* 响应式设计 */
@@ -601,13 +853,29 @@
         flex: 1;
     }
     
+    .task-details {
+        flex-direction: column;
+        gap: 8px;
+    }
+    
+    .task-title {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+    
     .action-buttons {
         flex-direction: column;
         align-items: center;
     }
     
-    .btn-primary, .btn-secondary, .btn-danger, .btn-success {
-        width: 200px;
+    .task-actions {
+        flex-wrap: wrap;
+    }
+    
+    .tab-button {
+        font-size: 14px;
+        padding: 12px 16px;
     }
 }
 </style>
@@ -615,102 +883,385 @@
 
 {% block scripts %}
 <script>
-let currentStep = 1;
-const stepItems = document.querySelectorAll('.step-item');
-const statusText = document.getElementById('status-text');
-const statusMessage = document.getElementById('status-message');
-const loadingSpinner = document.getElementById('loading-spinner');
-const resultSection = document.getElementById('result-section');
-const errorSection = document.getElementById('error-section');
-const stopSection = document.getElementById('stop-section');
+// 全局变量
+var currentStep = 1;
+var videoId = {{ video.id or 0 }};
 
-function updateStepDisplay() {
-    stepItems.forEach((item, index) => {
-        item.classList.remove('pending', 'active', 'completed');
-        
-        if (index === 0) {
-            // 开始节点始终完成
-            item.classList.add('completed');
-        } else if (index < currentStep) {
-            // 当前步骤之前的节点显示为完成
-            item.classList.add('completed');
-        } else if (index === currentStep) {
-            // 当前步骤显示为正在进行（不打勾）
-            item.classList.add('active');
-        } else {
-            // 当前步骤之后的节点显示为等待
-            item.classList.add('pending');
+// 等待DOM加载完成后初始化
+document.addEventListener('DOMContentLoaded', function() {
+    // 创建Vue实例
+    window.generateVueInstance = new Vue({
+        el: '#generate-app',
+        data: {
+            currentTask: null,
+            waitingTasks: [],
+            showEditDialog: false,
+            editingTask: null,
+            isUpdating: false,
+            currentStep: 1,
+            isNewTask: false
+        },
+        computed: {
+            hasCurrentTask: function() {
+                return this.currentTask && this.currentTask.video_id && this.currentTask.video_id > 0;
+            },
+            currentTaskTitle: function() {
+                return this.currentTask ? this.currentTask.title : '';
+            },
+            waitingCount: function() {
+                return this.waitingTasks ? this.waitingTasks.length : 0;
+            }
+        },
+        mounted: function() {
+            this.loadTasks();
+            this.checkCurrentTask();
+        },
+        methods: {
+            loadTasks: function() {
+                var self = this;
+                axios.get('/api/task-queue')
+                    .then(function(response) {
+                        if (response.data.success) {
+                            self.waitingTasks = response.data.waiting_tasks || [];
+                            
+                            // 找到当前正在处理的任务
+                            var processingTask = null;
+                            for (var i = 0; i < self.waitingTasks.length; i++) {
+                                if (self.waitingTasks[i].status === 'processing') {
+                                    processingTask = self.waitingTasks[i];
+                                    break;
+                                }
+                            }
+                            
+                            if (processingTask) {
+                                // 如果找到了正在处理的任务，而且与当前任务不同，开始轮询
+                                if (!self.currentTask || self.currentTask.video_id !== processingTask.video_id) {
+                                    // 标记这是一个新任务，需要重置显示状态
+                                    self.isNewTask = true;
+                                    self.currentTask = processingTask;
+                                    // 更新全局videoId
+                                    window.videoId = processingTask.video_id;
+                                    // 开始轮询新任务的状态
+                                    if (processingTask.video_id) {
+                                        self.checkGenerationStatus(processingTask.video_id);
+                                    }
+                                }
+                            } else {
+                                // 如果没有正在处理的任务，清空currentTask
+                                self.currentTask = null;
+                            }
+                        }
+                    })
+                    .catch(function(error) {
+                        console.error('加载任务失败:', error);
+                    });
+            },
+            
+            checkCurrentTask: function() {
+                if (videoId && videoId > 0) {
+                    // 先设置一个临时的currentTask对象，这样进度条就能显示了
+                    this.currentTask = {
+                        video_id: videoId,
+                        title: '正在生成视频...',
+                        status: 'processing'
+                    };
+                    this.checkGenerationStatus(videoId);
+                }
+            },
+            
+            editTask: function(task) {
+                this.editingTask = Object.assign({}, task);
+                this.showEditDialog = true;
+            },
+            
+            saveEditTask: function() {
+                if (!this.editingTask) return;
+                
+                var self = this;
+                self.isUpdating = true;
+                axios.put('/api/task-queue/' + self.editingTask.id, self.editingTask)
+                    .then(function(response) {
+                        if (response.data.success) {
+                            self.$message.success('任务更新成功');
+                            self.loadTasks();
+                            self.showEditDialog = false;
+                        } else {
+                            self.$message.error(response.data.message || '更新失败');
+                        }
+                    })
+                    .catch(function(error) {
+                        self.$message.error('更新失败：' + error.message);
+                    })
+                    .finally(function() {
+                        self.isUpdating = false;
+                    });
+            },
+            
+            deleteTask: function(taskId) {
+                var self = this;
+                this.$confirm('确定要删除这个任务吗？', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(function() {
+                    axios.delete('/api/task-queue/' + taskId)
+                        .then(function(response) {
+                            if (response.data.success) {
+                                self.$message.success('任务已删除');
+                                self.loadTasks();
+                            } else {
+                                self.$message.error(response.data.message || '删除失败');
+                            }
+                        })
+                        .catch(function(error) {
+                            self.$message.error('删除失败：' + error.message);
+                        });
+                });
+            },
+            
+            moveTaskToFront: function(taskId) {
+                var self = this;
+                this.$confirm('确定要将此任务移动到队列最前面吗？', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'info'
+                }).then(function() {
+                    axios.post('/api/task-queue/' + taskId + '/move-to-front')
+                        .then(function(response) {
+                            if (response.data.success) {
+                                self.$message.success('任务已移动到队列最前面');
+                                self.loadTasks();
+                            } else {
+                                self.$message.error(response.data.message || '移动失败');
+                            }
+                        })
+                        .catch(function(error) {
+                            self.$message.error('移动失败：' + error.message);
+                        });
+                });
+            },
+            
+            getStatusText: function(status) {
+                var statusMap = {
+                    'waiting': '等待中',
+                    'processing': '生成中',
+                    'completed': '已完成',
+                    'failed': '失败',
+                    'cancelled': '已取消'
+                };
+                return statusMap[status] || status;
+            },
+            
+            formatTime: function(timeString) {
+                if (!timeString) return '';
+                var date = new Date(timeString);
+                return date.toLocaleString('zh-CN');
+            },
+            
+            checkGenerationStatus: function(videoId) {
+                var self = this;
+                
+                // 如果是新任务，重置显示状态
+                if (self.isNewTask) {
+                    self.resetDisplayForNewTask();
+                    self.isNewTask = false; // 重置标志
+                }
+                
+                fetch('/api/video-status/' + videoId)
+                    .then(function(response) {
+                        return response.json();
+                    })
+                    .then(function(data) {
+                        if (data.success) {
+                            if (data.status === 'completed') {
+                                self.showComplete();
+                            } else if (data.status === 'failed' || data.status === 'error') {
+                                self.showError(data.message || '生成过程中出现错误');
+                            } else if (data.status === 'processing') {
+                                // 更新currentTask信息
+                                if (self.currentTask) {
+                                    self.currentTask.title = data.title || '正在生成视频...';
+                                    self.currentTask.status = 'processing';
+                                }
+                                if (data.current_step !== undefined) {
+                                    self.setStep(data.current_step);
+                                }
+                                if (data.message) {
+                                    var statusText = document.getElementById('status-text');
+                                    if (statusText) {
+                                        statusText.textContent = data.message;
+                                    }
+                                }
+                                self.updateStopButtonVisibility();
+                                setTimeout(function() {
+                                    self.checkGenerationStatus(videoId);
+                                }, 2000);
+                            } else if (data.status === 'cancelled') {
+                                self.showError('任务被用户主动取消');
+                            } else {
+                                setTimeout(function() {
+                                    self.checkGenerationStatus(videoId);
+                                }, 2000);
+                            }
+                        } else {
+                            self.showError(data.message || '获取状态失败');
+                        }
+                    })
+                    .catch(function(error) {
+                        console.error('Error:', error);
+                        self.showError('无法获取生成状态，请刷新页面重试');
+                    });
+            },
+            
+            resetDisplayForNewTask: function() {
+                // 重置显示状态为新任务
+                var resultSection = document.getElementById('result-section');
+                var statusMessage = document.getElementById('status-message');
+                var loadingSpinner = document.getElementById('loading-spinner');
+                var statusText = document.getElementById('status-text');
+                var currentTaskSection = document.getElementById('current-task');
+                
+                if (resultSection) resultSection.style.display = 'none';
+                if (statusMessage) statusMessage.classList.remove('error');
+                if (loadingSpinner) loadingSpinner.style.display = 'flex';
+                if (statusText) statusText.textContent = '正在撰写脚本';
+                if (currentTaskSection) currentTaskSection.style.display = 'block';
+                
+                // 重置步骤
+                this.currentStep = 1;
+                this.updateStepDisplay();
+                this.updateStopButtonVisibility();
+                
+                // 更新页面标题
+                if (this.currentTask && this.currentTask.title) {
+                    document.title = '正在生成视频 - ' + this.currentTask.title;
+                }
+            },
+            
+            setStep: function(step) {
+                this.currentStep = step;
+                var messages = [
+                    '正在撰写脚本',
+                    '正在撰写脚本',
+                    '正在制作图片',
+                    '正在录制语音',
+                    '正在剪辑视频',
+                    '正在制作封面',
+                    '正在完成最后步骤',
+                    '视频生成完成！'
+                ];
+                
+                var statusText = document.getElementById('status-text');
+                if (statusText) {
+                    statusText.textContent = messages[step] || messages[1];
+                }
+                this.updateStepDisplay();
+                this.updateStopButtonVisibility();
+            },
+            
+            updateStepDisplay: function() {
+                var stepItems = document.querySelectorAll('.step-item');
+                for (var i = 0; i < stepItems.length; i++) {
+                    var item = stepItems[i];
+                    item.classList.remove('pending', 'active', 'completed');
+                    
+                    if (i === 0) {
+                        item.classList.add('completed');
+                    } else if (i < this.currentStep) {
+                        item.classList.add('completed');
+                    } else if (i === this.currentStep) {
+                        item.classList.add('active');
+                    } else {
+                        item.classList.add('pending');
+                    }
+                }
+            },
+            
+            updateStopButtonVisibility: function() {
+                var stopSection = document.getElementById('stop-section');
+                if (stopSection && this.currentStep > 0 && this.currentStep < 7) {
+                    stopSection.style.display = 'block';
+                } else if (stopSection) {
+                    stopSection.style.display = 'none';
+                }
+            },
+            
+            showComplete: function() {
+                var self = this;
+                self.currentStep = 7;
+                self.updateStepDisplay();
+                
+                var loadingSpinner = document.getElementById('loading-spinner');
+                var stopSection = document.getElementById('stop-section');
+                
+                if (loadingSpinner) loadingSpinner.style.display = 'none';
+                if (stopSection) stopSection.style.display = 'none';
+                
+                fetch('/api/video-info/' + videoId)
+                    .then(function(response) {
+                        return response.json();
+                    })
+                    .then(function(data) {
+                        if (data.success && data.video_url) {
+                            var videoContainer = document.getElementById('video-container');
+                            if (videoContainer) {
+                                videoContainer.innerHTML = '<video controls><source src="' + data.video_url + '" type="video/mp4">您的浏览器不支持视频播放。</video>';
+                            }
+                        }
+                    })
+                    .catch(function(error) {
+                        console.error('加载视频失败:', error);
+                    });
+                
+                setTimeout(function() {
+                    var resultSection = document.getElementById('result-section');
+                    var statusText = document.getElementById('status-text');
+                    
+                    if (resultSection) resultSection.style.display = 'block';
+                    if (statusText) statusText.textContent = '视频生成完成！';
+                    
+                    // 标记当前任务完成
+                    if (self.currentTask) {
+                        self.currentTask.status = 'completed';
+                    }
+                    
+                    // 清空全局videoId，表示当前任务已完成
+                    window.videoId = null;
+                    
+                    // 重新加载任务列表，这会自动检查是否有新任务
+                    self.loadTasks();
+                }, 1000);
+            },
+            
+            showError: function(errorMessage) {
+                var statusMessage = document.getElementById('status-message');
+                var statusText = document.getElementById('status-text');
+                var loadingSpinner = document.getElementById('loading-spinner');
+                var errorSection = document.getElementById('error-section');
+                var errorText = document.getElementById('error-text');
+                var stopSection = document.getElementById('stop-section');
+                
+                if (statusMessage) statusMessage.classList.add('error');
+                if (statusText) statusText.textContent = errorMessage || '生成过程中出现错误，请重试';
+                if (loadingSpinner) loadingSpinner.style.display = 'none';
+                if (errorSection) errorSection.style.display = 'block';
+                if (errorText) errorText.textContent = errorMessage || '生成过程中出现未知错误，请重试';
+                if (stopSection) stopSection.style.display = 'none';
+            }
         }
     });
-}
+});
 
-function setStep(step) {
-    currentStep = step;
-    
-    const messages = [
-        '正在撰写脚本',    // step 0 - 对应步骤1（撰写脚本）
-        '正在撰写脚本',    // step 1 - 对应步骤1（撰写脚本）
-        '正在制作图片',    // step 2 - 对应步骤2（制作图片）
-        '正在录制语音',    // step 3 - 对应步骤3（录制语音）
-        '正在剪辑视频',    // step 4 - 对应步骤4（剪辑视频）
-        '正在制作封面',    // step 5 - 对应步骤5（制作封面）
-        '正在完成最后步骤', // step 6 - 对应步骤6（结束）
-        '视频生成完成！'   // step 7 - 全部完成
-    ];
-    
-    statusText.textContent = messages[step] || messages[1];
-    updateStepDisplay();
-    updateStopButtonVisibility();
-}
-
-function showComplete() {
-    currentStep = 7;
-    updateStepDisplay();
-    loadingSpinner.style.display = 'none';
-    hideStopButton();
-    
-    // 获取视频信息并加载视频
-    const videoId = {{ video.id|tojson }};
-    fetch('/api/video-info/' + videoId)
-        .then(response => response.json())
-        .then(data => {
-            if (data.success && data.video_url) {
-                // 创建视频元素
-                const videoContainer = document.getElementById('video-container');
-                videoContainer.innerHTML = `
-                    <video controls>
-                        <source src="${data.video_url}" type="video/mp4">
-                        您的浏览器不支持视频播放。
-                    </video>
-                `;
-            }
-        })
-        .catch(error => {
-            console.error('加载视频失败:', error);
-        });
-    
-    setTimeout(() => {
-        resultSection.style.display = 'block';
-        statusText.textContent = '视频生成完成！';
-    }, 1000);
-}
-
-function showError(errorMessage) {
-    statusMessage.classList.add('error');
-    statusText.textContent = errorMessage || '生成过程中出现错误，请重试';
-    loadingSpinner.style.display = 'none';
-    errorSection.style.display = 'block';
-    document.getElementById('error-text').textContent = errorMessage || '生成过程中出现未知错误，请重试';
-    hideStopButton();
-}
+// 全局函数
 
 function stopGeneration() {
     if (confirm('确定要停止生成并删除所有文件吗？\n\n• 将删除所有已生成的文件\n• 返还您的额度\n• 此操作不可恢复\n\n确定继续吗？')) {
-        const videoId = {{ video.id }};
-        const stopButton = document.querySelector('.btn-stop');
+        var stopButton = document.querySelector('.btn-stop');
         
-        stopButton.disabled = true;
-        stopButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 正在停止...';
+        if (stopButton) {
+            stopButton.disabled = true;
+            stopButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 正在停止...';
+        }
         
         fetch('/api/stop-generation/' + videoId, {
             method: 'POST',
@@ -718,123 +1269,73 @@ function stopGeneration() {
                 'Content-Type': 'application/json',
             }
         })
-        .then(response => response.json())
-        .then(data => {
+        .then(function(response) {
+            return response.json();
+        })
+        .then(function(data) {
             if (data.success) {
                 alert('已成功停止生成并清理文件' + 
                       (data.credits_returned ? '，返还了 ' + data.credits_returned + ' 个额度' : ''));
                 window.location.href = '/my-videos';
             } else {
                 alert('停止失败：' + data.message);
+                if (stopButton) {
+                    stopButton.disabled = false;
+                    stopButton.innerHTML = '<i class="fas fa-stop"></i> 停止并删除';
+                }
+            }
+        })
+        .catch(function(error) {
+            console.error('Stop generation error:', error);
+            alert('停止失败，请重试');
+            if (stopButton) {
                 stopButton.disabled = false;
                 stopButton.innerHTML = '<i class="fas fa-stop"></i> 停止并删除';
             }
-        })
-        .catch(error => {
-            console.error('Stop generation error:', error);
-            alert('停止失败，请重试');
-            stopButton.disabled = false;
-            stopButton.innerHTML = '<i class="fas fa-stop"></i> 停止并删除';
-        });
-    }
-}
-
-function showStopButton() {
-    if (stopSection) {
-        stopSection.style.display = 'block';
-    }
-}
-
-function hideStopButton() {
-    if (stopSection) {
-        stopSection.style.display = 'none';
-    }
-}
-
-function updateStopButtonVisibility() {
-    if (currentStep > 0 && currentStep < 7) {
-        showStopButton();
-    } else {
-        hideStopButton();
-    }
-}
-
-function deleteVideo(videoId) {
-    if (confirm('确定要删除这个视频吗？')) {
-        fetch('/api/delete-video/' + videoId, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                window.location.href = '/my-videos';
-            } else {
-                alert('删除失败：' + data.message);
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('删除失败，请重试');
         });
     }
 }
 
 function retryGeneration() {
-    location.reload();
+    window.location.reload();
 }
 
-function checkGenerationStatus() {
-    const videoId = {{ video.id }};
-    
-    fetch('/api/video-status/' + videoId)
-        .then(response => response.json())
-        .then(data => {
-            console.log('状态数据:', data); // 调试日志
-            
-            if (data.success) {
-                if (data.status === 'completed') {
-                    showComplete();
-                } else if (data.status === 'failed' || data.status === 'error') {
-                    showError(data.message || '生成过程中出现错误');
-                } else if (data.status === 'processing') {
-                    // 更新进度状态
-                    if (data.current_step !== undefined) {
-                        setStep(data.current_step);
-                    }
-                    if (data.message) {
-                        statusText.textContent = data.message;
-                    }
-                    updateStopButtonVisibility();
-                    // 继续轮询
-                    setTimeout(checkGenerationStatus, 2000);
-                } else if (data.status === 'cancelled') {
-                    showError('任务被用户主动取消');
+function deleteVideo(videoId) {
+    if (confirm('确定要删除这个视频吗？')) {
+        axios.post('/api/delete-video/' + videoId)
+            .then(function(response) {
+                if (response.data.success) {
+                    alert('视频已删除');
+                    window.location.href = '/my-videos';
                 } else {
-                    // 其他状态，继续轮询
-                    setTimeout(checkGenerationStatus, 2000);
+                    alert('删除失败：' + response.data.message);
                 }
-            } else {
-                showError(data.message || '获取状态失败');
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            showError('无法获取生成状态，请刷新页面重试');
-        });
+            })
+            .catch(function(error) {
+                alert('删除失败：' + error.message);
+            });
+    }
 }
 
-updateStepDisplay();
-
+// 初始化检查
 {% if video.status != 'completed' and video.status != 'error' and video.status != 'failed' %}
-    setTimeout(checkGenerationStatus, 1000);
+    setTimeout(function() {
+        if (window.generateVueInstance && videoId > 0) {
+            window.generateVueInstance.checkGenerationStatus(videoId);
+        }
+    }, 1000);
 {% elif video.status == 'completed' %}
-    showComplete();
+    setTimeout(function() {
+        if (window.generateVueInstance) {
+            window.generateVueInstance.showComplete();
+        }
+    }, 500);
 {% elif video.status == 'error' or video.status == 'failed' %}
-    {% set error_msg = video.error_message or '生成过程中出现错误' %}
-    showError('{{ error_msg }}');
+    setTimeout(function() {
+        if (window.generateVueInstance) {
+            window.generateVueInstance.showError('{{ video.error_message or "生成过程中出现错误" }}');
+        }
+    }, 500);
 {% endif %}
 </script>
 {% endblock %} 

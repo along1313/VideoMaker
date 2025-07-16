@@ -167,8 +167,8 @@
                         {% endif %}
                         <a class="hover:text-blue-400 transition-colors" href="{{ url_for('contact') }}">联系我们</a>
                     {% else %}
-                        <a class="hover:text-blue-400 transition-colors" href="{{ url_for('login') }}">登录</a>
-                        <a class="hover:text-blue-400 transition-colors" href="{{ url_for('register') }}">注册</a>
+                        <a class="hover:text-blue-400 transition-colors cursor-pointer" onclick="window.globalVue.openLoginDialog()">登录</a>
+                        <a class="hover:text-blue-400 transition-colors cursor-pointer" onclick="window.globalVue.openRegisterDialog()">注册</a>
                         <a class="hover:text-blue-400 transition-colors" href="{{ url_for('contact') }}">联系我们</a>
                     {% endif %}
                 </nav>
@@ -200,6 +200,122 @@
                 <p>&copy; 2025 百速AI一键生成短视频 - 让创意更简单</p>
             </div>
         </footer>
+
+    </div>
+
+    <!-- 全局弹窗容器 -->
+    <div id="global-dialogs">
+        <!-- 全局登录弹窗 -->
+        <el-dialog
+            title="用户登录"
+            :visible.sync="showLoginDialog"
+            width="400px"
+            :close-on-click-modal="true"
+            :close-on-press-escape="true"
+            :show-close="true"
+            class="login-dialog">
+            <div class="login-form">
+                <form @submit.prevent="handleLogin">
+                    <div class="form-group">
+                        <label for="loginUsername">用户名</label>
+                        <el-input
+                            v-model="loginForm.username"
+                            placeholder="请输入用户名"
+                            ref="loginUsernameInput"
+                            class="login-input">
+                        </el-input>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="loginPassword">密码</label>
+                        <el-input
+                            v-model="loginForm.password"
+                            type="password"
+                            placeholder="请输入密码"
+                            class="login-input">
+                        </el-input>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <el-button type="primary" native-type="submit" :loading="loginLoading" style="width: 100%;">
+                            登录
+                        </el-button>
+                    </div>
+                    
+                    <div class="login-footer">
+                        <div class="forgot-password">
+                            <a href="#" @click.prevent="handleForgotPassword">忘记密码？</a>
+                        </div>
+                        <div class="register-link">
+                            <span>还没有账号？</span>
+                            <a href="#" @click.prevent="openRegisterDialog">立即注册</a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </el-dialog>
+
+        <!-- 全局注册弹窗 -->
+        <el-dialog
+            title="用户注册"
+            :visible.sync="showRegisterDialog"
+            width="400px"
+            :close-on-click-modal="true"
+            :close-on-press-escape="true"
+            :show-close="true"
+            class="register-dialog">
+            <div class="register-form">
+                <p class="register-subtitle">创建账号，立即开始AI视频创作</p>
+                <form @submit.prevent="handleRegister">
+                    <div class="form-group">
+                        <label for="registerUsername">用户名</label>
+                        <el-input
+                            v-model="registerForm.username"
+                            placeholder="请输入用户名"
+                            ref="registerUsernameInput"
+                            class="register-input">
+                        </el-input>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="registerEmail">邮箱</label>
+                        <el-input
+                            v-model="registerForm.email"
+                            type="email"
+                            placeholder="请输入邮箱"
+                            class="register-input">
+                        </el-input>
+                        <div class="email-hint">
+                            <i class="el-icon-info"></i>
+                            请正确输入邮箱，否则无法使用找回密码功能
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="registerPassword">密码</label>
+                        <el-input
+                            v-model="registerForm.password"
+                            type="password"
+                            placeholder="请输入密码"
+                            class="register-input">
+                        </el-input>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <el-button type="primary" native-type="submit" :loading="registerLoading" style="width: 100%;">
+                            注册
+                        </el-button>
+                    </div>
+                    
+                    <div class="register-footer">
+                        <div class="login-link">
+                            <span>已有账号？</span>
+                            <a href="#" @click.prevent="openLoginDialog">立即登录</a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </el-dialog>
     </div>
 
     <!-- 全局Vue配置 - 现代化方式 -->
@@ -287,6 +403,144 @@
     <script src="{{ url_for('static', filename='js/vue-utils.js') }}"></script>
     <!-- 自定义脚本 -->
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    
+    <!-- 全局Vue实例 -->
+    <script>
+        // 创建全局Vue实例处理弹窗
+        window.globalVue = window.AppConfig.createVue({
+            el: '#global-dialogs',
+            data: function() {
+                return {
+                    showLoginDialog: false,
+                    showRegisterDialog: false,
+                    loginLoading: false,
+                    registerLoading: false,
+                    loginForm: {
+                        username: '',
+                        password: ''
+                    },
+                    registerForm: {
+                        username: '',
+                        email: '',
+                        password: ''
+                    },
+                    savedPrompt: '' // 保存用户输入的提示词
+                };
+            },
+            methods: {
+                openLoginDialog: function() {
+                    this.showLoginDialog = true;
+                    this.showRegisterDialog = false;
+                    this.clearForms();
+                },
+                
+                openRegisterDialog: function() {
+                    this.showRegisterDialog = true;
+                    this.showLoginDialog = false;
+                    this.clearForms();
+                },
+                
+                closeDialogs: function() {
+                    this.showLoginDialog = false;
+                    this.showRegisterDialog = false;
+                    this.clearForms();
+                },
+                
+                clearForms: function() {
+                    this.loginForm = { username: '', password: '' };
+                    this.registerForm = { username: '', email: '', password: '' };
+                },
+                
+                handleLogin: function() {
+                    if (!this.loginForm.username || !this.loginForm.password) {
+                        this.$message.error('请填写用户名和密码');
+                        return;
+                    }
+                    
+                    this.loginLoading = true;
+                    
+                    axios.post('/login', this.loginForm, {
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    .then(response => {
+                        const data = response.data;
+                        if (data.success) {
+                            this.$message.success('登录成功');
+                            this.updateUserInfo(data.user);
+                            this.closeDialogs();
+                            // 刷新页面以更新状态
+                            setTimeout(() => {
+                                window.location.reload();
+                            }, 500);
+                        } else {
+                            this.$message.error(data.message || '登录失败');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('登录错误:', error);
+                        this.$message.error('登录请求失败');
+                    })
+                    .finally(() => {
+                        this.loginLoading = false;
+                    });
+                },
+                
+                handleRegister: function() {
+                    if (!this.registerForm.username || !this.registerForm.email || !this.registerForm.password) {
+                        this.$message.error('请填写所有字段');
+                        return;
+                    }
+                    
+                    this.registerLoading = true;
+                    
+                    axios.post('/register', this.registerForm, {
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    .then(response => {
+                        const data = response.data;
+                        if (data.success) {
+                            this.$message.success('注册成功');
+                            this.updateUserInfo(data.user);
+                            this.closeDialogs();
+                            // 刷新页面以更新状态
+                            setTimeout(() => {
+                                window.location.reload();
+                            }, 500);
+                        } else {
+                            this.$message.error(data.message || '注册失败');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('注册错误:', error);
+                        this.$message.error('注册请求失败');
+                    })
+                    .finally(() => {
+                        this.registerLoading = false;
+                    });
+                },
+                
+                updateUserInfo: function(user) {
+                    // 更新全局用户状态
+                    if (this.$global && this.$global.user) {
+                        this.$global.user = user;
+                    }
+                    // 恢复页面中的提示词内容
+                    if (window.indexVueInstance && this.savedPrompt) {
+                        window.indexVueInstance.prompt = this.savedPrompt;
+                    }
+                },
+                
+                handleForgotPassword: function() {
+                    this.$message.info('忘记密码功能正在开发中');
+                }
+            }
+        });
+    </script>
+    
     {% block scripts %}{% endblock %}
 </body>
 </html>

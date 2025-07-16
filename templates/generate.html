@@ -91,6 +91,9 @@
             <button class="btn-stop" onclick="stopGeneration()">
                 <i class="fas fa-stop"></i> 停止并删除
             </button>
+            <a href="{{ url_for('index') }}" class="btn-create-new">
+                <i class="fas fa-plus"></i> 去创作新视频
+            </a>
         </div>
 
         <!-- 完成后的视频展示 -->
@@ -150,7 +153,8 @@
                             <h4>第 <span v-text="index + 1"></span> 个任务
                                 <span class="task-mode-badge" :class="task.mode">
                                     <span v-if="task.mode === 'prompt'">提示词</span>
-                                    <span v-else>文案</span>模式
+                                    <span v-else-if="task.mode === 'script'">文案</span>
+                                    <span v-else v-text="task.mode"></span>模式
                                 </span>
                             </h4>
                             <span class="task-status" :class="task.status">
@@ -209,13 +213,6 @@
                           :rows="4" placeholder="请输入提示词或文案"></el-input>
             </div>
             <div class="form-group">
-                <label>模式</label>
-                <el-select v-model="editingTask.mode" placeholder="请选择模式">
-                    <el-option label="提示词模式" value="prompt"></el-option>
-                    <el-option label="文案模式" value="script"></el-option>
-                </el-select>
-            </div>
-            <div class="form-group">
                 <label>模板</label>
                 <el-select v-model="editingTask.template" placeholder="请选择模板">
                     <el-option label="通用" value="通用"></el-option>
@@ -232,17 +229,6 @@
                     <el-option label="写实" value="写实"></el-option>
                     <el-option label="插画" value="插画"></el-option>
                 </el-select>
-            </div>
-            <div class="form-group">
-                <label>TTS模型</label>
-                <el-select v-model="editingTask.tts_model_str" placeholder="请选择TTS模型">
-                    <el-option label="CosyVoice" value="cosyvoice-v1"></el-option>
-                    <el-option label="智谱TTS" value="zhipu-tts"></el-option>
-                </el-select>
-            </div>
-            <div class="form-group">
-                <label>显示标题</label>
-                <el-switch v-model="editingTask.is_display_title" active-text="显示" inactive-text="不显示"></el-switch>
             </div>
             <div class="form-group" v-if="editingTask.template === '读一本书'">
                 <label>书本标题</label>
@@ -457,6 +443,7 @@
     display: inline-flex;
     align-items: center;
     gap: 8px;
+    margin-right: 12px;
 }
 
 .btn-stop:hover {
@@ -468,6 +455,28 @@
     background: #6b7280;
     cursor: not-allowed;
     transform: none;
+}
+
+.btn-create-new {
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+}
+.btn-create-new:hover {
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    transform: translateY(-1px);
+    text-decoration: none;
+    color: white;
 }
 
 /* 任务列表区域 */
@@ -919,7 +928,9 @@ document.addEventListener('DOMContentLoaded', function() {
         methods: {
             loadTasks: function() {
                 var self = this;
-                axios.get('/api/task-queue')
+                axios.get('/api/task-queue', {
+                    withCredentials: true
+                })
                     .then(function(response) {
                         if (response.data.success) {
                             self.waitingTasks = response.data.waiting_tasks || [];
@@ -947,14 +958,29 @@ document.addEventListener('DOMContentLoaded', function() {
                                     }
                                 }
                             } else {
-                                // 如果没有正在处理的任务，清空currentTask
+                                // 如果没有正在处理的任务，清空currentTask并更新页面显示
                                 self.currentTask = null;
+                                self.updatePageDisplayForNoTask();
                             }
                         }
                     })
                     .catch(function(error) {
                         console.error('加载任务失败:', error);
                     });
+            },
+            
+            updatePageDisplayForNoTask: function() {
+                // 当没有正在处理的任务时，隐藏当前任务区域
+                var currentTaskSection = document.getElementById('current-task');
+                if (currentTaskSection) {
+                    currentTaskSection.style.display = 'none';
+                }
+                
+                // 更新页面标题
+                document.title = '我的任务中心 - 百速AI';
+                
+                // 清空全局videoId
+                window.videoId = null;
             },
             
             checkCurrentTask: function() {
@@ -979,7 +1005,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 var self = this;
                 self.isUpdating = true;
-                axios.put('/api/task-queue/' + self.editingTask.id, self.editingTask)
+                axios.put('/api/task-queue/' + self.editingTask.id, self.editingTask, {
+                    withCredentials: true
+                })
                     .then(function(response) {
                         if (response.data.success) {
                             self.$message.success('任务更新成功');
@@ -1004,7 +1032,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     cancelButtonText: '取消',
                     type: 'warning'
                 }).then(function() {
-                    axios.delete('/api/task-queue/' + taskId)
+                    axios.delete('/api/task-queue/' + taskId, {
+                        withCredentials: true
+                    })
                         .then(function(response) {
                             if (response.data.success) {
                                 self.$message.success('任务已删除');
@@ -1014,7 +1044,12 @@ document.addEventListener('DOMContentLoaded', function() {
                             }
                         })
                         .catch(function(error) {
-                            self.$message.error('删除失败：' + error.message);
+                            console.error('删除请求错误:', error);
+                            if (error.response && error.response.status === 401) {
+                                self.$message.error('请先登录');
+                            } else {
+                                self.$message.error('删除失败：' + (error.response?.data?.message || error.message));
+                            }
                         });
                 });
             },
@@ -1026,7 +1061,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     cancelButtonText: '取消',
                     type: 'info'
                 }).then(function() {
-                    axios.post('/api/task-queue/' + taskId + '/move-to-front')
+                    axios.post('/api/task-queue/' + taskId + '/move-to-front', {}, {
+                        withCredentials: true
+                    })
                         .then(function(response) {
                             if (response.data.success) {
                                 self.$message.success('任务已移动到队列最前面');

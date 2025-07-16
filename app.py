@@ -70,10 +70,23 @@ def migrate_video_paths():
     """迁移旧的视频路径到新的统一路径格式"""
     try:
         with app.app_context():
+            # 检查是否需要迁移（只在有实际需要迁移的视频时才输出日志）
+            needs_migration = False
+            videos = Video.query.all()
+            for video in videos:
+                if video.video_path:
+                    user = User.query.get(video.user_id)
+                    if user:
+                        path_parts = video.video_path.split('/')
+                        if len(path_parts) >= 2 and path_parts[1] != user.username:
+                            needs_migration = True
+                            break
+            
+            if not needs_migration:
+                return
+                
             log_info("开始迁移视频路径...")
             
-            # 查找所有视频记录
-            videos = Video.query.all()
             migrated_count = 0
             
             for video in videos:
@@ -413,7 +426,8 @@ class User(UserMixin, db.Model):
     
     def set_password(self, password):
         """设置密码哈希"""
-        self.password_hash = generate_password_hash(password)
+        # 使用兼容性更好的pbkdf2算法
+        self.password_hash = generate_password_hash(password, method='pbkdf2:sha256')
         
     def check_password(self, password):
         """验证密码"""
@@ -708,15 +722,25 @@ def robots():
 def login():
     """用户登录"""
     if current_user.is_authenticated:
+        if request.content_type == 'application/json':
+            return jsonify({'success': False, 'message': '用户已登录'})
         return redirect(url_for('index'))
     
     if request.method == 'POST':
-        username = request.form.get('username')
-        password = request.form.get('password')
+        # 支持表单数据和JSON数据
+        if request.content_type == 'application/json':
+            data = request.get_json()
+            username = data.get('username')
+            password = data.get('password')
+        else:
+            username = request.form.get('username')
+            password = request.form.get('password')
         
         user = User.query.filter_by(username=username).first()
         if user and user.check_password(password):
             if not user.is_active:
+                if request.content_type == 'application/json':
+                    return jsonify({'success': False, 'message': '账户已被禁用'})
                 return render_template('login.html', error='账户已被禁用')
             
             # 记录登录日志
@@ -740,6 +764,22 @@ def login():
             # 登录用户
             login_user(user, remember=True)
             
+            # 对于JSON请求，返回用户信息
+            if request.content_type == 'application/json':
+                return jsonify({
+                    'success': True,
+                    'message': '登录成功',
+                    'user': {
+                        'id': user.id,
+                        'username': user.username,
+                        'email': user.email,
+                        'isAuthenticated': True,
+                        'isVip': user.is_vip,
+                        'credits': user.credits,
+                        'vipExpireAt': user.vip_expires_at.isoformat() if user.vip_expires_at else None
+                    }
+                })
+            
             # 获取下一个页面
             next_page = request.args.get('next')
             if not next_page or not next_page.startswith('/'):
@@ -747,6 +787,9 @@ def login():
             
             return redirect(next_page)
         
+        # 登录失败
+        if request.content_type == 'application/json':
+            return jsonify({'success': False, 'message': '用户名或密码错误'})
         return render_template('login.html', error='用户名或密码错误')
     
     return render_template('login.html')
@@ -756,24 +799,39 @@ def login():
 def register():
     """用户注册"""
     if current_user.is_authenticated:
+        if request.content_type == 'application/json':
+            return jsonify({'success': False, 'message': '用户已登录'})
         return redirect(url_for('index'))
     
     if request.method == 'POST':
-        username = request.form.get('username')
-        email = request.form.get('email')
-        password = request.form.get('password')
+        # 支持表单数据和JSON数据
+        if request.content_type == 'application/json':
+            data = request.get_json()
+            username = data.get('username')
+            email = data.get('email')
+            password = data.get('password')
+        else:
+            username = request.form.get('username')
+            email = request.form.get('email')
+            password = request.form.get('password')
         
         # 用户名合法性校验
         import re
         username_pattern = r'^[A-Za-z0-9_-]+$'
         if not re.match(username_pattern, username or ''):
+            if request.content_type == 'application/json':
+                return jsonify({'success': False, 'message': '用户名仅支持字母、数字、-、_'})
             return render_template('register.html', error='用户名仅支持字母、数字、-、_')
         
         # 检查用户名和邮箱是否已存在
         if User.query.filter_by(username=username).first():
+            if request.content_type == 'application/json':
+                return jsonify({'success': False, 'message': '用户名已存在'})
             return render_template('register.html', error='用户名已存在')
         
         if User.query.filter_by(email=email).first():
+            if request.content_type == 'application/json':
+                return jsonify({'success': False, 'message': '邮箱已存在'})
             return render_template('register.html', error='邮箱已存在')
         
         # 创建新用户
@@ -784,6 +842,23 @@ def register():
         
         # 自动登录
         login_user(user)
+        
+        # 对于JSON请求，返回用户信息
+        if request.content_type == 'application/json':
+            return jsonify({
+                'success': True,
+                'message': '注册成功',
+                'user': {
+                    'id': user.id,
+                    'username': user.username,
+                    'email': user.email,
+                    'isAuthenticated': True,
+                    'isVip': user.is_vip,
+                    'credits': user.credits,
+                    'vipExpireAt': user.vip_expires_at.isoformat() if user.vip_expires_at else None
+                }
+            })
+        
         return redirect(url_for('index'))
     
     return render_template('register.html')

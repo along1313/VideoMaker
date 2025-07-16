@@ -1370,3 +1370,1305 @@ WHERE video.id = ?]
 [2025-07-16 19:07:49,163] [INFO] [logger:55] - 视频路径迁移完成，共迁移 0 个视频
 [2025-07-16 19:07:49,164] [INFO] [logger:55] - 没有发现中断的任务
 [2025-07-16 19:07:49,164] [INFO] [logger:55] - 任务恢复检查完成
+[2025-07-16 19:43:36,788] [INFO] [logger:55] - 正在检查并恢复中断的任务...
+[2025-07-16 19:43:36,788] [INFO] [logger:55] - 检查服务器启动时是否有中断的任务需要恢复...
+[2025-07-16 19:43:36,788] [INFO] [logger:55] - 开始迁移视频路径...
+[2025-07-16 19:43:36,791] [INFO] [logger:55] - 迁移视频 13: user1 -> admin
+[2025-07-16 19:43:36,791] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 13: workstore/admin/纳什均衡解析/output.mp4
+[2025-07-16 19:43:36,791] [INFO] [logger:55] - 迁移视频 15: user1 -> admin
+[2025-07-16 19:43:36,791] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 15: workstore/admin/白雪公主的童话/output.mp4
+[2025-07-16 19:43:36,791] [INFO] [logger:55] - 迁移视频 18: user3 -> test2
+[2025-07-16 19:43:36,791] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 18: workstore/test2/坚持的力量/output.mp4
+[2025-07-16 19:43:36,791] [INFO] [logger:55] - 迁移视频 19: user6 -> test4
+[2025-07-16 19:43:36,791] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 19: workstore/test4/白雪公主的故事/output.mp4
+[2025-07-16 19:43:36,791] [INFO] [logger:55] - 迁移视频 26: user6 -> test4
+[2025-07-16 19:43:36,791] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 26: workstore/test4/人性弱点智慧/output.mp4
+[2025-07-16 19:43:36,791] [INFO] [logger:55] - 迁移视频 27: user6 -> test4
+[2025-07-16 19:43:36,791] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 27: workstore/test4/达克效应之谜/output.mp4
+[2025-07-16 19:43:36,791] [INFO] [logger:55] - 迁移视频 32: user6 -> test4
+[2025-07-16 19:43:36,791] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 32: workstore/test4/《金刚经》第一品：法会因由分/output.mp4
+[2025-07-16 19:43:36,792] [INFO] [logger:55] - 迁移视频 33: user6 -> test4
+[2025-07-16 19:43:36,792] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 33: workstore/test4/《金刚经》第二品善现启请分/output.mp4
+[2025-07-16 19:43:36,792] [INFO] [logger:55] - 迁移视频 34: user1 -> admin
+[2025-07-16 19:43:36,792] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 34: workstore/admin/小红帽的森林奇遇/output.mp4
+[2025-07-16 19:43:36,792] [INFO] [logger:55] - 迁移视频 35: user8 -> test9
+[2025-07-16 19:43:36,792] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 35: workstore/test9/《金刚经》第五品 如理实见分/output.mp4
+[2025-07-16 19:43:36,792] [INFO] [logger:55] - 迁移视频 36: user8 -> test9
+[2025-07-16 19:43:36,792] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 36: workstore/test9/《金刚经》第六品 正信希有分/output.mp4
+[2025-07-16 19:43:36,792] [INFO] [logger:55] - 迁移视频 37: user1 -> admin
+[2025-07-16 19:43:36,792] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 37: workstore/admin/停止按钮背后的故事/output.mp4
+[2025-07-16 19:43:36,792] [INFO] [logger:55] - 迁移视频 38: user1 -> admin
+[2025-07-16 19:43:36,792] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 38: workstore/admin/《金刚经》第八品 依法出生分/output.mp4
+[2025-07-16 19:43:36,792] [INFO] [logger:55] - 视频路径迁移完成，共迁移 0 个视频
+[2025-07-16 19:43:36,793] [INFO] [logger:55] - 没有发现中断的任务
+[2025-07-16 19:43:36,793] [INFO] [logger:55] - 任务恢复检查完成
+[2025-07-16 19:43:37,409] [INFO] [logger:55] - 正在检查并恢复中断的任务...
+[2025-07-16 19:43:37,409] [INFO] [logger:55] - 检查服务器启动时是否有中断的任务需要恢复...
+[2025-07-16 19:43:37,409] [INFO] [logger:55] - 开始迁移视频路径...
+[2025-07-16 19:43:37,411] [INFO] [logger:55] - 迁移视频 13: user1 -> admin
+[2025-07-16 19:43:37,411] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 13: workstore/admin/纳什均衡解析/output.mp4
+[2025-07-16 19:43:37,411] [INFO] [logger:55] - 迁移视频 15: user1 -> admin
+[2025-07-16 19:43:37,411] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 15: workstore/admin/白雪公主的童话/output.mp4
+[2025-07-16 19:43:37,411] [INFO] [logger:55] - 迁移视频 18: user3 -> test2
+[2025-07-16 19:43:37,411] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 18: workstore/test2/坚持的力量/output.mp4
+[2025-07-16 19:43:37,412] [INFO] [logger:55] - 迁移视频 19: user6 -> test4
+[2025-07-16 19:43:37,412] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 19: workstore/test4/白雪公主的故事/output.mp4
+[2025-07-16 19:43:37,412] [INFO] [logger:55] - 迁移视频 26: user6 -> test4
+[2025-07-16 19:43:37,412] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 26: workstore/test4/人性弱点智慧/output.mp4
+[2025-07-16 19:43:37,412] [INFO] [logger:55] - 迁移视频 27: user6 -> test4
+[2025-07-16 19:43:37,412] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 27: workstore/test4/达克效应之谜/output.mp4
+[2025-07-16 19:43:37,412] [INFO] [logger:55] - 迁移视频 32: user6 -> test4
+[2025-07-16 19:43:37,412] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 32: workstore/test4/《金刚经》第一品：法会因由分/output.mp4
+[2025-07-16 19:43:37,412] [INFO] [logger:55] - 迁移视频 33: user6 -> test4
+[2025-07-16 19:43:37,412] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 33: workstore/test4/《金刚经》第二品善现启请分/output.mp4
+[2025-07-16 19:43:37,412] [INFO] [logger:55] - 迁移视频 34: user1 -> admin
+[2025-07-16 19:43:37,412] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 34: workstore/admin/小红帽的森林奇遇/output.mp4
+[2025-07-16 19:43:37,412] [INFO] [logger:55] - 迁移视频 35: user8 -> test9
+[2025-07-16 19:43:37,412] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 35: workstore/test9/《金刚经》第五品 如理实见分/output.mp4
+[2025-07-16 19:43:37,412] [INFO] [logger:55] - 迁移视频 36: user8 -> test9
+[2025-07-16 19:43:37,412] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 36: workstore/test9/《金刚经》第六品 正信希有分/output.mp4
+[2025-07-16 19:43:37,413] [INFO] [logger:55] - 迁移视频 37: user1 -> admin
+[2025-07-16 19:43:37,413] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 37: workstore/admin/停止按钮背后的故事/output.mp4
+[2025-07-16 19:43:37,413] [INFO] [logger:55] - 迁移视频 38: user1 -> admin
+[2025-07-16 19:43:37,413] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 38: workstore/admin/《金刚经》第八品 依法出生分/output.mp4
+[2025-07-16 19:43:37,413] [INFO] [logger:55] - 视频路径迁移完成，共迁移 0 个视频
+[2025-07-16 19:43:37,414] [INFO] [logger:55] - 没有发现中断的任务
+[2025-07-16 19:43:37,414] [INFO] [logger:55] - 任务恢复检查完成
+[2025-07-16 19:52:19,803] [INFO] [logger:55] - 正在检查并恢复中断的任务...
+[2025-07-16 19:52:19,803] [INFO] [logger:55] - 检查服务器启动时是否有中断的任务需要恢复...
+[2025-07-16 19:52:19,803] [INFO] [logger:55] - 开始迁移视频路径...
+[2025-07-16 19:52:19,805] [INFO] [logger:55] - 迁移视频 13: user1 -> admin
+[2025-07-16 19:52:19,805] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 13: workstore/admin/纳什均衡解析/output.mp4
+[2025-07-16 19:52:19,805] [INFO] [logger:55] - 迁移视频 15: user1 -> admin
+[2025-07-16 19:52:19,805] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 15: workstore/admin/白雪公主的童话/output.mp4
+[2025-07-16 19:52:19,805] [INFO] [logger:55] - 迁移视频 18: user3 -> test2
+[2025-07-16 19:52:19,805] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 18: workstore/test2/坚持的力量/output.mp4
+[2025-07-16 19:52:19,806] [INFO] [logger:55] - 迁移视频 19: user6 -> test4
+[2025-07-16 19:52:19,806] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 19: workstore/test4/白雪公主的故事/output.mp4
+[2025-07-16 19:52:19,806] [INFO] [logger:55] - 迁移视频 26: user6 -> test4
+[2025-07-16 19:52:19,806] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 26: workstore/test4/人性弱点智慧/output.mp4
+[2025-07-16 19:52:19,806] [INFO] [logger:55] - 迁移视频 27: user6 -> test4
+[2025-07-16 19:52:19,806] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 27: workstore/test4/达克效应之谜/output.mp4
+[2025-07-16 19:52:19,806] [INFO] [logger:55] - 迁移视频 32: user6 -> test4
+[2025-07-16 19:52:19,806] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 32: workstore/test4/《金刚经》第一品：法会因由分/output.mp4
+[2025-07-16 19:52:19,806] [INFO] [logger:55] - 迁移视频 33: user6 -> test4
+[2025-07-16 19:52:19,806] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 33: workstore/test4/《金刚经》第二品善现启请分/output.mp4
+[2025-07-16 19:52:19,806] [INFO] [logger:55] - 迁移视频 34: user1 -> admin
+[2025-07-16 19:52:19,806] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 34: workstore/admin/小红帽的森林奇遇/output.mp4
+[2025-07-16 19:52:19,806] [INFO] [logger:55] - 迁移视频 35: user8 -> test9
+[2025-07-16 19:52:19,806] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 35: workstore/test9/《金刚经》第五品 如理实见分/output.mp4
+[2025-07-16 19:52:19,806] [INFO] [logger:55] - 迁移视频 36: user8 -> test9
+[2025-07-16 19:52:19,806] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 36: workstore/test9/《金刚经》第六品 正信希有分/output.mp4
+[2025-07-16 19:52:19,807] [INFO] [logger:55] - 迁移视频 37: user1 -> admin
+[2025-07-16 19:52:19,807] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 37: workstore/admin/停止按钮背后的故事/output.mp4
+[2025-07-16 19:52:19,807] [INFO] [logger:55] - 迁移视频 38: user1 -> admin
+[2025-07-16 19:52:19,807] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 38: workstore/admin/《金刚经》第八品 依法出生分/output.mp4
+[2025-07-16 19:52:19,807] [INFO] [logger:55] - 视频路径迁移完成，共迁移 0 个视频
+[2025-07-16 19:52:19,808] [INFO] [logger:55] - 没有发现中断的任务
+[2025-07-16 19:52:19,808] [INFO] [logger:55] - 任务恢复检查完成
+[2025-07-16 19:52:35,086] [INFO] [logger:55] - 正在检查并恢复中断的任务...
+[2025-07-16 19:52:35,086] [INFO] [logger:55] - 检查服务器启动时是否有中断的任务需要恢复...
+[2025-07-16 19:52:35,086] [INFO] [logger:55] - 开始迁移视频路径...
+[2025-07-16 19:52:35,088] [INFO] [logger:55] - 迁移视频 13: user1 -> admin
+[2025-07-16 19:52:35,088] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 13: workstore/admin/纳什均衡解析/output.mp4
+[2025-07-16 19:52:35,088] [INFO] [logger:55] - 迁移视频 15: user1 -> admin
+[2025-07-16 19:52:35,088] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 15: workstore/admin/白雪公主的童话/output.mp4
+[2025-07-16 19:52:35,089] [INFO] [logger:55] - 迁移视频 18: user3 -> test2
+[2025-07-16 19:52:35,089] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 18: workstore/test2/坚持的力量/output.mp4
+[2025-07-16 19:52:35,089] [INFO] [logger:55] - 迁移视频 19: user6 -> test4
+[2025-07-16 19:52:35,089] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 19: workstore/test4/白雪公主的故事/output.mp4
+[2025-07-16 19:52:35,089] [INFO] [logger:55] - 迁移视频 26: user6 -> test4
+[2025-07-16 19:52:35,089] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 26: workstore/test4/人性弱点智慧/output.mp4
+[2025-07-16 19:52:35,089] [INFO] [logger:55] - 迁移视频 27: user6 -> test4
+[2025-07-16 19:52:35,089] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 27: workstore/test4/达克效应之谜/output.mp4
+[2025-07-16 19:52:35,089] [INFO] [logger:55] - 迁移视频 32: user6 -> test4
+[2025-07-16 19:52:35,089] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 32: workstore/test4/《金刚经》第一品：法会因由分/output.mp4
+[2025-07-16 19:52:35,089] [INFO] [logger:55] - 迁移视频 33: user6 -> test4
+[2025-07-16 19:52:35,089] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 33: workstore/test4/《金刚经》第二品善现启请分/output.mp4
+[2025-07-16 19:52:35,089] [INFO] [logger:55] - 迁移视频 34: user1 -> admin
+[2025-07-16 19:52:35,089] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 34: workstore/admin/小红帽的森林奇遇/output.mp4
+[2025-07-16 19:52:35,089] [INFO] [logger:55] - 迁移视频 35: user8 -> test9
+[2025-07-16 19:52:35,089] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 35: workstore/test9/《金刚经》第五品 如理实见分/output.mp4
+[2025-07-16 19:52:35,090] [INFO] [logger:55] - 迁移视频 36: user8 -> test9
+[2025-07-16 19:52:35,090] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 36: workstore/test9/《金刚经》第六品 正信希有分/output.mp4
+[2025-07-16 19:52:35,090] [INFO] [logger:55] - 迁移视频 37: user1 -> admin
+[2025-07-16 19:52:35,090] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 37: workstore/admin/停止按钮背后的故事/output.mp4
+[2025-07-16 19:52:35,090] [INFO] [logger:55] - 迁移视频 38: user1 -> admin
+[2025-07-16 19:52:35,090] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 38: workstore/admin/《金刚经》第八品 依法出生分/output.mp4
+[2025-07-16 19:52:35,090] [INFO] [logger:55] - 视频路径迁移完成，共迁移 0 个视频
+[2025-07-16 19:52:35,091] [INFO] [logger:55] - 没有发现中断的任务
+[2025-07-16 19:52:35,091] [INFO] [logger:55] - 任务恢复检查完成
+[2025-07-16 19:53:20,153] [INFO] [logger:55] - 百速一键AI视频生成应用正在启动... 时间: 2025-07-16 19:53:20
+[2025-07-16 19:53:20,153] [INFO] [logger:55] - 正在初始化数据库...
+[2025-07-16 19:53:21,020] [INFO] [logger:55] - 数据库初始化完成
+[2025-07-16 19:53:21,020] [INFO] [logger:55] - 正在检查并恢复中断的任务...
+[2025-07-16 19:53:21,020] [INFO] [logger:55] - 检查服务器启动时是否有中断的任务需要恢复...
+[2025-07-16 19:53:21,020] [INFO] [logger:55] - 开始迁移视频路径...
+[2025-07-16 19:53:21,027] [INFO] [logger:55] - 迁移视频 13: user1 -> admin
+[2025-07-16 19:53:21,027] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 13: workstore/admin/纳什均衡解析/output.mp4
+[2025-07-16 19:53:21,027] [INFO] [logger:55] - 迁移视频 15: user1 -> admin
+[2025-07-16 19:53:21,027] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 15: workstore/admin/白雪公主的童话/output.mp4
+[2025-07-16 19:53:21,028] [INFO] [logger:55] - 迁移视频 18: user3 -> test2
+[2025-07-16 19:53:21,028] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 18: workstore/test2/坚持的力量/output.mp4
+[2025-07-16 19:53:21,028] [INFO] [logger:55] - 迁移视频 19: user6 -> test4
+[2025-07-16 19:53:21,028] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 19: workstore/test4/白雪公主的故事/output.mp4
+[2025-07-16 19:53:21,028] [INFO] [logger:55] - 迁移视频 26: user6 -> test4
+[2025-07-16 19:53:21,028] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 26: workstore/test4/人性弱点智慧/output.mp4
+[2025-07-16 19:53:21,028] [INFO] [logger:55] - 迁移视频 27: user6 -> test4
+[2025-07-16 19:53:21,028] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 27: workstore/test4/达克效应之谜/output.mp4
+[2025-07-16 19:53:21,028] [INFO] [logger:55] - 迁移视频 32: user6 -> test4
+[2025-07-16 19:53:21,028] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 32: workstore/test4/《金刚经》第一品：法会因由分/output.mp4
+[2025-07-16 19:53:21,028] [INFO] [logger:55] - 迁移视频 33: user6 -> test4
+[2025-07-16 19:53:21,028] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 33: workstore/test4/《金刚经》第二品善现启请分/output.mp4
+[2025-07-16 19:53:21,028] [INFO] [logger:55] - 迁移视频 34: user1 -> admin
+[2025-07-16 19:53:21,028] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 34: workstore/admin/小红帽的森林奇遇/output.mp4
+[2025-07-16 19:53:21,028] [INFO] [logger:55] - 迁移视频 35: user8 -> test9
+[2025-07-16 19:53:21,028] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 35: workstore/test9/《金刚经》第五品 如理实见分/output.mp4
+[2025-07-16 19:53:21,028] [INFO] [logger:55] - 迁移视频 36: user8 -> test9
+[2025-07-16 19:53:21,028] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 36: workstore/test9/《金刚经》第六品 正信希有分/output.mp4
+[2025-07-16 19:53:21,029] [INFO] [logger:55] - 迁移视频 37: user1 -> admin
+[2025-07-16 19:53:21,029] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 37: workstore/admin/停止按钮背后的故事/output.mp4
+[2025-07-16 19:53:21,029] [INFO] [logger:55] - 迁移视频 38: user1 -> admin
+[2025-07-16 19:53:21,029] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 38: workstore/admin/《金刚经》第八品 依法出生分/output.mp4
+[2025-07-16 19:53:21,029] [INFO] [logger:55] - 视频路径迁移完成，共迁移 0 个视频
+[2025-07-16 19:53:21,030] [INFO] [logger:55] - 没有发现中断的任务
+[2025-07-16 19:53:21,030] [INFO] [logger:55] - 任务恢复检查完成
+[2025-07-16 19:53:21,030] [INFO] [logger:55] - 百速一键AI视频生成应用服务器已启动，监听端口: 5002
+[2025-07-16 19:53:21,099] [INFO] [logger:55] - 百速一键AI视频生成应用正在启动... 时间: 2025-07-16 19:53:21
+[2025-07-16 19:53:21,099] [INFO] [logger:55] - 正在初始化数据库...
+[2025-07-16 19:53:21,675] [INFO] [logger:55] - 数据库初始化完成
+[2025-07-16 19:53:21,675] [INFO] [logger:55] - 正在检查并恢复中断的任务...
+[2025-07-16 19:53:21,675] [INFO] [logger:55] - 检查服务器启动时是否有中断的任务需要恢复...
+[2025-07-16 19:53:21,675] [INFO] [logger:55] - 开始迁移视频路径...
+[2025-07-16 19:53:21,681] [INFO] [logger:55] - 迁移视频 13: user1 -> admin
+[2025-07-16 19:53:21,682] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 13: workstore/admin/纳什均衡解析/output.mp4
+[2025-07-16 19:53:21,682] [INFO] [logger:55] - 迁移视频 15: user1 -> admin
+[2025-07-16 19:53:21,682] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 15: workstore/admin/白雪公主的童话/output.mp4
+[2025-07-16 19:53:21,682] [INFO] [logger:55] - 迁移视频 18: user3 -> test2
+[2025-07-16 19:53:21,682] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 18: workstore/test2/坚持的力量/output.mp4
+[2025-07-16 19:53:21,682] [INFO] [logger:55] - 迁移视频 19: user6 -> test4
+[2025-07-16 19:53:21,682] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 19: workstore/test4/白雪公主的故事/output.mp4
+[2025-07-16 19:53:21,682] [INFO] [logger:55] - 迁移视频 26: user6 -> test4
+[2025-07-16 19:53:21,682] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 26: workstore/test4/人性弱点智慧/output.mp4
+[2025-07-16 19:53:21,682] [INFO] [logger:55] - 迁移视频 27: user6 -> test4
+[2025-07-16 19:53:21,682] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 27: workstore/test4/达克效应之谜/output.mp4
+[2025-07-16 19:53:21,682] [INFO] [logger:55] - 迁移视频 32: user6 -> test4
+[2025-07-16 19:53:21,682] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 32: workstore/test4/《金刚经》第一品：法会因由分/output.mp4
+[2025-07-16 19:53:21,682] [INFO] [logger:55] - 迁移视频 33: user6 -> test4
+[2025-07-16 19:53:21,682] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 33: workstore/test4/《金刚经》第二品善现启请分/output.mp4
+[2025-07-16 19:53:21,682] [INFO] [logger:55] - 迁移视频 34: user1 -> admin
+[2025-07-16 19:53:21,682] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 34: workstore/admin/小红帽的森林奇遇/output.mp4
+[2025-07-16 19:53:21,682] [INFO] [logger:55] - 迁移视频 35: user8 -> test9
+[2025-07-16 19:53:21,683] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 35: workstore/test9/《金刚经》第五品 如理实见分/output.mp4
+[2025-07-16 19:53:21,683] [INFO] [logger:55] - 迁移视频 36: user8 -> test9
+[2025-07-16 19:53:21,683] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 36: workstore/test9/《金刚经》第六品 正信希有分/output.mp4
+[2025-07-16 19:53:21,683] [INFO] [logger:55] - 迁移视频 37: user1 -> admin
+[2025-07-16 19:53:21,683] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 37: workstore/admin/停止按钮背后的故事/output.mp4
+[2025-07-16 19:53:21,683] [INFO] [logger:55] - 迁移视频 38: user1 -> admin
+[2025-07-16 19:53:21,683] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 38: workstore/admin/《金刚经》第八品 依法出生分/output.mp4
+[2025-07-16 19:53:21,683] [INFO] [logger:55] - 视频路径迁移完成，共迁移 0 个视频
+[2025-07-16 19:53:21,684] [INFO] [logger:55] - 没有发现中断的任务
+[2025-07-16 19:53:21,684] [INFO] [logger:55] - 任务恢复检查完成
+[2025-07-16 19:53:21,684] [INFO] [logger:55] - 百速一键AI视频生成应用服务器已启动，监听端口: 5002
+[2025-07-16 19:57:00,599] [INFO] [logger:55] - 正在检查并恢复中断的任务...
+[2025-07-16 19:57:00,599] [INFO] [logger:55] - 检查服务器启动时是否有中断的任务需要恢复...
+[2025-07-16 19:57:00,599] [INFO] [logger:55] - 开始迁移视频路径...
+[2025-07-16 19:57:00,601] [INFO] [logger:55] - 迁移视频 13: user1 -> admin
+[2025-07-16 19:57:00,602] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 13: workstore/admin/纳什均衡解析/output.mp4
+[2025-07-16 19:57:00,602] [INFO] [logger:55] - 迁移视频 15: user1 -> admin
+[2025-07-16 19:57:00,602] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 15: workstore/admin/白雪公主的童话/output.mp4
+[2025-07-16 19:57:00,602] [INFO] [logger:55] - 迁移视频 18: user3 -> test2
+[2025-07-16 19:57:00,602] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 18: workstore/test2/坚持的力量/output.mp4
+[2025-07-16 19:57:00,602] [INFO] [logger:55] - 迁移视频 19: user6 -> test4
+[2025-07-16 19:57:00,602] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 19: workstore/test4/白雪公主的故事/output.mp4
+[2025-07-16 19:57:00,602] [INFO] [logger:55] - 迁移视频 26: user6 -> test4
+[2025-07-16 19:57:00,602] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 26: workstore/test4/人性弱点智慧/output.mp4
+[2025-07-16 19:57:00,602] [INFO] [logger:55] - 迁移视频 27: user6 -> test4
+[2025-07-16 19:57:00,602] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 27: workstore/test4/达克效应之谜/output.mp4
+[2025-07-16 19:57:00,602] [INFO] [logger:55] - 迁移视频 32: user6 -> test4
+[2025-07-16 19:57:00,602] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 32: workstore/test4/《金刚经》第一品：法会因由分/output.mp4
+[2025-07-16 19:57:00,602] [INFO] [logger:55] - 迁移视频 33: user6 -> test4
+[2025-07-16 19:57:00,602] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 33: workstore/test4/《金刚经》第二品善现启请分/output.mp4
+[2025-07-16 19:57:00,603] [INFO] [logger:55] - 迁移视频 34: user1 -> admin
+[2025-07-16 19:57:00,603] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 34: workstore/admin/小红帽的森林奇遇/output.mp4
+[2025-07-16 19:57:00,603] [INFO] [logger:55] - 迁移视频 35: user8 -> test9
+[2025-07-16 19:57:00,603] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 35: workstore/test9/《金刚经》第五品 如理实见分/output.mp4
+[2025-07-16 19:57:00,603] [INFO] [logger:55] - 迁移视频 36: user8 -> test9
+[2025-07-16 19:57:00,603] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 36: workstore/test9/《金刚经》第六品 正信希有分/output.mp4
+[2025-07-16 19:57:00,603] [INFO] [logger:55] - 迁移视频 37: user1 -> admin
+[2025-07-16 19:57:00,603] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 37: workstore/admin/停止按钮背后的故事/output.mp4
+[2025-07-16 19:57:00,603] [INFO] [logger:55] - 迁移视频 38: user1 -> admin
+[2025-07-16 19:57:00,603] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 38: workstore/admin/《金刚经》第八品 依法出生分/output.mp4
+[2025-07-16 19:57:00,603] [INFO] [logger:55] - 视频路径迁移完成，共迁移 0 个视频
+[2025-07-16 19:57:00,604] [INFO] [logger:55] - 没有发现中断的任务
+[2025-07-16 19:57:00,604] [INFO] [logger:55] - 任务恢复检查完成
+[2025-07-16 19:57:01,242] [INFO] [logger:55] - 正在检查并恢复中断的任务...
+[2025-07-16 19:57:01,242] [INFO] [logger:55] - 检查服务器启动时是否有中断的任务需要恢复...
+[2025-07-16 19:57:01,242] [INFO] [logger:55] - 开始迁移视频路径...
+[2025-07-16 19:57:01,244] [INFO] [logger:55] - 迁移视频 13: user1 -> admin
+[2025-07-16 19:57:01,244] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 13: workstore/admin/纳什均衡解析/output.mp4
+[2025-07-16 19:57:01,244] [INFO] [logger:55] - 迁移视频 15: user1 -> admin
+[2025-07-16 19:57:01,244] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 15: workstore/admin/白雪公主的童话/output.mp4
+[2025-07-16 19:57:01,244] [INFO] [logger:55] - 迁移视频 18: user3 -> test2
+[2025-07-16 19:57:01,244] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 18: workstore/test2/坚持的力量/output.mp4
+[2025-07-16 19:57:01,244] [INFO] [logger:55] - 迁移视频 19: user6 -> test4
+[2025-07-16 19:57:01,244] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 19: workstore/test4/白雪公主的故事/output.mp4
+[2025-07-16 19:57:01,244] [INFO] [logger:55] - 迁移视频 26: user6 -> test4
+[2025-07-16 19:57:01,245] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 26: workstore/test4/人性弱点智慧/output.mp4
+[2025-07-16 19:57:01,245] [INFO] [logger:55] - 迁移视频 27: user6 -> test4
+[2025-07-16 19:57:01,245] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 27: workstore/test4/达克效应之谜/output.mp4
+[2025-07-16 19:57:01,245] [INFO] [logger:55] - 迁移视频 32: user6 -> test4
+[2025-07-16 19:57:01,245] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 32: workstore/test4/《金刚经》第一品：法会因由分/output.mp4
+[2025-07-16 19:57:01,245] [INFO] [logger:55] - 迁移视频 33: user6 -> test4
+[2025-07-16 19:57:01,245] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 33: workstore/test4/《金刚经》第二品善现启请分/output.mp4
+[2025-07-16 19:57:01,245] [INFO] [logger:55] - 迁移视频 34: user1 -> admin
+[2025-07-16 19:57:01,245] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 34: workstore/admin/小红帽的森林奇遇/output.mp4
+[2025-07-16 19:57:01,245] [INFO] [logger:55] - 迁移视频 35: user8 -> test9
+[2025-07-16 19:57:01,245] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 35: workstore/test9/《金刚经》第五品 如理实见分/output.mp4
+[2025-07-16 19:57:01,245] [INFO] [logger:55] - 迁移视频 36: user8 -> test9
+[2025-07-16 19:57:01,245] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 36: workstore/test9/《金刚经》第六品 正信希有分/output.mp4
+[2025-07-16 19:57:01,245] [INFO] [logger:55] - 迁移视频 37: user1 -> admin
+[2025-07-16 19:57:01,245] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 37: workstore/admin/停止按钮背后的故事/output.mp4
+[2025-07-16 19:57:01,245] [INFO] [logger:55] - 迁移视频 38: user1 -> admin
+[2025-07-16 19:57:01,246] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 38: workstore/admin/《金刚经》第八品 依法出生分/output.mp4
+[2025-07-16 19:57:01,246] [INFO] [logger:55] - 视频路径迁移完成，共迁移 0 个视频
+[2025-07-16 19:57:01,246] [INFO] [logger:55] - 没有发现中断的任务
+[2025-07-16 19:57:01,246] [INFO] [logger:55] - 任务恢复检查完成
+[2025-07-16 20:00:21,334] [INFO] [logger:55] - 正在检查并恢复中断的任务...
+[2025-07-16 20:00:21,334] [INFO] [logger:55] - 检查服务器启动时是否有中断的任务需要恢复...
+[2025-07-16 20:00:21,334] [INFO] [logger:55] - 开始迁移视频路径...
+[2025-07-16 20:00:21,336] [INFO] [logger:55] - 迁移视频 13: user1 -> admin
+[2025-07-16 20:00:21,336] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 13: workstore/admin/纳什均衡解析/output.mp4
+[2025-07-16 20:00:21,336] [INFO] [logger:55] - 迁移视频 15: user1 -> admin
+[2025-07-16 20:00:21,336] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 15: workstore/admin/白雪公主的童话/output.mp4
+[2025-07-16 20:00:21,336] [INFO] [logger:55] - 迁移视频 18: user3 -> test2
+[2025-07-16 20:00:21,336] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 18: workstore/test2/坚持的力量/output.mp4
+[2025-07-16 20:00:21,337] [INFO] [logger:55] - 迁移视频 19: user6 -> test4
+[2025-07-16 20:00:21,337] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 19: workstore/test4/白雪公主的故事/output.mp4
+[2025-07-16 20:00:21,337] [INFO] [logger:55] - 迁移视频 26: user6 -> test4
+[2025-07-16 20:00:21,337] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 26: workstore/test4/人性弱点智慧/output.mp4
+[2025-07-16 20:00:21,337] [INFO] [logger:55] - 迁移视频 27: user6 -> test4
+[2025-07-16 20:00:21,337] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 27: workstore/test4/达克效应之谜/output.mp4
+[2025-07-16 20:00:21,337] [INFO] [logger:55] - 迁移视频 32: user6 -> test4
+[2025-07-16 20:00:21,337] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 32: workstore/test4/《金刚经》第一品：法会因由分/output.mp4
+[2025-07-16 20:00:21,337] [INFO] [logger:55] - 迁移视频 33: user6 -> test4
+[2025-07-16 20:00:21,337] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 33: workstore/test4/《金刚经》第二品善现启请分/output.mp4
+[2025-07-16 20:00:21,337] [INFO] [logger:55] - 迁移视频 34: user1 -> admin
+[2025-07-16 20:00:21,337] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 34: workstore/admin/小红帽的森林奇遇/output.mp4
+[2025-07-16 20:00:21,337] [INFO] [logger:55] - 迁移视频 35: user8 -> test9
+[2025-07-16 20:00:21,337] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 35: workstore/test9/《金刚经》第五品 如理实见分/output.mp4
+[2025-07-16 20:00:21,337] [INFO] [logger:55] - 迁移视频 36: user8 -> test9
+[2025-07-16 20:00:21,337] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 36: workstore/test9/《金刚经》第六品 正信希有分/output.mp4
+[2025-07-16 20:00:21,337] [INFO] [logger:55] - 迁移视频 37: user1 -> admin
+[2025-07-16 20:00:21,338] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 37: workstore/admin/停止按钮背后的故事/output.mp4
+[2025-07-16 20:00:21,338] [INFO] [logger:55] - 迁移视频 38: user1 -> admin
+[2025-07-16 20:00:21,338] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 38: workstore/admin/《金刚经》第八品 依法出生分/output.mp4
+[2025-07-16 20:00:21,338] [INFO] [logger:55] - 视频路径迁移完成，共迁移 0 个视频
+[2025-07-16 20:00:21,338] [INFO] [logger:55] - 没有发现中断的任务
+[2025-07-16 20:00:21,338] [INFO] [logger:55] - 任务恢复检查完成
+[2025-07-16 20:00:46,838] [INFO] [logger:55] - 百速一键AI视频生成应用正在启动... 时间: 2025-07-16 20:00:46
+[2025-07-16 20:00:46,838] [INFO] [logger:55] - 正在初始化数据库...
+[2025-07-16 20:00:47,428] [INFO] [logger:55] - 数据库初始化完成
+[2025-07-16 20:00:47,428] [INFO] [logger:55] - 正在检查并恢复中断的任务...
+[2025-07-16 20:00:47,428] [INFO] [logger:55] - 检查服务器启动时是否有中断的任务需要恢复...
+[2025-07-16 20:00:47,428] [INFO] [logger:55] - 开始迁移视频路径...
+[2025-07-16 20:00:47,435] [INFO] [logger:55] - 迁移视频 13: user1 -> admin
+[2025-07-16 20:00:47,435] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 13: workstore/admin/纳什均衡解析/output.mp4
+[2025-07-16 20:00:47,435] [INFO] [logger:55] - 迁移视频 15: user1 -> admin
+[2025-07-16 20:00:47,435] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 15: workstore/admin/白雪公主的童话/output.mp4
+[2025-07-16 20:00:47,435] [INFO] [logger:55] - 迁移视频 18: user3 -> test2
+[2025-07-16 20:00:47,435] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 18: workstore/test2/坚持的力量/output.mp4
+[2025-07-16 20:00:47,435] [INFO] [logger:55] - 迁移视频 19: user6 -> test4
+[2025-07-16 20:00:47,435] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 19: workstore/test4/白雪公主的故事/output.mp4
+[2025-07-16 20:00:47,435] [INFO] [logger:55] - 迁移视频 26: user6 -> test4
+[2025-07-16 20:00:47,435] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 26: workstore/test4/人性弱点智慧/output.mp4
+[2025-07-16 20:00:47,435] [INFO] [logger:55] - 迁移视频 27: user6 -> test4
+[2025-07-16 20:00:47,435] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 27: workstore/test4/达克效应之谜/output.mp4
+[2025-07-16 20:00:47,435] [INFO] [logger:55] - 迁移视频 32: user6 -> test4
+[2025-07-16 20:00:47,435] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 32: workstore/test4/《金刚经》第一品：法会因由分/output.mp4
+[2025-07-16 20:00:47,435] [INFO] [logger:55] - 迁移视频 33: user6 -> test4
+[2025-07-16 20:00:47,435] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 33: workstore/test4/《金刚经》第二品善现启请分/output.mp4
+[2025-07-16 20:00:47,435] [INFO] [logger:55] - 迁移视频 34: user1 -> admin
+[2025-07-16 20:00:47,435] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 34: workstore/admin/小红帽的森林奇遇/output.mp4
+[2025-07-16 20:00:47,436] [INFO] [logger:55] - 迁移视频 35: user8 -> test9
+[2025-07-16 20:00:47,436] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 35: workstore/test9/《金刚经》第五品 如理实见分/output.mp4
+[2025-07-16 20:00:47,436] [INFO] [logger:55] - 迁移视频 36: user8 -> test9
+[2025-07-16 20:00:47,436] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 36: workstore/test9/《金刚经》第六品 正信希有分/output.mp4
+[2025-07-16 20:00:47,436] [INFO] [logger:55] - 迁移视频 37: user1 -> admin
+[2025-07-16 20:00:47,436] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 37: workstore/admin/停止按钮背后的故事/output.mp4
+[2025-07-16 20:00:47,436] [INFO] [logger:55] - 迁移视频 38: user1 -> admin
+[2025-07-16 20:00:47,436] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 38: workstore/admin/《金刚经》第八品 依法出生分/output.mp4
+[2025-07-16 20:00:47,436] [INFO] [logger:55] - 视频路径迁移完成，共迁移 0 个视频
+[2025-07-16 20:00:47,437] [INFO] [logger:55] - 没有发现中断的任务
+[2025-07-16 20:00:47,437] [INFO] [logger:55] - 任务恢复检查完成
+[2025-07-16 20:00:47,437] [INFO] [logger:55] - 百速一键AI视频生成应用服务器已启动，监听端口: 5002
+[2025-07-16 20:00:47,514] [INFO] [logger:55] - 百速一键AI视频生成应用正在启动... 时间: 2025-07-16 20:00:47
+[2025-07-16 20:00:47,514] [INFO] [logger:55] - 正在初始化数据库...
+[2025-07-16 20:00:48,089] [INFO] [logger:55] - 数据库初始化完成
+[2025-07-16 20:00:48,089] [INFO] [logger:55] - 正在检查并恢复中断的任务...
+[2025-07-16 20:00:48,089] [INFO] [logger:55] - 检查服务器启动时是否有中断的任务需要恢复...
+[2025-07-16 20:00:48,089] [INFO] [logger:55] - 开始迁移视频路径...
+[2025-07-16 20:00:48,096] [INFO] [logger:55] - 迁移视频 13: user1 -> admin
+[2025-07-16 20:00:48,096] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 13: workstore/admin/纳什均衡解析/output.mp4
+[2025-07-16 20:00:48,096] [INFO] [logger:55] - 迁移视频 15: user1 -> admin
+[2025-07-16 20:00:48,096] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 15: workstore/admin/白雪公主的童话/output.mp4
+[2025-07-16 20:00:48,096] [INFO] [logger:55] - 迁移视频 18: user3 -> test2
+[2025-07-16 20:00:48,096] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 18: workstore/test2/坚持的力量/output.mp4
+[2025-07-16 20:00:48,096] [INFO] [logger:55] - 迁移视频 19: user6 -> test4
+[2025-07-16 20:00:48,096] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 19: workstore/test4/白雪公主的故事/output.mp4
+[2025-07-16 20:00:48,097] [INFO] [logger:55] - 迁移视频 26: user6 -> test4
+[2025-07-16 20:00:48,097] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 26: workstore/test4/人性弱点智慧/output.mp4
+[2025-07-16 20:00:48,097] [INFO] [logger:55] - 迁移视频 27: user6 -> test4
+[2025-07-16 20:00:48,097] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 27: workstore/test4/达克效应之谜/output.mp4
+[2025-07-16 20:00:48,097] [INFO] [logger:55] - 迁移视频 32: user6 -> test4
+[2025-07-16 20:00:48,097] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 32: workstore/test4/《金刚经》第一品：法会因由分/output.mp4
+[2025-07-16 20:00:48,097] [INFO] [logger:55] - 迁移视频 33: user6 -> test4
+[2025-07-16 20:00:48,097] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 33: workstore/test4/《金刚经》第二品善现启请分/output.mp4
+[2025-07-16 20:00:48,097] [INFO] [logger:55] - 迁移视频 34: user1 -> admin
+[2025-07-16 20:00:48,097] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 34: workstore/admin/小红帽的森林奇遇/output.mp4
+[2025-07-16 20:00:48,097] [INFO] [logger:55] - 迁移视频 35: user8 -> test9
+[2025-07-16 20:00:48,097] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 35: workstore/test9/《金刚经》第五品 如理实见分/output.mp4
+[2025-07-16 20:00:48,097] [INFO] [logger:55] - 迁移视频 36: user8 -> test9
+[2025-07-16 20:00:48,097] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 36: workstore/test9/《金刚经》第六品 正信希有分/output.mp4
+[2025-07-16 20:00:48,097] [INFO] [logger:55] - 迁移视频 37: user1 -> admin
+[2025-07-16 20:00:48,097] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 37: workstore/admin/停止按钮背后的故事/output.mp4
+[2025-07-16 20:00:48,097] [INFO] [logger:55] - 迁移视频 38: user1 -> admin
+[2025-07-16 20:00:48,097] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 38: workstore/admin/《金刚经》第八品 依法出生分/output.mp4
+[2025-07-16 20:00:48,097] [INFO] [logger:55] - 视频路径迁移完成，共迁移 0 个视频
+[2025-07-16 20:00:48,098] [INFO] [logger:55] - 没有发现中断的任务
+[2025-07-16 20:00:48,099] [INFO] [logger:55] - 任务恢复检查完成
+[2025-07-16 20:00:48,099] [INFO] [logger:55] - 百速一键AI视频生成应用服务器已启动，监听端口: 5002
+[2025-07-16 20:03:06,342] [INFO] [logger:55] - 百速一键AI视频生成应用正在启动... 时间: 2025-07-16 20:03:06
+[2025-07-16 20:03:06,342] [INFO] [logger:55] - 正在初始化数据库...
+[2025-07-16 20:03:07,200] [INFO] [logger:55] - 数据库初始化完成
+[2025-07-16 20:03:07,200] [INFO] [logger:55] - 正在检查并恢复中断的任务...
+[2025-07-16 20:03:07,200] [INFO] [logger:55] - 检查服务器启动时是否有中断的任务需要恢复...
+[2025-07-16 20:03:07,200] [INFO] [logger:55] - 开始迁移视频路径...
+[2025-07-16 20:03:07,207] [INFO] [logger:55] - 迁移视频 13: user1 -> admin
+[2025-07-16 20:03:07,207] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 13: workstore/admin/纳什均衡解析/output.mp4
+[2025-07-16 20:03:07,207] [INFO] [logger:55] - 迁移视频 15: user1 -> admin
+[2025-07-16 20:03:07,207] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 15: workstore/admin/白雪公主的童话/output.mp4
+[2025-07-16 20:03:07,207] [INFO] [logger:55] - 迁移视频 18: user3 -> test2
+[2025-07-16 20:03:07,207] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 18: workstore/test2/坚持的力量/output.mp4
+[2025-07-16 20:03:07,207] [INFO] [logger:55] - 迁移视频 19: user6 -> test4
+[2025-07-16 20:03:07,207] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 19: workstore/test4/白雪公主的故事/output.mp4
+[2025-07-16 20:03:07,207] [INFO] [logger:55] - 迁移视频 26: user6 -> test4
+[2025-07-16 20:03:07,207] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 26: workstore/test4/人性弱点智慧/output.mp4
+[2025-07-16 20:03:07,207] [INFO] [logger:55] - 迁移视频 27: user6 -> test4
+[2025-07-16 20:03:07,207] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 27: workstore/test4/达克效应之谜/output.mp4
+[2025-07-16 20:03:07,207] [INFO] [logger:55] - 迁移视频 32: user6 -> test4
+[2025-07-16 20:03:07,207] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 32: workstore/test4/《金刚经》第一品：法会因由分/output.mp4
+[2025-07-16 20:03:07,207] [INFO] [logger:55] - 迁移视频 33: user6 -> test4
+[2025-07-16 20:03:07,207] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 33: workstore/test4/《金刚经》第二品善现启请分/output.mp4
+[2025-07-16 20:03:07,208] [INFO] [logger:55] - 迁移视频 34: user1 -> admin
+[2025-07-16 20:03:07,208] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 34: workstore/admin/小红帽的森林奇遇/output.mp4
+[2025-07-16 20:03:07,208] [INFO] [logger:55] - 迁移视频 35: user8 -> test9
+[2025-07-16 20:03:07,208] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 35: workstore/test9/《金刚经》第五品 如理实见分/output.mp4
+[2025-07-16 20:03:07,208] [INFO] [logger:55] - 迁移视频 36: user8 -> test9
+[2025-07-16 20:03:07,208] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 36: workstore/test9/《金刚经》第六品 正信希有分/output.mp4
+[2025-07-16 20:03:07,208] [INFO] [logger:55] - 迁移视频 37: user1 -> admin
+[2025-07-16 20:03:07,208] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 37: workstore/admin/停止按钮背后的故事/output.mp4
+[2025-07-16 20:03:07,208] [INFO] [logger:55] - 迁移视频 38: user1 -> admin
+[2025-07-16 20:03:07,208] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 38: workstore/admin/《金刚经》第八品 依法出生分/output.mp4
+[2025-07-16 20:03:07,208] [INFO] [logger:55] - 视频路径迁移完成，共迁移 0 个视频
+[2025-07-16 20:03:07,209] [INFO] [logger:55] - 没有发现中断的任务
+[2025-07-16 20:03:07,209] [INFO] [logger:55] - 任务恢复检查完成
+[2025-07-16 20:03:07,209] [INFO] [logger:55] - 百速一键AI视频生成应用服务器已启动，监听端口: 5002
+[2025-07-16 20:03:14,687] [INFO] [logger:55] - 百速一键AI视频生成应用正在启动... 时间: 2025-07-16 20:03:14
+[2025-07-16 20:03:14,687] [INFO] [logger:55] - 正在初始化数据库...
+[2025-07-16 20:03:15,253] [INFO] [logger:55] - 数据库初始化完成
+[2025-07-16 20:03:15,253] [INFO] [logger:55] - 正在检查并恢复中断的任务...
+[2025-07-16 20:03:15,253] [INFO] [logger:55] - 检查服务器启动时是否有中断的任务需要恢复...
+[2025-07-16 20:03:15,253] [INFO] [logger:55] - 开始迁移视频路径...
+[2025-07-16 20:03:15,261] [INFO] [logger:55] - 迁移视频 13: user1 -> admin
+[2025-07-16 20:03:15,261] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 13: workstore/admin/纳什均衡解析/output.mp4
+[2025-07-16 20:03:15,261] [INFO] [logger:55] - 迁移视频 15: user1 -> admin
+[2025-07-16 20:03:15,261] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 15: workstore/admin/白雪公主的童话/output.mp4
+[2025-07-16 20:03:15,261] [INFO] [logger:55] - 迁移视频 18: user3 -> test2
+[2025-07-16 20:03:15,261] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 18: workstore/test2/坚持的力量/output.mp4
+[2025-07-16 20:03:15,261] [INFO] [logger:55] - 迁移视频 19: user6 -> test4
+[2025-07-16 20:03:15,261] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 19: workstore/test4/白雪公主的故事/output.mp4
+[2025-07-16 20:03:15,261] [INFO] [logger:55] - 迁移视频 26: user6 -> test4
+[2025-07-16 20:03:15,261] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 26: workstore/test4/人性弱点智慧/output.mp4
+[2025-07-16 20:03:15,261] [INFO] [logger:55] - 迁移视频 27: user6 -> test4
+[2025-07-16 20:03:15,261] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 27: workstore/test4/达克效应之谜/output.mp4
+[2025-07-16 20:03:15,261] [INFO] [logger:55] - 迁移视频 32: user6 -> test4
+[2025-07-16 20:03:15,261] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 32: workstore/test4/《金刚经》第一品：法会因由分/output.mp4
+[2025-07-16 20:03:15,261] [INFO] [logger:55] - 迁移视频 33: user6 -> test4
+[2025-07-16 20:03:15,261] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 33: workstore/test4/《金刚经》第二品善现启请分/output.mp4
+[2025-07-16 20:03:15,262] [INFO] [logger:55] - 迁移视频 34: user1 -> admin
+[2025-07-16 20:03:15,262] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 34: workstore/admin/小红帽的森林奇遇/output.mp4
+[2025-07-16 20:03:15,262] [INFO] [logger:55] - 迁移视频 35: user8 -> test9
+[2025-07-16 20:03:15,262] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 35: workstore/test9/《金刚经》第五品 如理实见分/output.mp4
+[2025-07-16 20:03:15,262] [INFO] [logger:55] - 迁移视频 36: user8 -> test9
+[2025-07-16 20:03:15,262] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 36: workstore/test9/《金刚经》第六品 正信希有分/output.mp4
+[2025-07-16 20:03:15,262] [INFO] [logger:55] - 迁移视频 37: user1 -> admin
+[2025-07-16 20:03:15,262] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 37: workstore/admin/停止按钮背后的故事/output.mp4
+[2025-07-16 20:03:15,262] [INFO] [logger:55] - 迁移视频 38: user1 -> admin
+[2025-07-16 20:03:15,262] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 38: workstore/admin/《金刚经》第八品 依法出生分/output.mp4
+[2025-07-16 20:03:15,262] [INFO] [logger:55] - 视频路径迁移完成，共迁移 0 个视频
+[2025-07-16 20:03:15,264] [INFO] [logger:55] - 没有发现中断的任务
+[2025-07-16 20:03:15,264] [INFO] [logger:55] - 任务恢复检查完成
+[2025-07-16 20:03:15,264] [INFO] [logger:55] - 百速一键AI视频生成应用服务器已启动，监听端口: 5002
+[2025-07-16 20:03:43,522] [INFO] [logger:55] - 百速一键AI视频生成应用正在启动... 时间: 2025-07-16 20:03:43
+[2025-07-16 20:03:43,523] [INFO] [logger:55] - 正在初始化数据库...
+[2025-07-16 20:03:44,320] [INFO] [logger:55] - 数据库初始化完成
+[2025-07-16 20:03:44,320] [INFO] [logger:55] - 正在检查并恢复中断的任务...
+[2025-07-16 20:03:44,320] [INFO] [logger:55] - 检查服务器启动时是否有中断的任务需要恢复...
+[2025-07-16 20:03:44,320] [INFO] [logger:55] - 开始迁移视频路径...
+[2025-07-16 20:03:44,326] [INFO] [logger:55] - 迁移视频 13: user1 -> admin
+[2025-07-16 20:03:44,326] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 13: workstore/admin/纳什均衡解析/output.mp4
+[2025-07-16 20:03:44,327] [INFO] [logger:55] - 迁移视频 15: user1 -> admin
+[2025-07-16 20:03:44,327] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 15: workstore/admin/白雪公主的童话/output.mp4
+[2025-07-16 20:03:44,327] [INFO] [logger:55] - 迁移视频 18: user3 -> test2
+[2025-07-16 20:03:44,327] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 18: workstore/test2/坚持的力量/output.mp4
+[2025-07-16 20:03:44,327] [INFO] [logger:55] - 迁移视频 19: user6 -> test4
+[2025-07-16 20:03:44,327] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 19: workstore/test4/白雪公主的故事/output.mp4
+[2025-07-16 20:03:44,327] [INFO] [logger:55] - 迁移视频 26: user6 -> test4
+[2025-07-16 20:03:44,327] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 26: workstore/test4/人性弱点智慧/output.mp4
+[2025-07-16 20:03:44,327] [INFO] [logger:55] - 迁移视频 27: user6 -> test4
+[2025-07-16 20:03:44,327] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 27: workstore/test4/达克效应之谜/output.mp4
+[2025-07-16 20:03:44,327] [INFO] [logger:55] - 迁移视频 32: user6 -> test4
+[2025-07-16 20:03:44,327] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 32: workstore/test4/《金刚经》第一品：法会因由分/output.mp4
+[2025-07-16 20:03:44,327] [INFO] [logger:55] - 迁移视频 33: user6 -> test4
+[2025-07-16 20:03:44,327] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 33: workstore/test4/《金刚经》第二品善现启请分/output.mp4
+[2025-07-16 20:03:44,327] [INFO] [logger:55] - 迁移视频 34: user1 -> admin
+[2025-07-16 20:03:44,327] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 34: workstore/admin/小红帽的森林奇遇/output.mp4
+[2025-07-16 20:03:44,327] [INFO] [logger:55] - 迁移视频 35: user8 -> test9
+[2025-07-16 20:03:44,327] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 35: workstore/test9/《金刚经》第五品 如理实见分/output.mp4
+[2025-07-16 20:03:44,327] [INFO] [logger:55] - 迁移视频 36: user8 -> test9
+[2025-07-16 20:03:44,328] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 36: workstore/test9/《金刚经》第六品 正信希有分/output.mp4
+[2025-07-16 20:03:44,328] [INFO] [logger:55] - 迁移视频 37: user1 -> admin
+[2025-07-16 20:03:44,328] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 37: workstore/admin/停止按钮背后的故事/output.mp4
+[2025-07-16 20:03:44,328] [INFO] [logger:55] - 迁移视频 38: user1 -> admin
+[2025-07-16 20:03:44,328] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 38: workstore/admin/《金刚经》第八品 依法出生分/output.mp4
+[2025-07-16 20:03:44,328] [INFO] [logger:55] - 视频路径迁移完成，共迁移 0 个视频
+[2025-07-16 20:03:44,329] [INFO] [logger:55] - 没有发现中断的任务
+[2025-07-16 20:03:44,329] [INFO] [logger:55] - 任务恢复检查完成
+[2025-07-16 20:03:44,329] [INFO] [logger:55] - 百速一键AI视频生成应用服务器已启动，监听端口: 5002
+[2025-07-16 20:03:49,694] [INFO] [logger:55] - 百速一键AI视频生成应用正在启动... 时间: 2025-07-16 20:03:49
+[2025-07-16 20:03:49,694] [INFO] [logger:55] - 正在初始化数据库...
+[2025-07-16 20:03:50,251] [INFO] [logger:55] - 数据库初始化完成
+[2025-07-16 20:03:50,251] [INFO] [logger:55] - 正在检查并恢复中断的任务...
+[2025-07-16 20:03:50,251] [INFO] [logger:55] - 检查服务器启动时是否有中断的任务需要恢复...
+[2025-07-16 20:03:50,252] [INFO] [logger:55] - 开始迁移视频路径...
+[2025-07-16 20:03:50,258] [INFO] [logger:55] - 迁移视频 13: user1 -> admin
+[2025-07-16 20:03:50,258] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 13: workstore/admin/纳什均衡解析/output.mp4
+[2025-07-16 20:03:50,258] [INFO] [logger:55] - 迁移视频 15: user1 -> admin
+[2025-07-16 20:03:50,258] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 15: workstore/admin/白雪公主的童话/output.mp4
+[2025-07-16 20:03:50,258] [INFO] [logger:55] - 迁移视频 18: user3 -> test2
+[2025-07-16 20:03:50,258] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 18: workstore/test2/坚持的力量/output.mp4
+[2025-07-16 20:03:50,258] [INFO] [logger:55] - 迁移视频 19: user6 -> test4
+[2025-07-16 20:03:50,258] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 19: workstore/test4/白雪公主的故事/output.mp4
+[2025-07-16 20:03:50,258] [INFO] [logger:55] - 迁移视频 26: user6 -> test4
+[2025-07-16 20:03:50,258] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 26: workstore/test4/人性弱点智慧/output.mp4
+[2025-07-16 20:03:50,258] [INFO] [logger:55] - 迁移视频 27: user6 -> test4
+[2025-07-16 20:03:50,258] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 27: workstore/test4/达克效应之谜/output.mp4
+[2025-07-16 20:03:50,259] [INFO] [logger:55] - 迁移视频 32: user6 -> test4
+[2025-07-16 20:03:50,259] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 32: workstore/test4/《金刚经》第一品：法会因由分/output.mp4
+[2025-07-16 20:03:50,259] [INFO] [logger:55] - 迁移视频 33: user6 -> test4
+[2025-07-16 20:03:50,259] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 33: workstore/test4/《金刚经》第二品善现启请分/output.mp4
+[2025-07-16 20:03:50,259] [INFO] [logger:55] - 迁移视频 34: user1 -> admin
+[2025-07-16 20:03:50,259] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 34: workstore/admin/小红帽的森林奇遇/output.mp4
+[2025-07-16 20:03:50,259] [INFO] [logger:55] - 迁移视频 35: user8 -> test9
+[2025-07-16 20:03:50,259] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 35: workstore/test9/《金刚经》第五品 如理实见分/output.mp4
+[2025-07-16 20:03:50,259] [INFO] [logger:55] - 迁移视频 36: user8 -> test9
+[2025-07-16 20:03:50,259] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 36: workstore/test9/《金刚经》第六品 正信希有分/output.mp4
+[2025-07-16 20:03:50,259] [INFO] [logger:55] - 迁移视频 37: user1 -> admin
+[2025-07-16 20:03:50,259] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 37: workstore/admin/停止按钮背后的故事/output.mp4
+[2025-07-16 20:03:50,259] [INFO] [logger:55] - 迁移视频 38: user1 -> admin
+[2025-07-16 20:03:50,259] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 38: workstore/admin/《金刚经》第八品 依法出生分/output.mp4
+[2025-07-16 20:03:50,259] [INFO] [logger:55] - 视频路径迁移完成，共迁移 0 个视频
+[2025-07-16 20:03:50,260] [INFO] [logger:55] - 没有发现中断的任务
+[2025-07-16 20:03:50,260] [INFO] [logger:55] - 任务恢复检查完成
+[2025-07-16 20:03:50,260] [INFO] [logger:55] - 百速一键AI视频生成应用服务器已启动，监听端口: 5002
+[2025-07-16 20:04:35,992] [INFO] [logger:55] - 百速一键AI视频生成应用正在启动... 时间: 2025-07-16 20:04:35
+[2025-07-16 20:04:35,992] [INFO] [logger:55] - 正在初始化数据库...
+[2025-07-16 20:04:36,765] [INFO] [logger:55] - 数据库初始化完成
+[2025-07-16 20:04:36,765] [INFO] [logger:55] - 正在检查并恢复中断的任务...
+[2025-07-16 20:04:36,766] [INFO] [logger:55] - 检查服务器启动时是否有中断的任务需要恢复...
+[2025-07-16 20:04:36,766] [INFO] [logger:55] - 开始迁移视频路径...
+[2025-07-16 20:04:36,772] [INFO] [logger:55] - 迁移视频 13: user1 -> admin
+[2025-07-16 20:04:36,772] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 13: workstore/admin/纳什均衡解析/output.mp4
+[2025-07-16 20:04:36,772] [INFO] [logger:55] - 迁移视频 15: user1 -> admin
+[2025-07-16 20:04:36,772] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 15: workstore/admin/白雪公主的童话/output.mp4
+[2025-07-16 20:04:36,772] [INFO] [logger:55] - 迁移视频 18: user3 -> test2
+[2025-07-16 20:04:36,772] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 18: workstore/test2/坚持的力量/output.mp4
+[2025-07-16 20:04:36,772] [INFO] [logger:55] - 迁移视频 19: user6 -> test4
+[2025-07-16 20:04:36,772] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 19: workstore/test4/白雪公主的故事/output.mp4
+[2025-07-16 20:04:36,772] [INFO] [logger:55] - 迁移视频 26: user6 -> test4
+[2025-07-16 20:04:36,772] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 26: workstore/test4/人性弱点智慧/output.mp4
+[2025-07-16 20:04:36,772] [INFO] [logger:55] - 迁移视频 27: user6 -> test4
+[2025-07-16 20:04:36,772] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 27: workstore/test4/达克效应之谜/output.mp4
+[2025-07-16 20:04:36,772] [INFO] [logger:55] - 迁移视频 32: user6 -> test4
+[2025-07-16 20:04:36,772] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 32: workstore/test4/《金刚经》第一品：法会因由分/output.mp4
+[2025-07-16 20:04:36,772] [INFO] [logger:55] - 迁移视频 33: user6 -> test4
+[2025-07-16 20:04:36,772] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 33: workstore/test4/《金刚经》第二品善现启请分/output.mp4
+[2025-07-16 20:04:36,773] [INFO] [logger:55] - 迁移视频 34: user1 -> admin
+[2025-07-16 20:04:36,773] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 34: workstore/admin/小红帽的森林奇遇/output.mp4
+[2025-07-16 20:04:36,773] [INFO] [logger:55] - 迁移视频 35: user8 -> test9
+[2025-07-16 20:04:36,773] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 35: workstore/test9/《金刚经》第五品 如理实见分/output.mp4
+[2025-07-16 20:04:36,773] [INFO] [logger:55] - 迁移视频 36: user8 -> test9
+[2025-07-16 20:04:36,773] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 36: workstore/test9/《金刚经》第六品 正信希有分/output.mp4
+[2025-07-16 20:04:36,773] [INFO] [logger:55] - 迁移视频 37: user1 -> admin
+[2025-07-16 20:04:36,773] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 37: workstore/admin/停止按钮背后的故事/output.mp4
+[2025-07-16 20:04:36,773] [INFO] [logger:55] - 迁移视频 38: user1 -> admin
+[2025-07-16 20:04:36,773] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 38: workstore/admin/《金刚经》第八品 依法出生分/output.mp4
+[2025-07-16 20:04:36,773] [INFO] [logger:55] - 视频路径迁移完成，共迁移 0 个视频
+[2025-07-16 20:04:36,774] [INFO] [logger:55] - 没有发现中断的任务
+[2025-07-16 20:04:36,775] [INFO] [logger:55] - 任务恢复检查完成
+[2025-07-16 20:04:36,775] [INFO] [logger:55] - 百速一键AI视频生成应用服务器已启动，监听端口: 5002
+[2025-07-16 20:04:36,847] [INFO] [logger:55] - 百速一键AI视频生成应用正在启动... 时间: 2025-07-16 20:04:36
+[2025-07-16 20:04:36,847] [INFO] [logger:55] - 正在初始化数据库...
+[2025-07-16 20:04:37,399] [INFO] [logger:55] - 数据库初始化完成
+[2025-07-16 20:04:37,399] [INFO] [logger:55] - 正在检查并恢复中断的任务...
+[2025-07-16 20:04:37,399] [INFO] [logger:55] - 检查服务器启动时是否有中断的任务需要恢复...
+[2025-07-16 20:04:37,399] [INFO] [logger:55] - 开始迁移视频路径...
+[2025-07-16 20:04:37,405] [INFO] [logger:55] - 迁移视频 13: user1 -> admin
+[2025-07-16 20:04:37,405] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 13: workstore/admin/纳什均衡解析/output.mp4
+[2025-07-16 20:04:37,405] [INFO] [logger:55] - 迁移视频 15: user1 -> admin
+[2025-07-16 20:04:37,405] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 15: workstore/admin/白雪公主的童话/output.mp4
+[2025-07-16 20:04:37,405] [INFO] [logger:55] - 迁移视频 18: user3 -> test2
+[2025-07-16 20:04:37,405] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 18: workstore/test2/坚持的力量/output.mp4
+[2025-07-16 20:04:37,405] [INFO] [logger:55] - 迁移视频 19: user6 -> test4
+[2025-07-16 20:04:37,405] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 19: workstore/test4/白雪公主的故事/output.mp4
+[2025-07-16 20:04:37,405] [INFO] [logger:55] - 迁移视频 26: user6 -> test4
+[2025-07-16 20:04:37,405] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 26: workstore/test4/人性弱点智慧/output.mp4
+[2025-07-16 20:04:37,405] [INFO] [logger:55] - 迁移视频 27: user6 -> test4
+[2025-07-16 20:04:37,405] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 27: workstore/test4/达克效应之谜/output.mp4
+[2025-07-16 20:04:37,405] [INFO] [logger:55] - 迁移视频 32: user6 -> test4
+[2025-07-16 20:04:37,405] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 32: workstore/test4/《金刚经》第一品：法会因由分/output.mp4
+[2025-07-16 20:04:37,406] [INFO] [logger:55] - 迁移视频 33: user6 -> test4
+[2025-07-16 20:04:37,406] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 33: workstore/test4/《金刚经》第二品善现启请分/output.mp4
+[2025-07-16 20:04:37,406] [INFO] [logger:55] - 迁移视频 34: user1 -> admin
+[2025-07-16 20:04:37,406] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 34: workstore/admin/小红帽的森林奇遇/output.mp4
+[2025-07-16 20:04:37,406] [INFO] [logger:55] - 迁移视频 35: user8 -> test9
+[2025-07-16 20:04:37,406] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 35: workstore/test9/《金刚经》第五品 如理实见分/output.mp4
+[2025-07-16 20:04:37,406] [INFO] [logger:55] - 迁移视频 36: user8 -> test9
+[2025-07-16 20:04:37,406] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 36: workstore/test9/《金刚经》第六品 正信希有分/output.mp4
+[2025-07-16 20:04:37,406] [INFO] [logger:55] - 迁移视频 37: user1 -> admin
+[2025-07-16 20:04:37,406] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 37: workstore/admin/停止按钮背后的故事/output.mp4
+[2025-07-16 20:04:37,406] [INFO] [logger:55] - 迁移视频 38: user1 -> admin
+[2025-07-16 20:04:37,406] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 38: workstore/admin/《金刚经》第八品 依法出生分/output.mp4
+[2025-07-16 20:04:37,406] [INFO] [logger:55] - 视频路径迁移完成，共迁移 0 个视频
+[2025-07-16 20:04:37,407] [INFO] [logger:55] - 没有发现中断的任务
+[2025-07-16 20:04:37,407] [INFO] [logger:55] - 任务恢复检查完成
+[2025-07-16 20:04:37,407] [INFO] [logger:55] - 百速一键AI视频生成应用服务器已启动，监听端口: 5002
+[2025-07-16 20:06:56,704] [INFO] [logger:55] - 百速一键AI视频生成应用正在启动... 时间: 2025-07-16 20:06:56
+[2025-07-16 20:06:56,704] [INFO] [logger:55] - 正在初始化数据库...
+[2025-07-16 20:06:57,326] [INFO] [logger:55] - 数据库初始化完成
+[2025-07-16 20:06:57,326] [INFO] [logger:55] - 正在检查并恢复中断的任务...
+[2025-07-16 20:06:57,326] [INFO] [logger:55] - 检查服务器启动时是否有中断的任务需要恢复...
+[2025-07-16 20:06:57,326] [INFO] [logger:55] - 开始迁移视频路径...
+[2025-07-16 20:06:57,332] [INFO] [logger:55] - 迁移视频 13: user1 -> admin
+[2025-07-16 20:06:57,333] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 13: workstore/admin/纳什均衡解析/output.mp4
+[2025-07-16 20:06:57,333] [INFO] [logger:55] - 迁移视频 15: user1 -> admin
+[2025-07-16 20:06:57,333] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 15: workstore/admin/白雪公主的童话/output.mp4
+[2025-07-16 20:06:57,333] [INFO] [logger:55] - 迁移视频 18: user3 -> test2
+[2025-07-16 20:06:57,333] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 18: workstore/test2/坚持的力量/output.mp4
+[2025-07-16 20:06:57,333] [INFO] [logger:55] - 迁移视频 19: user6 -> test4
+[2025-07-16 20:06:57,333] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 19: workstore/test4/白雪公主的故事/output.mp4
+[2025-07-16 20:06:57,333] [INFO] [logger:55] - 迁移视频 26: user6 -> test4
+[2025-07-16 20:06:57,333] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 26: workstore/test4/人性弱点智慧/output.mp4
+[2025-07-16 20:06:57,333] [INFO] [logger:55] - 迁移视频 27: user6 -> test4
+[2025-07-16 20:06:57,333] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 27: workstore/test4/达克效应之谜/output.mp4
+[2025-07-16 20:06:57,333] [INFO] [logger:55] - 迁移视频 32: user6 -> test4
+[2025-07-16 20:06:57,333] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 32: workstore/test4/《金刚经》第一品：法会因由分/output.mp4
+[2025-07-16 20:06:57,333] [INFO] [logger:55] - 迁移视频 33: user6 -> test4
+[2025-07-16 20:06:57,333] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 33: workstore/test4/《金刚经》第二品善现启请分/output.mp4
+[2025-07-16 20:06:57,333] [INFO] [logger:55] - 迁移视频 34: user1 -> admin
+[2025-07-16 20:06:57,333] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 34: workstore/admin/小红帽的森林奇遇/output.mp4
+[2025-07-16 20:06:57,333] [INFO] [logger:55] - 迁移视频 35: user8 -> test9
+[2025-07-16 20:06:57,333] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 35: workstore/test9/《金刚经》第五品 如理实见分/output.mp4
+[2025-07-16 20:06:57,333] [INFO] [logger:55] - 迁移视频 36: user8 -> test9
+[2025-07-16 20:06:57,334] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 36: workstore/test9/《金刚经》第六品 正信希有分/output.mp4
+[2025-07-16 20:06:57,334] [INFO] [logger:55] - 迁移视频 37: user1 -> admin
+[2025-07-16 20:06:57,334] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 37: workstore/admin/停止按钮背后的故事/output.mp4
+[2025-07-16 20:06:57,334] [INFO] [logger:55] - 迁移视频 38: user1 -> admin
+[2025-07-16 20:06:57,334] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 38: workstore/admin/《金刚经》第八品 依法出生分/output.mp4
+[2025-07-16 20:06:57,334] [INFO] [logger:55] - 视频路径迁移完成，共迁移 0 个视频
+[2025-07-16 20:06:57,335] [INFO] [logger:55] - 没有发现中断的任务
+[2025-07-16 20:06:57,335] [INFO] [logger:55] - 任务恢复检查完成
+[2025-07-16 20:06:57,335] [INFO] [logger:55] - 百速一键AI视频生成应用服务器已启动，监听端口: 5002
+[2025-07-16 20:08:43,089] [INFO] [logger:55] - 正在检查并恢复中断的任务...
+[2025-07-16 20:08:43,090] [INFO] [logger:55] - 检查服务器启动时是否有中断的任务需要恢复...
+[2025-07-16 20:08:43,090] [INFO] [logger:55] - 开始迁移视频路径...
+[2025-07-16 20:08:43,092] [INFO] [logger:55] - 迁移视频 13: user1 -> admin
+[2025-07-16 20:08:43,092] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 13: workstore/admin/纳什均衡解析/output.mp4
+[2025-07-16 20:08:43,092] [INFO] [logger:55] - 迁移视频 15: user1 -> admin
+[2025-07-16 20:08:43,092] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 15: workstore/admin/白雪公主的童话/output.mp4
+[2025-07-16 20:08:43,092] [INFO] [logger:55] - 迁移视频 18: user3 -> test2
+[2025-07-16 20:08:43,092] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 18: workstore/test2/坚持的力量/output.mp4
+[2025-07-16 20:08:43,092] [INFO] [logger:55] - 迁移视频 19: user6 -> test4
+[2025-07-16 20:08:43,092] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 19: workstore/test4/白雪公主的故事/output.mp4
+[2025-07-16 20:08:43,092] [INFO] [logger:55] - 迁移视频 26: user6 -> test4
+[2025-07-16 20:08:43,092] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 26: workstore/test4/人性弱点智慧/output.mp4
+[2025-07-16 20:08:43,092] [INFO] [logger:55] - 迁移视频 27: user6 -> test4
+[2025-07-16 20:08:43,092] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 27: workstore/test4/达克效应之谜/output.mp4
+[2025-07-16 20:08:43,092] [INFO] [logger:55] - 迁移视频 32: user6 -> test4
+[2025-07-16 20:08:43,092] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 32: workstore/test4/《金刚经》第一品：法会因由分/output.mp4
+[2025-07-16 20:08:43,092] [INFO] [logger:55] - 迁移视频 33: user6 -> test4
+[2025-07-16 20:08:43,092] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 33: workstore/test4/《金刚经》第二品善现启请分/output.mp4
+[2025-07-16 20:08:43,093] [INFO] [logger:55] - 迁移视频 34: user1 -> admin
+[2025-07-16 20:08:43,093] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 34: workstore/admin/小红帽的森林奇遇/output.mp4
+[2025-07-16 20:08:43,093] [INFO] [logger:55] - 迁移视频 35: user8 -> test9
+[2025-07-16 20:08:43,093] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 35: workstore/test9/《金刚经》第五品 如理实见分/output.mp4
+[2025-07-16 20:08:43,093] [INFO] [logger:55] - 迁移视频 36: user8 -> test9
+[2025-07-16 20:08:43,093] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 36: workstore/test9/《金刚经》第六品 正信希有分/output.mp4
+[2025-07-16 20:08:43,093] [INFO] [logger:55] - 迁移视频 37: user1 -> admin
+[2025-07-16 20:08:43,093] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 37: workstore/admin/停止按钮背后的故事/output.mp4
+[2025-07-16 20:08:43,093] [INFO] [logger:55] - 迁移视频 38: user1 -> admin
+[2025-07-16 20:08:43,093] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 38: workstore/admin/《金刚经》第八品 依法出生分/output.mp4
+[2025-07-16 20:08:43,093] [INFO] [logger:55] - 视频路径迁移完成，共迁移 0 个视频
+[2025-07-16 20:08:43,094] [INFO] [logger:55] - 没有发现中断的任务
+[2025-07-16 20:08:43,094] [INFO] [logger:55] - 任务恢复检查完成
+[2025-07-16 20:08:43,727] [INFO] [logger:55] - 正在检查并恢复中断的任务...
+[2025-07-16 20:08:43,727] [INFO] [logger:55] - 检查服务器启动时是否有中断的任务需要恢复...
+[2025-07-16 20:08:43,727] [INFO] [logger:55] - 开始迁移视频路径...
+[2025-07-16 20:08:43,729] [INFO] [logger:55] - 迁移视频 13: user1 -> admin
+[2025-07-16 20:08:43,729] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 13: workstore/admin/纳什均衡解析/output.mp4
+[2025-07-16 20:08:43,729] [INFO] [logger:55] - 迁移视频 15: user1 -> admin
+[2025-07-16 20:08:43,729] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 15: workstore/admin/白雪公主的童话/output.mp4
+[2025-07-16 20:08:43,729] [INFO] [logger:55] - 迁移视频 18: user3 -> test2
+[2025-07-16 20:08:43,729] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 18: workstore/test2/坚持的力量/output.mp4
+[2025-07-16 20:08:43,729] [INFO] [logger:55] - 迁移视频 19: user6 -> test4
+[2025-07-16 20:08:43,729] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 19: workstore/test4/白雪公主的故事/output.mp4
+[2025-07-16 20:08:43,729] [INFO] [logger:55] - 迁移视频 26: user6 -> test4
+[2025-07-16 20:08:43,729] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 26: workstore/test4/人性弱点智慧/output.mp4
+[2025-07-16 20:08:43,729] [INFO] [logger:55] - 迁移视频 27: user6 -> test4
+[2025-07-16 20:08:43,729] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 27: workstore/test4/达克效应之谜/output.mp4
+[2025-07-16 20:08:43,730] [INFO] [logger:55] - 迁移视频 32: user6 -> test4
+[2025-07-16 20:08:43,730] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 32: workstore/test4/《金刚经》第一品：法会因由分/output.mp4
+[2025-07-16 20:08:43,730] [INFO] [logger:55] - 迁移视频 33: user6 -> test4
+[2025-07-16 20:08:43,730] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 33: workstore/test4/《金刚经》第二品善现启请分/output.mp4
+[2025-07-16 20:08:43,730] [INFO] [logger:55] - 迁移视频 34: user1 -> admin
+[2025-07-16 20:08:43,730] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 34: workstore/admin/小红帽的森林奇遇/output.mp4
+[2025-07-16 20:08:43,730] [INFO] [logger:55] - 迁移视频 35: user8 -> test9
+[2025-07-16 20:08:43,730] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 35: workstore/test9/《金刚经》第五品 如理实见分/output.mp4
+[2025-07-16 20:08:43,730] [INFO] [logger:55] - 迁移视频 36: user8 -> test9
+[2025-07-16 20:08:43,730] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 36: workstore/test9/《金刚经》第六品 正信希有分/output.mp4
+[2025-07-16 20:08:43,730] [INFO] [logger:55] - 迁移视频 37: user1 -> admin
+[2025-07-16 20:08:43,730] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 37: workstore/admin/停止按钮背后的故事/output.mp4
+[2025-07-16 20:08:43,730] [INFO] [logger:55] - 迁移视频 38: user1 -> admin
+[2025-07-16 20:08:43,730] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 38: workstore/admin/《金刚经》第八品 依法出生分/output.mp4
+[2025-07-16 20:08:43,731] [INFO] [logger:55] - 视频路径迁移完成，共迁移 0 个视频
+[2025-07-16 20:08:43,731] [INFO] [logger:55] - 没有发现中断的任务
+[2025-07-16 20:08:43,731] [INFO] [logger:55] - 任务恢复检查完成
+[2025-07-16 20:10:14,203] [INFO] [logger:55] - 正在检查并恢复中断的任务...
+[2025-07-16 20:10:14,203] [INFO] [logger:55] - 检查服务器启动时是否有中断的任务需要恢复...
+[2025-07-16 20:10:14,204] [INFO] [logger:55] - 开始迁移视频路径...
+[2025-07-16 20:10:14,206] [INFO] [logger:55] - 迁移视频 13: user1 -> admin
+[2025-07-16 20:10:14,206] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 13: workstore/admin/纳什均衡解析/output.mp4
+[2025-07-16 20:10:14,206] [INFO] [logger:55] - 迁移视频 15: user1 -> admin
+[2025-07-16 20:10:14,206] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 15: workstore/admin/白雪公主的童话/output.mp4
+[2025-07-16 20:10:14,206] [INFO] [logger:55] - 迁移视频 18: user3 -> test2
+[2025-07-16 20:10:14,206] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 18: workstore/test2/坚持的力量/output.mp4
+[2025-07-16 20:10:14,206] [INFO] [logger:55] - 迁移视频 19: user6 -> test4
+[2025-07-16 20:10:14,206] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 19: workstore/test4/白雪公主的故事/output.mp4
+[2025-07-16 20:10:14,206] [INFO] [logger:55] - 迁移视频 26: user6 -> test4
+[2025-07-16 20:10:14,206] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 26: workstore/test4/人性弱点智慧/output.mp4
+[2025-07-16 20:10:14,206] [INFO] [logger:55] - 迁移视频 27: user6 -> test4
+[2025-07-16 20:10:14,206] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 27: workstore/test4/达克效应之谜/output.mp4
+[2025-07-16 20:10:14,206] [INFO] [logger:55] - 迁移视频 32: user6 -> test4
+[2025-07-16 20:10:14,206] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 32: workstore/test4/《金刚经》第一品：法会因由分/output.mp4
+[2025-07-16 20:10:14,206] [INFO] [logger:55] - 迁移视频 33: user6 -> test4
+[2025-07-16 20:10:14,206] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 33: workstore/test4/《金刚经》第二品善现启请分/output.mp4
+[2025-07-16 20:10:14,207] [INFO] [logger:55] - 迁移视频 34: user1 -> admin
+[2025-07-16 20:10:14,207] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 34: workstore/admin/小红帽的森林奇遇/output.mp4
+[2025-07-16 20:10:14,207] [INFO] [logger:55] - 迁移视频 35: user8 -> test9
+[2025-07-16 20:10:14,207] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 35: workstore/test9/《金刚经》第五品 如理实见分/output.mp4
+[2025-07-16 20:10:14,207] [INFO] [logger:55] - 迁移视频 36: user8 -> test9
+[2025-07-16 20:10:14,207] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 36: workstore/test9/《金刚经》第六品 正信希有分/output.mp4
+[2025-07-16 20:10:14,207] [INFO] [logger:55] - 迁移视频 37: user1 -> admin
+[2025-07-16 20:10:14,207] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 37: workstore/admin/停止按钮背后的故事/output.mp4
+[2025-07-16 20:10:14,207] [INFO] [logger:55] - 迁移视频 38: user1 -> admin
+[2025-07-16 20:10:14,207] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 38: workstore/admin/《金刚经》第八品 依法出生分/output.mp4
+[2025-07-16 20:10:14,207] [INFO] [logger:55] - 视频路径迁移完成，共迁移 0 个视频
+[2025-07-16 20:10:14,208] [INFO] [logger:55] - 没有发现中断的任务
+[2025-07-16 20:10:14,208] [INFO] [logger:55] - 任务恢复检查完成
+[2025-07-16 20:10:14,843] [INFO] [logger:55] - 正在检查并恢复中断的任务...
+[2025-07-16 20:10:14,843] [INFO] [logger:55] - 检查服务器启动时是否有中断的任务需要恢复...
+[2025-07-16 20:10:14,843] [INFO] [logger:55] - 开始迁移视频路径...
+[2025-07-16 20:10:14,845] [INFO] [logger:55] - 迁移视频 13: user1 -> admin
+[2025-07-16 20:10:14,845] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 13: workstore/admin/纳什均衡解析/output.mp4
+[2025-07-16 20:10:14,845] [INFO] [logger:55] - 迁移视频 15: user1 -> admin
+[2025-07-16 20:10:14,845] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 15: workstore/admin/白雪公主的童话/output.mp4
+[2025-07-16 20:10:14,845] [INFO] [logger:55] - 迁移视频 18: user3 -> test2
+[2025-07-16 20:10:14,845] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 18: workstore/test2/坚持的力量/output.mp4
+[2025-07-16 20:10:14,845] [INFO] [logger:55] - 迁移视频 19: user6 -> test4
+[2025-07-16 20:10:14,845] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 19: workstore/test4/白雪公主的故事/output.mp4
+[2025-07-16 20:10:14,845] [INFO] [logger:55] - 迁移视频 26: user6 -> test4
+[2025-07-16 20:10:14,845] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 26: workstore/test4/人性弱点智慧/output.mp4
+[2025-07-16 20:10:14,845] [INFO] [logger:55] - 迁移视频 27: user6 -> test4
+[2025-07-16 20:10:14,845] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 27: workstore/test4/达克效应之谜/output.mp4
+[2025-07-16 20:10:14,846] [INFO] [logger:55] - 迁移视频 32: user6 -> test4
+[2025-07-16 20:10:14,846] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 32: workstore/test4/《金刚经》第一品：法会因由分/output.mp4
+[2025-07-16 20:10:14,846] [INFO] [logger:55] - 迁移视频 33: user6 -> test4
+[2025-07-16 20:10:14,846] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 33: workstore/test4/《金刚经》第二品善现启请分/output.mp4
+[2025-07-16 20:10:14,846] [INFO] [logger:55] - 迁移视频 34: user1 -> admin
+[2025-07-16 20:10:14,846] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 34: workstore/admin/小红帽的森林奇遇/output.mp4
+[2025-07-16 20:10:14,846] [INFO] [logger:55] - 迁移视频 35: user8 -> test9
+[2025-07-16 20:10:14,846] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 35: workstore/test9/《金刚经》第五品 如理实见分/output.mp4
+[2025-07-16 20:10:14,846] [INFO] [logger:55] - 迁移视频 36: user8 -> test9
+[2025-07-16 20:10:14,846] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 36: workstore/test9/《金刚经》第六品 正信希有分/output.mp4
+[2025-07-16 20:10:14,846] [INFO] [logger:55] - 迁移视频 37: user1 -> admin
+[2025-07-16 20:10:14,846] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 37: workstore/admin/停止按钮背后的故事/output.mp4
+[2025-07-16 20:10:14,846] [INFO] [logger:55] - 迁移视频 38: user1 -> admin
+[2025-07-16 20:10:14,846] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 38: workstore/admin/《金刚经》第八品 依法出生分/output.mp4
+[2025-07-16 20:10:14,847] [INFO] [logger:55] - 视频路径迁移完成，共迁移 0 个视频
+[2025-07-16 20:10:14,847] [INFO] [logger:55] - 没有发现中断的任务
+[2025-07-16 20:10:14,847] [INFO] [logger:55] - 任务恢复检查完成
+[2025-07-16 20:22:07,828] [INFO] [logger:55] - 百速一键AI视频生成应用正在启动... 时间: 2025-07-16 20:22:07
+[2025-07-16 20:22:07,828] [INFO] [logger:55] - 正在初始化数据库...
+[2025-07-16 20:22:08,674] [INFO] [logger:55] - 数据库初始化完成
+[2025-07-16 20:22:08,674] [INFO] [logger:55] - 正在检查并恢复中断的任务...
+[2025-07-16 20:22:08,674] [INFO] [logger:55] - 检查服务器启动时是否有中断的任务需要恢复...
+[2025-07-16 20:22:08,674] [INFO] [logger:55] - 开始迁移视频路径...
+[2025-07-16 20:22:08,680] [INFO] [logger:55] - 迁移视频 13: user1 -> admin
+[2025-07-16 20:22:08,680] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 13: workstore/admin/纳什均衡解析/output.mp4
+[2025-07-16 20:22:08,680] [INFO] [logger:55] - 迁移视频 15: user1 -> admin
+[2025-07-16 20:22:08,680] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 15: workstore/admin/白雪公主的童话/output.mp4
+[2025-07-16 20:22:08,680] [INFO] [logger:55] - 迁移视频 18: user3 -> test2
+[2025-07-16 20:22:08,680] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 18: workstore/test2/坚持的力量/output.mp4
+[2025-07-16 20:22:08,681] [INFO] [logger:55] - 迁移视频 19: user6 -> test4
+[2025-07-16 20:22:08,681] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 19: workstore/test4/白雪公主的故事/output.mp4
+[2025-07-16 20:22:08,681] [INFO] [logger:55] - 迁移视频 26: user6 -> test4
+[2025-07-16 20:22:08,681] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 26: workstore/test4/人性弱点智慧/output.mp4
+[2025-07-16 20:22:08,681] [INFO] [logger:55] - 迁移视频 27: user6 -> test4
+[2025-07-16 20:22:08,681] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 27: workstore/test4/达克效应之谜/output.mp4
+[2025-07-16 20:22:08,681] [INFO] [logger:55] - 迁移视频 32: user6 -> test4
+[2025-07-16 20:22:08,681] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 32: workstore/test4/《金刚经》第一品：法会因由分/output.mp4
+[2025-07-16 20:22:08,681] [INFO] [logger:55] - 迁移视频 33: user6 -> test4
+[2025-07-16 20:22:08,681] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 33: workstore/test4/《金刚经》第二品善现启请分/output.mp4
+[2025-07-16 20:22:08,681] [INFO] [logger:55] - 迁移视频 34: user1 -> admin
+[2025-07-16 20:22:08,681] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 34: workstore/admin/小红帽的森林奇遇/output.mp4
+[2025-07-16 20:22:08,681] [INFO] [logger:55] - 迁移视频 35: user8 -> test9
+[2025-07-16 20:22:08,681] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 35: workstore/test9/《金刚经》第五品 如理实见分/output.mp4
+[2025-07-16 20:22:08,681] [INFO] [logger:55] - 迁移视频 36: user8 -> test9
+[2025-07-16 20:22:08,681] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 36: workstore/test9/《金刚经》第六品 正信希有分/output.mp4
+[2025-07-16 20:22:08,681] [INFO] [logger:55] - 迁移视频 37: user1 -> admin
+[2025-07-16 20:22:08,681] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 37: workstore/admin/停止按钮背后的故事/output.mp4
+[2025-07-16 20:22:08,681] [INFO] [logger:55] - 迁移视频 38: user1 -> admin
+[2025-07-16 20:22:08,681] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 38: workstore/admin/《金刚经》第八品 依法出生分/output.mp4
+[2025-07-16 20:22:08,681] [INFO] [logger:55] - 视频路径迁移完成，共迁移 0 个视频
+[2025-07-16 20:22:08,682] [INFO] [logger:55] - 没有发现中断的任务
+[2025-07-16 20:22:08,683] [INFO] [logger:55] - 任务恢复检查完成
+[2025-07-16 20:22:08,683] [INFO] [logger:55] - 百速一键AI视频生成应用服务器已启动，监听端口: 5002
+[2025-07-16 20:35:00,306] [INFO] [logger:55] - 百速一键AI视频生成应用正在启动... 时间: 2025-07-16 20:35:00
+[2025-07-16 20:35:00,306] [INFO] [logger:55] - 正在初始化数据库...
+[2025-07-16 20:35:01,182] [INFO] [logger:55] - 数据库初始化完成
+[2025-07-16 20:35:01,182] [INFO] [logger:55] - 正在检查并恢复中断的任务...
+[2025-07-16 20:35:01,182] [INFO] [logger:55] - 检查服务器启动时是否有中断的任务需要恢复...
+[2025-07-16 20:35:01,182] [INFO] [logger:55] - 开始迁移视频路径...
+[2025-07-16 20:35:01,189] [INFO] [logger:55] - 迁移视频 13: user1 -> admin
+[2025-07-16 20:35:01,189] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 13: workstore/admin/纳什均衡解析/output.mp4
+[2025-07-16 20:35:01,189] [INFO] [logger:55] - 迁移视频 15: user1 -> admin
+[2025-07-16 20:35:01,189] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 15: workstore/admin/白雪公主的童话/output.mp4
+[2025-07-16 20:35:01,189] [INFO] [logger:55] - 迁移视频 18: user3 -> test2
+[2025-07-16 20:35:01,189] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 18: workstore/test2/坚持的力量/output.mp4
+[2025-07-16 20:35:01,189] [INFO] [logger:55] - 迁移视频 19: user6 -> test4
+[2025-07-16 20:35:01,189] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 19: workstore/test4/白雪公主的故事/output.mp4
+[2025-07-16 20:35:01,189] [INFO] [logger:55] - 迁移视频 26: user6 -> test4
+[2025-07-16 20:35:01,189] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 26: workstore/test4/人性弱点智慧/output.mp4
+[2025-07-16 20:35:01,189] [INFO] [logger:55] - 迁移视频 27: user6 -> test4
+[2025-07-16 20:35:01,189] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 27: workstore/test4/达克效应之谜/output.mp4
+[2025-07-16 20:35:01,189] [INFO] [logger:55] - 迁移视频 32: user6 -> test4
+[2025-07-16 20:35:01,189] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 32: workstore/test4/《金刚经》第一品：法会因由分/output.mp4
+[2025-07-16 20:35:01,189] [INFO] [logger:55] - 迁移视频 33: user6 -> test4
+[2025-07-16 20:35:01,189] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 33: workstore/test4/《金刚经》第二品善现启请分/output.mp4
+[2025-07-16 20:35:01,190] [INFO] [logger:55] - 迁移视频 34: user1 -> admin
+[2025-07-16 20:35:01,190] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 34: workstore/admin/小红帽的森林奇遇/output.mp4
+[2025-07-16 20:35:01,190] [INFO] [logger:55] - 迁移视频 35: user8 -> test9
+[2025-07-16 20:35:01,190] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 35: workstore/test9/《金刚经》第五品 如理实见分/output.mp4
+[2025-07-16 20:35:01,190] [INFO] [logger:55] - 迁移视频 36: user8 -> test9
+[2025-07-16 20:35:01,190] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 36: workstore/test9/《金刚经》第六品 正信希有分/output.mp4
+[2025-07-16 20:35:01,190] [INFO] [logger:55] - 迁移视频 37: user1 -> admin
+[2025-07-16 20:35:01,190] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 37: workstore/admin/停止按钮背后的故事/output.mp4
+[2025-07-16 20:35:01,190] [INFO] [logger:55] - 迁移视频 38: user1 -> admin
+[2025-07-16 20:35:01,190] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 38: workstore/admin/《金刚经》第八品 依法出生分/output.mp4
+[2025-07-16 20:35:01,190] [INFO] [logger:55] - 视频路径迁移完成，共迁移 0 个视频
+[2025-07-16 20:35:01,191] [INFO] [logger:55] - 没有发现中断的任务
+[2025-07-16 20:35:01,191] [INFO] [logger:55] - 任务恢复检查完成
+[2025-07-16 20:35:01,191] [INFO] [logger:55] - 百速一键AI视频生成应用服务器已启动，监听端口: 5002
+[2025-07-16 20:35:01,258] [INFO] [logger:55] - 百速一键AI视频生成应用正在启动... 时间: 2025-07-16 20:35:01
+[2025-07-16 20:35:01,258] [INFO] [logger:55] - 正在初始化数据库...
+[2025-07-16 20:35:01,829] [INFO] [logger:55] - 数据库初始化完成
+[2025-07-16 20:35:01,829] [INFO] [logger:55] - 正在检查并恢复中断的任务...
+[2025-07-16 20:35:01,829] [INFO] [logger:55] - 检查服务器启动时是否有中断的任务需要恢复...
+[2025-07-16 20:35:01,829] [INFO] [logger:55] - 开始迁移视频路径...
+[2025-07-16 20:35:01,836] [INFO] [logger:55] - 迁移视频 13: user1 -> admin
+[2025-07-16 20:35:01,837] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 13: workstore/admin/纳什均衡解析/output.mp4
+[2025-07-16 20:35:01,837] [INFO] [logger:55] - 迁移视频 15: user1 -> admin
+[2025-07-16 20:35:01,837] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 15: workstore/admin/白雪公主的童话/output.mp4
+[2025-07-16 20:35:01,837] [INFO] [logger:55] - 迁移视频 18: user3 -> test2
+[2025-07-16 20:35:01,837] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 18: workstore/test2/坚持的力量/output.mp4
+[2025-07-16 20:35:01,837] [INFO] [logger:55] - 迁移视频 19: user6 -> test4
+[2025-07-16 20:35:01,837] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 19: workstore/test4/白雪公主的故事/output.mp4
+[2025-07-16 20:35:01,837] [INFO] [logger:55] - 迁移视频 26: user6 -> test4
+[2025-07-16 20:35:01,837] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 26: workstore/test4/人性弱点智慧/output.mp4
+[2025-07-16 20:35:01,837] [INFO] [logger:55] - 迁移视频 27: user6 -> test4
+[2025-07-16 20:35:01,837] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 27: workstore/test4/达克效应之谜/output.mp4
+[2025-07-16 20:35:01,837] [INFO] [logger:55] - 迁移视频 32: user6 -> test4
+[2025-07-16 20:35:01,837] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 32: workstore/test4/《金刚经》第一品：法会因由分/output.mp4
+[2025-07-16 20:35:01,837] [INFO] [logger:55] - 迁移视频 33: user6 -> test4
+[2025-07-16 20:35:01,837] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 33: workstore/test4/《金刚经》第二品善现启请分/output.mp4
+[2025-07-16 20:35:01,837] [INFO] [logger:55] - 迁移视频 34: user1 -> admin
+[2025-07-16 20:35:01,837] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 34: workstore/admin/小红帽的森林奇遇/output.mp4
+[2025-07-16 20:35:01,837] [INFO] [logger:55] - 迁移视频 35: user8 -> test9
+[2025-07-16 20:35:01,837] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 35: workstore/test9/《金刚经》第五品 如理实见分/output.mp4
+[2025-07-16 20:35:01,838] [INFO] [logger:55] - 迁移视频 36: user8 -> test9
+[2025-07-16 20:35:01,838] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 36: workstore/test9/《金刚经》第六品 正信希有分/output.mp4
+[2025-07-16 20:35:01,838] [INFO] [logger:55] - 迁移视频 37: user1 -> admin
+[2025-07-16 20:35:01,838] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 37: workstore/admin/停止按钮背后的故事/output.mp4
+[2025-07-16 20:35:01,838] [INFO] [logger:55] - 迁移视频 38: user1 -> admin
+[2025-07-16 20:35:01,838] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 38: workstore/admin/《金刚经》第八品 依法出生分/output.mp4
+[2025-07-16 20:35:01,838] [INFO] [logger:55] - 视频路径迁移完成，共迁移 0 个视频
+[2025-07-16 20:35:01,839] [INFO] [logger:55] - 没有发现中断的任务
+[2025-07-16 20:35:01,839] [INFO] [logger:55] - 任务恢复检查完成
+[2025-07-16 20:35:01,839] [INFO] [logger:55] - 百速一键AI视频生成应用服务器已启动，监听端口: 5002
+[2025-07-16 20:38:42,748] [INFO] [logger:55] - 正在检查并恢复中断的任务...
+[2025-07-16 20:38:42,748] [INFO] [logger:55] - 检查服务器启动时是否有中断的任务需要恢复...
+[2025-07-16 20:38:42,748] [INFO] [logger:55] - 开始迁移视频路径...
+[2025-07-16 20:38:42,750] [INFO] [logger:55] - 迁移视频 13: user1 -> admin
+[2025-07-16 20:38:42,750] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 13: workstore/admin/纳什均衡解析/output.mp4
+[2025-07-16 20:38:42,750] [INFO] [logger:55] - 迁移视频 15: user1 -> admin
+[2025-07-16 20:38:42,750] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 15: workstore/admin/白雪公主的童话/output.mp4
+[2025-07-16 20:38:42,750] [INFO] [logger:55] - 迁移视频 18: user3 -> test2
+[2025-07-16 20:38:42,750] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 18: workstore/test2/坚持的力量/output.mp4
+[2025-07-16 20:38:42,751] [INFO] [logger:55] - 迁移视频 19: user6 -> test4
+[2025-07-16 20:38:42,751] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 19: workstore/test4/白雪公主的故事/output.mp4
+[2025-07-16 20:38:42,751] [INFO] [logger:55] - 迁移视频 26: user6 -> test4
+[2025-07-16 20:38:42,751] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 26: workstore/test4/人性弱点智慧/output.mp4
+[2025-07-16 20:38:42,751] [INFO] [logger:55] - 迁移视频 27: user6 -> test4
+[2025-07-16 20:38:42,751] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 27: workstore/test4/达克效应之谜/output.mp4
+[2025-07-16 20:38:42,751] [INFO] [logger:55] - 迁移视频 32: user6 -> test4
+[2025-07-16 20:38:42,751] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 32: workstore/test4/《金刚经》第一品：法会因由分/output.mp4
+[2025-07-16 20:38:42,751] [INFO] [logger:55] - 迁移视频 33: user6 -> test4
+[2025-07-16 20:38:42,751] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 33: workstore/test4/《金刚经》第二品善现启请分/output.mp4
+[2025-07-16 20:38:42,751] [INFO] [logger:55] - 迁移视频 34: user1 -> admin
+[2025-07-16 20:38:42,751] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 34: workstore/admin/小红帽的森林奇遇/output.mp4
+[2025-07-16 20:38:42,751] [INFO] [logger:55] - 迁移视频 35: user8 -> test9
+[2025-07-16 20:38:42,751] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 35: workstore/test9/《金刚经》第五品 如理实见分/output.mp4
+[2025-07-16 20:38:42,751] [INFO] [logger:55] - 迁移视频 36: user8 -> test9
+[2025-07-16 20:38:42,751] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 36: workstore/test9/《金刚经》第六品 正信希有分/output.mp4
+[2025-07-16 20:38:42,751] [INFO] [logger:55] - 迁移视频 37: user1 -> admin
+[2025-07-16 20:38:42,751] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 37: workstore/admin/停止按钮背后的故事/output.mp4
+[2025-07-16 20:38:42,751] [INFO] [logger:55] - 迁移视频 38: user1 -> admin
+[2025-07-16 20:38:42,752] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 38: workstore/admin/《金刚经》第八品 依法出生分/output.mp4
+[2025-07-16 20:38:42,752] [INFO] [logger:55] - 视频路径迁移完成，共迁移 0 个视频
+[2025-07-16 20:38:42,752] [INFO] [logger:55] - 没有发现中断的任务
+[2025-07-16 20:38:42,752] [INFO] [logger:55] - 任务恢复检查完成
+[2025-07-16 20:38:43,392] [INFO] [logger:55] - 正在检查并恢复中断的任务...
+[2025-07-16 20:38:43,392] [INFO] [logger:55] - 检查服务器启动时是否有中断的任务需要恢复...
+[2025-07-16 20:38:43,392] [INFO] [logger:55] - 开始迁移视频路径...
+[2025-07-16 20:38:43,394] [INFO] [logger:55] - 迁移视频 13: user1 -> admin
+[2025-07-16 20:38:43,394] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 13: workstore/admin/纳什均衡解析/output.mp4
+[2025-07-16 20:38:43,394] [INFO] [logger:55] - 迁移视频 15: user1 -> admin
+[2025-07-16 20:38:43,394] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 15: workstore/admin/白雪公主的童话/output.mp4
+[2025-07-16 20:38:43,394] [INFO] [logger:55] - 迁移视频 18: user3 -> test2
+[2025-07-16 20:38:43,394] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 18: workstore/test2/坚持的力量/output.mp4
+[2025-07-16 20:38:43,394] [INFO] [logger:55] - 迁移视频 19: user6 -> test4
+[2025-07-16 20:38:43,394] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 19: workstore/test4/白雪公主的故事/output.mp4
+[2025-07-16 20:38:43,394] [INFO] [logger:55] - 迁移视频 26: user6 -> test4
+[2025-07-16 20:38:43,394] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 26: workstore/test4/人性弱点智慧/output.mp4
+[2025-07-16 20:38:43,394] [INFO] [logger:55] - 迁移视频 27: user6 -> test4
+[2025-07-16 20:38:43,395] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 27: workstore/test4/达克效应之谜/output.mp4
+[2025-07-16 20:38:43,395] [INFO] [logger:55] - 迁移视频 32: user6 -> test4
+[2025-07-16 20:38:43,395] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 32: workstore/test4/《金刚经》第一品：法会因由分/output.mp4
+[2025-07-16 20:38:43,395] [INFO] [logger:55] - 迁移视频 33: user6 -> test4
+[2025-07-16 20:38:43,395] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 33: workstore/test4/《金刚经》第二品善现启请分/output.mp4
+[2025-07-16 20:38:43,395] [INFO] [logger:55] - 迁移视频 34: user1 -> admin
+[2025-07-16 20:38:43,395] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 34: workstore/admin/小红帽的森林奇遇/output.mp4
+[2025-07-16 20:38:43,395] [INFO] [logger:55] - 迁移视频 35: user8 -> test9
+[2025-07-16 20:38:43,395] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 35: workstore/test9/《金刚经》第五品 如理实见分/output.mp4
+[2025-07-16 20:38:43,395] [INFO] [logger:55] - 迁移视频 36: user8 -> test9
+[2025-07-16 20:38:43,395] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 36: workstore/test9/《金刚经》第六品 正信希有分/output.mp4
+[2025-07-16 20:38:43,395] [INFO] [logger:55] - 迁移视频 37: user1 -> admin
+[2025-07-16 20:38:43,395] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 37: workstore/admin/停止按钮背后的故事/output.mp4
+[2025-07-16 20:38:43,395] [INFO] [logger:55] - 迁移视频 38: user1 -> admin
+[2025-07-16 20:38:43,395] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 38: workstore/admin/《金刚经》第八品 依法出生分/output.mp4
+[2025-07-16 20:38:43,396] [INFO] [logger:55] - 视频路径迁移完成，共迁移 0 个视频
+[2025-07-16 20:38:43,396] [INFO] [logger:55] - 没有发现中断的任务
+[2025-07-16 20:38:43,396] [INFO] [logger:55] - 任务恢复检查完成
+[2025-07-16 20:50:56,341] [INFO] [logger:55] - 百速一键AI视频生成应用正在启动... 时间: 2025-07-16 20:50:56
+[2025-07-16 20:50:56,342] [INFO] [logger:55] - 正在初始化数据库...
+[2025-07-16 20:50:57,220] [INFO] [logger:55] - 数据库初始化完成
+[2025-07-16 20:50:57,220] [INFO] [logger:55] - 正在检查并恢复中断的任务...
+[2025-07-16 20:50:57,220] [INFO] [logger:55] - 检查服务器启动时是否有中断的任务需要恢复...
+[2025-07-16 20:50:57,220] [INFO] [logger:55] - 开始迁移视频路径...
+[2025-07-16 20:50:57,227] [INFO] [logger:55] - 迁移视频 13: user1 -> admin
+[2025-07-16 20:50:57,227] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 13: workstore/admin/纳什均衡解析/output.mp4
+[2025-07-16 20:50:57,228] [INFO] [logger:55] - 迁移视频 15: user1 -> admin
+[2025-07-16 20:50:57,228] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 15: workstore/admin/白雪公主的童话/output.mp4
+[2025-07-16 20:50:57,228] [INFO] [logger:55] - 迁移视频 18: user3 -> test2
+[2025-07-16 20:50:57,228] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 18: workstore/test2/坚持的力量/output.mp4
+[2025-07-16 20:50:57,228] [INFO] [logger:55] - 迁移视频 19: user6 -> test4
+[2025-07-16 20:50:57,228] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 19: workstore/test4/白雪公主的故事/output.mp4
+[2025-07-16 20:50:57,228] [INFO] [logger:55] - 迁移视频 26: user6 -> test4
+[2025-07-16 20:50:57,228] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 26: workstore/test4/人性弱点智慧/output.mp4
+[2025-07-16 20:50:57,228] [INFO] [logger:55] - 迁移视频 27: user6 -> test4
+[2025-07-16 20:50:57,228] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 27: workstore/test4/达克效应之谜/output.mp4
+[2025-07-16 20:50:57,228] [INFO] [logger:55] - 迁移视频 32: user6 -> test4
+[2025-07-16 20:50:57,228] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 32: workstore/test4/《金刚经》第一品：法会因由分/output.mp4
+[2025-07-16 20:50:57,228] [INFO] [logger:55] - 迁移视频 33: user6 -> test4
+[2025-07-16 20:50:57,228] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 33: workstore/test4/《金刚经》第二品善现启请分/output.mp4
+[2025-07-16 20:50:57,228] [INFO] [logger:55] - 迁移视频 34: user1 -> admin
+[2025-07-16 20:50:57,228] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 34: workstore/admin/小红帽的森林奇遇/output.mp4
+[2025-07-16 20:50:57,229] [INFO] [logger:55] - 迁移视频 35: user8 -> test9
+[2025-07-16 20:50:57,229] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 35: workstore/test9/《金刚经》第五品 如理实见分/output.mp4
+[2025-07-16 20:50:57,229] [INFO] [logger:55] - 迁移视频 36: user8 -> test9
+[2025-07-16 20:50:57,229] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 36: workstore/test9/《金刚经》第六品 正信希有分/output.mp4
+[2025-07-16 20:50:57,229] [INFO] [logger:55] - 迁移视频 37: user1 -> admin
+[2025-07-16 20:50:57,229] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 37: workstore/admin/停止按钮背后的故事/output.mp4
+[2025-07-16 20:50:57,229] [INFO] [logger:55] - 迁移视频 38: user1 -> admin
+[2025-07-16 20:50:57,229] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 38: workstore/admin/《金刚经》第八品 依法出生分/output.mp4
+[2025-07-16 20:50:57,229] [INFO] [logger:55] - 视频路径迁移完成，共迁移 0 个视频
+[2025-07-16 20:50:57,230] [INFO] [logger:55] - 没有发现中断的任务
+[2025-07-16 20:50:57,230] [INFO] [logger:55] - 任务恢复检查完成
+[2025-07-16 20:50:57,230] [INFO] [logger:55] - 百速一键AI视频生成应用服务器已启动，监听端口: 5002
+[2025-07-16 20:50:57,300] [INFO] [logger:55] - 百速一键AI视频生成应用正在启动... 时间: 2025-07-16 20:50:57
+[2025-07-16 20:50:57,300] [INFO] [logger:55] - 正在初始化数据库...
+[2025-07-16 20:50:57,902] [INFO] [logger:55] - 数据库初始化完成
+[2025-07-16 20:50:57,902] [INFO] [logger:55] - 正在检查并恢复中断的任务...
+[2025-07-16 20:50:57,902] [INFO] [logger:55] - 检查服务器启动时是否有中断的任务需要恢复...
+[2025-07-16 20:50:57,902] [INFO] [logger:55] - 开始迁移视频路径...
+[2025-07-16 20:50:57,908] [INFO] [logger:55] - 迁移视频 13: user1 -> admin
+[2025-07-16 20:50:57,908] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 13: workstore/admin/纳什均衡解析/output.mp4
+[2025-07-16 20:50:57,908] [INFO] [logger:55] - 迁移视频 15: user1 -> admin
+[2025-07-16 20:50:57,908] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 15: workstore/admin/白雪公主的童话/output.mp4
+[2025-07-16 20:50:57,909] [INFO] [logger:55] - 迁移视频 18: user3 -> test2
+[2025-07-16 20:50:57,909] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 18: workstore/test2/坚持的力量/output.mp4
+[2025-07-16 20:50:57,909] [INFO] [logger:55] - 迁移视频 19: user6 -> test4
+[2025-07-16 20:50:57,909] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 19: workstore/test4/白雪公主的故事/output.mp4
+[2025-07-16 20:50:57,909] [INFO] [logger:55] - 迁移视频 26: user6 -> test4
+[2025-07-16 20:50:57,909] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 26: workstore/test4/人性弱点智慧/output.mp4
+[2025-07-16 20:50:57,909] [INFO] [logger:55] - 迁移视频 27: user6 -> test4
+[2025-07-16 20:50:57,909] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 27: workstore/test4/达克效应之谜/output.mp4
+[2025-07-16 20:50:57,909] [INFO] [logger:55] - 迁移视频 32: user6 -> test4
+[2025-07-16 20:50:57,909] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 32: workstore/test4/《金刚经》第一品：法会因由分/output.mp4
+[2025-07-16 20:50:57,909] [INFO] [logger:55] - 迁移视频 33: user6 -> test4
+[2025-07-16 20:50:57,909] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 33: workstore/test4/《金刚经》第二品善现启请分/output.mp4
+[2025-07-16 20:50:57,910] [INFO] [logger:55] - 迁移视频 34: user1 -> admin
+[2025-07-16 20:50:57,910] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 34: workstore/admin/小红帽的森林奇遇/output.mp4
+[2025-07-16 20:50:57,910] [INFO] [logger:55] - 迁移视频 35: user8 -> test9
+[2025-07-16 20:50:57,910] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 35: workstore/test9/《金刚经》第五品 如理实见分/output.mp4
+[2025-07-16 20:50:57,910] [INFO] [logger:55] - 迁移视频 36: user8 -> test9
+[2025-07-16 20:50:57,910] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 36: workstore/test9/《金刚经》第六品 正信希有分/output.mp4
+[2025-07-16 20:50:57,910] [INFO] [logger:55] - 迁移视频 37: user1 -> admin
+[2025-07-16 20:50:57,910] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 37: workstore/admin/停止按钮背后的故事/output.mp4
+[2025-07-16 20:50:57,910] [INFO] [logger:55] - 迁移视频 38: user1 -> admin
+[2025-07-16 20:50:57,910] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 38: workstore/admin/《金刚经》第八品 依法出生分/output.mp4
+[2025-07-16 20:50:57,910] [INFO] [logger:55] - 视频路径迁移完成，共迁移 0 个视频
+[2025-07-16 20:50:57,912] [INFO] [logger:55] - 没有发现中断的任务
+[2025-07-16 20:50:57,912] [INFO] [logger:55] - 任务恢复检查完成
+[2025-07-16 20:50:57,912] [INFO] [logger:55] - 百速一键AI视频生成应用服务器已启动，监听端口: 5002
+[2025-07-16 20:53:49,388] [INFO] [logger:55] - 百速一键AI视频生成应用正在启动... 时间: 2025-07-16 20:53:49
+[2025-07-16 20:53:49,388] [INFO] [logger:55] - 正在初始化数据库...
+[2025-07-16 20:53:50,228] [INFO] [logger:55] - 数据库初始化完成
+[2025-07-16 20:53:50,229] [INFO] [logger:55] - 正在检查并恢复中断的任务...
+[2025-07-16 20:53:50,229] [INFO] [logger:55] - 检查服务器启动时是否有中断的任务需要恢复...
+[2025-07-16 20:53:50,229] [INFO] [logger:55] - 开始迁移视频路径...
+[2025-07-16 20:53:50,235] [INFO] [logger:55] - 迁移视频 13: user1 -> admin
+[2025-07-16 20:53:50,235] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 13: workstore/admin/纳什均衡解析/output.mp4
+[2025-07-16 20:53:50,235] [INFO] [logger:55] - 迁移视频 15: user1 -> admin
+[2025-07-16 20:53:50,235] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 15: workstore/admin/白雪公主的童话/output.mp4
+[2025-07-16 20:53:50,236] [INFO] [logger:55] - 迁移视频 18: user3 -> test2
+[2025-07-16 20:53:50,236] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 18: workstore/test2/坚持的力量/output.mp4
+[2025-07-16 20:53:50,236] [INFO] [logger:55] - 迁移视频 19: user6 -> test4
+[2025-07-16 20:53:50,236] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 19: workstore/test4/白雪公主的故事/output.mp4
+[2025-07-16 20:53:50,236] [INFO] [logger:55] - 迁移视频 26: user6 -> test4
+[2025-07-16 20:53:50,236] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 26: workstore/test4/人性弱点智慧/output.mp4
+[2025-07-16 20:53:50,236] [INFO] [logger:55] - 迁移视频 27: user6 -> test4
+[2025-07-16 20:53:50,236] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 27: workstore/test4/达克效应之谜/output.mp4
+[2025-07-16 20:53:50,236] [INFO] [logger:55] - 迁移视频 32: user6 -> test4
+[2025-07-16 20:53:50,236] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 32: workstore/test4/《金刚经》第一品：法会因由分/output.mp4
+[2025-07-16 20:53:50,236] [INFO] [logger:55] - 迁移视频 33: user6 -> test4
+[2025-07-16 20:53:50,236] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 33: workstore/test4/《金刚经》第二品善现启请分/output.mp4
+[2025-07-16 20:53:50,236] [INFO] [logger:55] - 迁移视频 34: user1 -> admin
+[2025-07-16 20:53:50,236] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 34: workstore/admin/小红帽的森林奇遇/output.mp4
+[2025-07-16 20:53:50,236] [INFO] [logger:55] - 迁移视频 35: user8 -> test9
+[2025-07-16 20:53:50,236] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 35: workstore/test9/《金刚经》第五品 如理实见分/output.mp4
+[2025-07-16 20:53:50,236] [INFO] [logger:55] - 迁移视频 36: user8 -> test9
+[2025-07-16 20:53:50,236] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 36: workstore/test9/《金刚经》第六品 正信希有分/output.mp4
+[2025-07-16 20:53:50,236] [INFO] [logger:55] - 迁移视频 37: user1 -> admin
+[2025-07-16 20:53:50,236] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 37: workstore/admin/停止按钮背后的故事/output.mp4
+[2025-07-16 20:53:50,237] [INFO] [logger:55] - 迁移视频 38: user1 -> admin
+[2025-07-16 20:53:50,237] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 38: workstore/admin/《金刚经》第八品 依法出生分/output.mp4
+[2025-07-16 20:53:50,237] [INFO] [logger:55] - 视频路径迁移完成，共迁移 0 个视频
+[2025-07-16 20:53:50,238] [INFO] [logger:55] - 没有发现中断的任务
+[2025-07-16 20:53:50,238] [INFO] [logger:55] - 任务恢复检查完成
+[2025-07-16 20:53:50,238] [INFO] [logger:55] - 百速一键AI视频生成应用服务器已启动，监听端口: 5001
+[2025-07-16 20:54:07,272] [INFO] [logger:55] - 百速一键AI视频生成应用正在启动... 时间: 2025-07-16 20:54:07
+[2025-07-16 20:54:07,272] [INFO] [logger:55] - 正在初始化数据库...
+[2025-07-16 20:54:07,871] [INFO] [logger:55] - 数据库初始化完成
+[2025-07-16 20:54:07,871] [INFO] [logger:55] - 正在检查并恢复中断的任务...
+[2025-07-16 20:54:07,871] [INFO] [logger:55] - 检查服务器启动时是否有中断的任务需要恢复...
+[2025-07-16 20:54:07,871] [INFO] [logger:55] - 开始迁移视频路径...
+[2025-07-16 20:54:07,878] [INFO] [logger:55] - 迁移视频 13: user1 -> admin
+[2025-07-16 20:54:07,878] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 13: workstore/admin/纳什均衡解析/output.mp4
+[2025-07-16 20:54:07,878] [INFO] [logger:55] - 迁移视频 15: user1 -> admin
+[2025-07-16 20:54:07,878] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 15: workstore/admin/白雪公主的童话/output.mp4
+[2025-07-16 20:54:07,878] [INFO] [logger:55] - 迁移视频 18: user3 -> test2
+[2025-07-16 20:54:07,878] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 18: workstore/test2/坚持的力量/output.mp4
+[2025-07-16 20:54:07,879] [INFO] [logger:55] - 迁移视频 19: user6 -> test4
+[2025-07-16 20:54:07,879] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 19: workstore/test4/白雪公主的故事/output.mp4
+[2025-07-16 20:54:07,879] [INFO] [logger:55] - 迁移视频 26: user6 -> test4
+[2025-07-16 20:54:07,879] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 26: workstore/test4/人性弱点智慧/output.mp4
+[2025-07-16 20:54:07,879] [INFO] [logger:55] - 迁移视频 27: user6 -> test4
+[2025-07-16 20:54:07,879] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 27: workstore/test4/达克效应之谜/output.mp4
+[2025-07-16 20:54:07,879] [INFO] [logger:55] - 迁移视频 32: user6 -> test4
+[2025-07-16 20:54:07,879] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 32: workstore/test4/《金刚经》第一品：法会因由分/output.mp4
+[2025-07-16 20:54:07,879] [INFO] [logger:55] - 迁移视频 33: user6 -> test4
+[2025-07-16 20:54:07,879] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 33: workstore/test4/《金刚经》第二品善现启请分/output.mp4
+[2025-07-16 20:54:07,879] [INFO] [logger:55] - 迁移视频 34: user1 -> admin
+[2025-07-16 20:54:07,879] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 34: workstore/admin/小红帽的森林奇遇/output.mp4
+[2025-07-16 20:54:07,879] [INFO] [logger:55] - 迁移视频 35: user8 -> test9
+[2025-07-16 20:54:07,879] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 35: workstore/test9/《金刚经》第五品 如理实见分/output.mp4
+[2025-07-16 20:54:07,879] [INFO] [logger:55] - 迁移视频 36: user8 -> test9
+[2025-07-16 20:54:07,879] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 36: workstore/test9/《金刚经》第六品 正信希有分/output.mp4
+[2025-07-16 20:54:07,879] [INFO] [logger:55] - 迁移视频 37: user1 -> admin
+[2025-07-16 20:54:07,879] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 37: workstore/admin/停止按钮背后的故事/output.mp4
+[2025-07-16 20:54:07,879] [INFO] [logger:55] - 迁移视频 38: user1 -> admin
+[2025-07-16 20:54:07,879] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 38: workstore/admin/《金刚经》第八品 依法出生分/output.mp4
+[2025-07-16 20:54:07,880] [INFO] [logger:55] - 视频路径迁移完成，共迁移 0 个视频
+[2025-07-16 20:54:07,881] [INFO] [logger:55] - 没有发现中断的任务
+[2025-07-16 20:54:07,881] [INFO] [logger:55] - 任务恢复检查完成
+[2025-07-16 20:54:07,881] [INFO] [logger:55] - 百速一键AI视频生成应用服务器已启动，监听端口: 5001
+[2025-07-16 20:54:07,950] [INFO] [logger:55] - 百速一键AI视频生成应用正在启动... 时间: 2025-07-16 20:54:07
+[2025-07-16 20:54:07,950] [INFO] [logger:55] - 正在初始化数据库...
+[2025-07-16 20:54:08,533] [INFO] [logger:55] - 数据库初始化完成
+[2025-07-16 20:54:08,533] [INFO] [logger:55] - 正在检查并恢复中断的任务...
+[2025-07-16 20:54:08,533] [INFO] [logger:55] - 检查服务器启动时是否有中断的任务需要恢复...
+[2025-07-16 20:54:08,533] [INFO] [logger:55] - 开始迁移视频路径...
+[2025-07-16 20:54:08,539] [INFO] [logger:55] - 迁移视频 13: user1 -> admin
+[2025-07-16 20:54:08,539] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 13: workstore/admin/纳什均衡解析/output.mp4
+[2025-07-16 20:54:08,539] [INFO] [logger:55] - 迁移视频 15: user1 -> admin
+[2025-07-16 20:54:08,539] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 15: workstore/admin/白雪公主的童话/output.mp4
+[2025-07-16 20:54:08,539] [INFO] [logger:55] - 迁移视频 18: user3 -> test2
+[2025-07-16 20:54:08,539] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 18: workstore/test2/坚持的力量/output.mp4
+[2025-07-16 20:54:08,539] [INFO] [logger:55] - 迁移视频 19: user6 -> test4
+[2025-07-16 20:54:08,540] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 19: workstore/test4/白雪公主的故事/output.mp4
+[2025-07-16 20:54:08,540] [INFO] [logger:55] - 迁移视频 26: user6 -> test4
+[2025-07-16 20:54:08,540] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 26: workstore/test4/人性弱点智慧/output.mp4
+[2025-07-16 20:54:08,540] [INFO] [logger:55] - 迁移视频 27: user6 -> test4
+[2025-07-16 20:54:08,540] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 27: workstore/test4/达克效应之谜/output.mp4
+[2025-07-16 20:54:08,540] [INFO] [logger:55] - 迁移视频 32: user6 -> test4
+[2025-07-16 20:54:08,540] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 32: workstore/test4/《金刚经》第一品：法会因由分/output.mp4
+[2025-07-16 20:54:08,540] [INFO] [logger:55] - 迁移视频 33: user6 -> test4
+[2025-07-16 20:54:08,540] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 33: workstore/test4/《金刚经》第二品善现启请分/output.mp4
+[2025-07-16 20:54:08,540] [INFO] [logger:55] - 迁移视频 34: user1 -> admin
+[2025-07-16 20:54:08,540] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 34: workstore/admin/小红帽的森林奇遇/output.mp4
+[2025-07-16 20:54:08,540] [INFO] [logger:55] - 迁移视频 35: user8 -> test9
+[2025-07-16 20:54:08,540] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 35: workstore/test9/《金刚经》第五品 如理实见分/output.mp4
+[2025-07-16 20:54:08,540] [INFO] [logger:55] - 迁移视频 36: user8 -> test9
+[2025-07-16 20:54:08,540] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 36: workstore/test9/《金刚经》第六品 正信希有分/output.mp4
+[2025-07-16 20:54:08,540] [INFO] [logger:55] - 迁移视频 37: user1 -> admin
+[2025-07-16 20:54:08,540] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 37: workstore/admin/停止按钮背后的故事/output.mp4
+[2025-07-16 20:54:08,540] [INFO] [logger:55] - 迁移视频 38: user1 -> admin
+[2025-07-16 20:54:08,540] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 38: workstore/admin/《金刚经》第八品 依法出生分/output.mp4
+[2025-07-16 20:54:08,540] [INFO] [logger:55] - 视频路径迁移完成，共迁移 0 个视频
+[2025-07-16 20:54:08,541] [INFO] [logger:55] - 没有发现中断的任务
+[2025-07-16 20:54:08,541] [INFO] [logger:55] - 任务恢复检查完成
+[2025-07-16 20:54:08,541] [INFO] [logger:55] - 百速一键AI视频生成应用服务器已启动，监听端口: 5001
+[2025-07-16 20:58:06,371] [INFO] [logger:55] - 用户 admin 生成视频扣除了 1 条额度，剩余 90 条
+[2025-07-16 20:58:06,377] [INFO] [logger:55] - 用户 admin 的任务已加入队列，任务ID: 1
+[2025-07-16 20:58:06,390] [INFO] [logger:55] - 开始处理用户 admin 的队列任务，任务ID: 1, 视频ID: 39
+[2025-07-16 20:59:12,846] [INFO] [logger:55] - 用户 admin 生成视频扣除了 1 条额度，剩余 89 条
+[2025-07-16 20:59:12,850] [INFO] [logger:55] - 用户 admin 的任务已加入队列，任务ID: 2
+[2025-07-16 21:00:59,956] [INFO] [logger:55] - 用户 admin 查看我的视频页面，共 6 个视频
+[2025-07-16 21:01:00,085] [INFO] [app:2383] - 请求 workstore 文件: user1/《金刚经》第八品 依法出生分/covers/cover_4:3.png
+[2025-07-16 21:01:00,086] [INFO] [app:2383] - 请求 workstore 文件: user1/停止按钮背后的故事/covers/cover_4:3.png
+[2025-07-16 21:01:00,089] [INFO] [app:2383] - 请求 workstore 文件: user1/小红帽的森林奇遇/covers/cover_4:3.png
+[2025-07-16 21:01:00,092] [INFO] [app:2383] - 请求 workstore 文件: user1/纳什均衡解析/covers/cover_4:3.png
+[2025-07-16 21:01:00,092] [INFO] [app:2383] - 请求 workstore 文件: user1/白雪公主的童话/covers/cover_4:3.png
+[2025-07-16 21:03:45,088] [INFO] [logger:55] - 更新视频路径: workstore/admin/《金刚经》第二十五品 化无所化分/output.mp4
+[2025-07-16 21:03:45,089] [INFO] [logger:55] - 更新封面路径: workstore/admin/《金刚经》第二十五品 化无所化分/covers/cover_4:3.png
+[2025-07-16 21:03:45,091] [INFO] [logger:55] - 队列任务完成，任务ID: 1, 视频ID: 39
+[2025-07-16 21:03:45,094] [INFO] [logger:55] - 开始处理用户 admin 的队列任务，任务ID: 2, 视频ID: 40
+[2025-07-16 21:10:23,094] [INFO] [logger:55] - 更新视频路径: workstore/admin/《金刚经》第二十六品 法身非相分/output.mp4
+[2025-07-16 21:10:23,094] [INFO] [logger:55] - 更新封面路径: workstore/admin/《金刚经》第二十六品 法身非相分/covers/cover_4:3.png
+[2025-07-16 21:10:23,095] [INFO] [logger:55] - 队列任务完成，任务ID: 2, 视频ID: 40
+[2025-07-16 21:13:44,207] [INFO] [logger:55] - 用户 admin 查看我的视频页面，共 7 个视频
+[2025-07-16 21:13:44,468] [INFO] [app:2383] - 请求 workstore 文件: admin/《金刚经》第二十六品 法身非相分/covers/cover_4:3.png
+[2025-07-16 21:13:44,469] [INFO] [app:2383] - 请求 workstore 文件: user1/停止按钮背后的故事/covers/cover_4:3.png
+[2025-07-16 21:13:44,471] [INFO] [app:2383] - 请求 workstore 文件: admin/《金刚经》第二十五品 化无所化分/covers/cover_4:3.png
+[2025-07-16 21:13:44,471] [INFO] [app:2383] - 请求 workstore 文件: user1/《金刚经》第八品 依法出生分/covers/cover_4:3.png
+[2025-07-16 21:13:44,472] [INFO] [app:2383] - 请求 workstore 文件: user1/小红帽的森林奇遇/covers/cover_4:3.png
+[2025-07-16 21:13:44,474] [INFO] [app:2383] - 请求 workstore 文件: user1/白雪公主的童话/covers/cover_4:3.png
+[2025-07-16 21:13:44,485] [INFO] [app:2383] - 请求 workstore 文件: user1/纳什均衡解析/covers/cover_4:3.png
+[2025-07-16 21:16:18,376] [INFO] [logger:55] - 用户 admin 查看我的视频页面，共 7 个视频
+[2025-07-16 21:16:18,482] [INFO] [app:2383] - 请求 workstore 文件: user1/《金刚经》第八品 依法出生分/covers/cover_4:3.png
+[2025-07-16 21:16:18,484] [INFO] [app:2383] - 请求 workstore 文件: admin/《金刚经》第二十六品 法身非相分/covers/cover_4:3.png
+[2025-07-16 21:16:18,485] [INFO] [app:2383] - 请求 workstore 文件: admin/《金刚经》第二十五品 化无所化分/covers/cover_4:3.png
+[2025-07-16 21:16:18,490] [INFO] [app:2383] - 请求 workstore 文件: user1/停止按钮背后的故事/covers/cover_4:3.png
+[2025-07-16 21:16:18,491] [INFO] [app:2383] - 请求 workstore 文件: user1/白雪公主的童话/covers/cover_4:3.png
+[2025-07-16 21:16:18,491] [INFO] [app:2383] - 请求 workstore 文件: user1/小红帽的森林奇遇/covers/cover_4:3.png
+[2025-07-16 21:16:18,493] [INFO] [app:2383] - 请求 workstore 文件: user1/纳什均衡解析/covers/cover_4:3.png
+[2025-07-16 21:16:40,255] [INFO] [logger:55] - 用户 admin 查看我的视频页面，共 7 个视频
+[2025-07-16 21:16:40,354] [INFO] [app:2383] - 请求 workstore 文件: admin/《金刚经》第二十六品 法身非相分/covers/cover_4:3.png
+[2025-07-16 21:16:40,357] [INFO] [app:2383] - 请求 workstore 文件: admin/《金刚经》第二十五品 化无所化分/covers/cover_4:3.png
+[2025-07-16 21:16:40,357] [INFO] [app:2383] - 请求 workstore 文件: user1/《金刚经》第八品 依法出生分/covers/cover_4:3.png
+[2025-07-16 21:16:40,359] [INFO] [app:2383] - 请求 workstore 文件: user1/停止按钮背后的故事/covers/cover_4:3.png
+[2025-07-16 21:16:40,361] [INFO] [app:2383] - 请求 workstore 文件: user1/小红帽的森林奇遇/covers/cover_4:3.png
+[2025-07-16 21:16:40,362] [INFO] [app:2383] - 请求 workstore 文件: user1/白雪公主的童话/covers/cover_4:3.png
+[2025-07-16 21:16:40,368] [INFO] [app:2383] - 请求 workstore 文件: user1/纳什均衡解析/covers/cover_4:3.png
+[2025-07-16 21:16:42,184] [INFO] [app:2383] - 请求 workstore 文件: admin/《金刚经》第二十六品 法身非相分/output.mp4
+[2025-07-16 21:16:42,197] [INFO] [app:2383] - 请求 workstore 文件: admin/《金刚经》第二十六品 法身非相分/output.mp4
+[2025-07-16 21:16:42,370] [INFO] [app:2383] - 请求 workstore 文件: admin/《金刚经》第二十六品 法身非相分/output.mp4
+[2025-07-16 21:16:42,374] [INFO] [app:2383] - 请求 workstore 文件: admin/《金刚经》第二十六品 法身非相分/output.mp4
+[2025-07-16 21:16:46,104] [INFO] [app:2383] - 请求 workstore 文件: admin/《金刚经》第二十六品 法身非相分/output.mp4
+[2025-07-16 21:21:22,679] [INFO] [app:2383] - 请求 workstore 文件: admin/《金刚经》第二十五品 化无所化分/output.mp4
+[2025-07-16 21:21:22,691] [INFO] [app:2383] - 请求 workstore 文件: admin/《金刚经》第二十五品 化无所化分/output.mp4
+[2025-07-16 21:21:22,697] [INFO] [app:2383] - 请求 workstore 文件: admin/《金刚经》第二十五品 化无所化分/output.mp4
+[2025-07-16 21:21:22,701] [INFO] [app:2383] - 请求 workstore 文件: admin/《金刚经》第二十五品 化无所化分/output.mp4
+[2025-07-16 21:21:27,568] [INFO] [app:2383] - 请求 workstore 文件: admin/《金刚经》第二十五品 化无所化分/output.mp4
+[2025-07-16 21:21:34,857] [INFO] [app:2383] - 请求 workstore 文件: admin/《金刚经》第二十五品 化无所化分/output.mp4
+[2025-07-16 21:21:34,887] [INFO] [app:2383] - 请求 workstore 文件: admin/《金刚经》第二十五品 化无所化分/output.mp4
+[2025-07-16 21:21:39,127] [INFO] [app:2383] - 请求 workstore 文件: admin/《金刚经》第二十五品 化无所化分/output.mp4
+[2025-07-16 21:27:09,076] [INFO] [app:2301] - 用户 1 请求下载视频 40, 路径: workstore/admin/《金刚经》第二十六品 法身非相分/output.mp4
+[2025-07-16 21:27:09,078] [INFO] [app:2328] - 解析的基础目录: workstore/admin/《金刚经》第二十六品 法身非相分
+[2025-07-16 21:27:09,564] [INFO] [app:2342] - 已添加视频文件到ZIP: workstore/admin/《金刚经》第二十六品 法身非相分/output.mp4
+[2025-07-16 21:27:09,579] [INFO] [app:2354] - 已添加封面文件到ZIP: workstore/admin/《金刚经》第二十六品 法身非相分/covers/cover_3:4.png
+[2025-07-16 21:27:09,593] [INFO] [app:2354] - 已添加封面文件到ZIP: workstore/admin/《金刚经》第二十六品 法身非相分/covers/cover_4:3.png
+[2025-07-16 21:27:09,593] [INFO] [app:2363] - 开始下载，文件名: video_40_20250716212709.zip
+[2025-07-16 21:27:19,569] [INFO] [app:2301] - 用户 1 请求下载视频 39, 路径: workstore/admin/《金刚经》第二十五品 化无所化分/output.mp4
+[2025-07-16 21:27:19,570] [INFO] [app:2328] - 解析的基础目录: workstore/admin/《金刚经》第二十五品 化无所化分
+[2025-07-16 21:27:20,019] [INFO] [app:2342] - 已添加视频文件到ZIP: workstore/admin/《金刚经》第二十五品 化无所化分/output.mp4
+[2025-07-16 21:27:20,034] [INFO] [app:2354] - 已添加封面文件到ZIP: workstore/admin/《金刚经》第二十五品 化无所化分/covers/cover_3:4.png
+[2025-07-16 21:27:20,049] [INFO] [app:2354] - 已添加封面文件到ZIP: workstore/admin/《金刚经》第二十五品 化无所化分/covers/cover_4:3.png
+[2025-07-16 21:27:20,049] [INFO] [app:2363] - 开始下载，文件名: video_39_20250716212720.zip
+[2025-07-16 22:02:44,585] [INFO] [logger:55] - 百速一键AI视频生成应用正在启动... 时间: 2025-07-16 22:02:44
+[2025-07-16 22:02:44,585] [INFO] [logger:55] - 正在初始化数据库...
+[2025-07-16 22:02:45,561] [INFO] [logger:55] - 数据库初始化完成
+[2025-07-16 22:02:45,561] [INFO] [logger:55] - 正在检查并恢复中断的任务...
+[2025-07-16 22:02:45,562] [INFO] [logger:55] - 检查服务器启动时是否有中断的任务需要恢复...
+[2025-07-16 22:02:45,568] [INFO] [logger:55] - 开始迁移视频路径...
+[2025-07-16 22:02:45,569] [INFO] [logger:55] - 迁移视频 13: user1 -> admin
+[2025-07-16 22:02:45,569] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 13: workstore/admin/纳什均衡解析/output.mp4
+[2025-07-16 22:02:45,569] [INFO] [logger:55] - 迁移视频 15: user1 -> admin
+[2025-07-16 22:02:45,569] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 15: workstore/admin/白雪公主的童话/output.mp4
+[2025-07-16 22:02:45,569] [INFO] [logger:55] - 迁移视频 18: user3 -> test2
+[2025-07-16 22:02:45,569] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 18: workstore/test2/坚持的力量/output.mp4
+[2025-07-16 22:02:45,569] [INFO] [logger:55] - 迁移视频 19: user6 -> test4
+[2025-07-16 22:02:45,569] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 19: workstore/test4/白雪公主的故事/output.mp4
+[2025-07-16 22:02:45,569] [INFO] [logger:55] - 迁移视频 26: user6 -> test4
+[2025-07-16 22:02:45,569] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 26: workstore/test4/人性弱点智慧/output.mp4
+[2025-07-16 22:02:45,569] [INFO] [logger:55] - 迁移视频 27: user6 -> test4
+[2025-07-16 22:02:45,569] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 27: workstore/test4/达克效应之谜/output.mp4
+[2025-07-16 22:02:45,569] [INFO] [logger:55] - 迁移视频 32: user6 -> test4
+[2025-07-16 22:02:45,569] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 32: workstore/test4/《金刚经》第一品：法会因由分/output.mp4
+[2025-07-16 22:02:45,569] [INFO] [logger:55] - 迁移视频 33: user6 -> test4
+[2025-07-16 22:02:45,569] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 33: workstore/test4/《金刚经》第二品善现启请分/output.mp4
+[2025-07-16 22:02:45,570] [INFO] [logger:55] - 迁移视频 34: user1 -> admin
+[2025-07-16 22:02:45,570] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 34: workstore/admin/小红帽的森林奇遇/output.mp4
+[2025-07-16 22:02:45,570] [INFO] [logger:55] - 迁移视频 35: user8 -> test9
+[2025-07-16 22:02:45,570] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 35: workstore/test9/《金刚经》第五品 如理实见分/output.mp4
+[2025-07-16 22:02:45,570] [INFO] [logger:55] - 迁移视频 36: user8 -> test9
+[2025-07-16 22:02:45,570] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 36: workstore/test9/《金刚经》第六品 正信希有分/output.mp4
+[2025-07-16 22:02:45,570] [INFO] [logger:55] - 迁移视频 37: user1 -> admin
+[2025-07-16 22:02:45,570] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 37: workstore/admin/停止按钮背后的故事/output.mp4
+[2025-07-16 22:02:45,570] [INFO] [logger:55] - 迁移视频 38: user1 -> admin
+[2025-07-16 22:02:45,570] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 38: workstore/admin/《金刚经》第八品 依法出生分/output.mp4
+[2025-07-16 22:02:45,570] [INFO] [logger:55] - 视频路径迁移完成，共迁移 0 个视频
+[2025-07-16 22:02:45,572] [INFO] [logger:55] - 没有发现中断的任务
+[2025-07-16 22:02:45,572] [INFO] [logger:55] - 任务恢复检查完成
+[2025-07-16 22:02:45,572] [INFO] [logger:55] - 百速一键AI视频生成应用服务器已启动，监听端口: 5001
+[2025-07-16 22:02:45,645] [INFO] [logger:55] - 百速一键AI视频生成应用正在启动... 时间: 2025-07-16 22:02:45
+[2025-07-16 22:02:45,645] [INFO] [logger:55] - 正在初始化数据库...
+[2025-07-16 22:02:46,260] [INFO] [logger:55] - 数据库初始化完成
+[2025-07-16 22:02:46,260] [INFO] [logger:55] - 正在检查并恢复中断的任务...
+[2025-07-16 22:02:46,260] [INFO] [logger:55] - 检查服务器启动时是否有中断的任务需要恢复...
+[2025-07-16 22:02:46,267] [INFO] [logger:55] - 开始迁移视频路径...
+[2025-07-16 22:02:46,267] [INFO] [logger:55] - 迁移视频 13: user1 -> admin
+[2025-07-16 22:02:46,267] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 13: workstore/admin/纳什均衡解析/output.mp4
+[2025-07-16 22:02:46,267] [INFO] [logger:55] - 迁移视频 15: user1 -> admin
+[2025-07-16 22:02:46,267] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 15: workstore/admin/白雪公主的童话/output.mp4
+[2025-07-16 22:02:46,267] [INFO] [logger:55] - 迁移视频 18: user3 -> test2
+[2025-07-16 22:02:46,267] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 18: workstore/test2/坚持的力量/output.mp4
+[2025-07-16 22:02:46,267] [INFO] [logger:55] - 迁移视频 19: user6 -> test4
+[2025-07-16 22:02:46,267] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 19: workstore/test4/白雪公主的故事/output.mp4
+[2025-07-16 22:02:46,267] [INFO] [logger:55] - 迁移视频 26: user6 -> test4
+[2025-07-16 22:02:46,267] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 26: workstore/test4/人性弱点智慧/output.mp4
+[2025-07-16 22:02:46,267] [INFO] [logger:55] - 迁移视频 27: user6 -> test4
+[2025-07-16 22:02:46,267] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 27: workstore/test4/达克效应之谜/output.mp4
+[2025-07-16 22:02:46,267] [INFO] [logger:55] - 迁移视频 32: user6 -> test4
+[2025-07-16 22:02:46,267] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 32: workstore/test4/《金刚经》第一品：法会因由分/output.mp4
+[2025-07-16 22:02:46,267] [INFO] [logger:55] - 迁移视频 33: user6 -> test4
+[2025-07-16 22:02:46,267] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 33: workstore/test4/《金刚经》第二品善现启请分/output.mp4
+[2025-07-16 22:02:46,267] [INFO] [logger:55] - 迁移视频 34: user1 -> admin
+[2025-07-16 22:02:46,267] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 34: workstore/admin/小红帽的森林奇遇/output.mp4
+[2025-07-16 22:02:46,268] [INFO] [logger:55] - 迁移视频 35: user8 -> test9
+[2025-07-16 22:02:46,268] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 35: workstore/test9/《金刚经》第五品 如理实见分/output.mp4
+[2025-07-16 22:02:46,268] [INFO] [logger:55] - 迁移视频 36: user8 -> test9
+[2025-07-16 22:02:46,268] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 36: workstore/test9/《金刚经》第六品 正信希有分/output.mp4
+[2025-07-16 22:02:46,268] [INFO] [logger:55] - 迁移视频 37: user1 -> admin
+[2025-07-16 22:02:46,268] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 37: workstore/admin/停止按钮背后的故事/output.mp4
+[2025-07-16 22:02:46,268] [INFO] [logger:55] - 迁移视频 38: user1 -> admin
+[2025-07-16 22:02:46,268] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 38: workstore/admin/《金刚经》第八品 依法出生分/output.mp4
+[2025-07-16 22:02:46,268] [INFO] [logger:55] - 视频路径迁移完成，共迁移 0 个视频
+[2025-07-16 22:02:46,269] [INFO] [logger:55] - 没有发现中断的任务
+[2025-07-16 22:02:46,269] [INFO] [logger:55] - 任务恢复检查完成
+[2025-07-16 22:02:46,269] [INFO] [logger:55] - 百速一键AI视频生成应用服务器已启动，监听端口: 5001
+[2025-07-16 22:06:12,680] [INFO] [logger:55] - 正在检查并恢复中断的任务...
+[2025-07-16 22:06:12,680] [INFO] [logger:55] - 检查服务器启动时是否有中断的任务需要恢复...
+[2025-07-16 22:06:12,683] [INFO] [logger:55] - 开始迁移视频路径...
+[2025-07-16 22:06:12,683] [INFO] [logger:55] - 迁移视频 13: user1 -> admin
+[2025-07-16 22:06:12,683] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 13: workstore/admin/纳什均衡解析/output.mp4
+[2025-07-16 22:06:12,683] [INFO] [logger:55] - 迁移视频 15: user1 -> admin
+[2025-07-16 22:06:12,683] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 15: workstore/admin/白雪公主的童话/output.mp4
+[2025-07-16 22:06:12,683] [INFO] [logger:55] - 迁移视频 18: user3 -> test2
+[2025-07-16 22:06:12,683] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 18: workstore/test2/坚持的力量/output.mp4
+[2025-07-16 22:06:12,683] [INFO] [logger:55] - 迁移视频 19: user6 -> test4
+[2025-07-16 22:06:12,683] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 19: workstore/test4/白雪公主的故事/output.mp4
+[2025-07-16 22:06:12,683] [INFO] [logger:55] - 迁移视频 26: user6 -> test4
+[2025-07-16 22:06:12,683] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 26: workstore/test4/人性弱点智慧/output.mp4
+[2025-07-16 22:06:12,683] [INFO] [logger:55] - 迁移视频 27: user6 -> test4
+[2025-07-16 22:06:12,683] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 27: workstore/test4/达克效应之谜/output.mp4
+[2025-07-16 22:06:12,683] [INFO] [logger:55] - 迁移视频 32: user6 -> test4
+[2025-07-16 22:06:12,683] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 32: workstore/test4/《金刚经》第一品：法会因由分/output.mp4
+[2025-07-16 22:06:12,683] [INFO] [logger:55] - 迁移视频 33: user6 -> test4
+[2025-07-16 22:06:12,683] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 33: workstore/test4/《金刚经》第二品善现启请分/output.mp4
+[2025-07-16 22:06:12,684] [INFO] [logger:55] - 迁移视频 34: user1 -> admin
+[2025-07-16 22:06:12,684] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 34: workstore/admin/小红帽的森林奇遇/output.mp4
+[2025-07-16 22:06:12,684] [INFO] [logger:55] - 迁移视频 35: user8 -> test9
+[2025-07-16 22:06:12,684] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 35: workstore/test9/《金刚经》第五品 如理实见分/output.mp4
+[2025-07-16 22:06:12,684] [INFO] [logger:55] - 迁移视频 36: user8 -> test9
+[2025-07-16 22:06:12,684] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 36: workstore/test9/《金刚经》第六品 正信希有分/output.mp4
+[2025-07-16 22:06:12,684] [INFO] [logger:55] - 迁移视频 37: user1 -> admin
+[2025-07-16 22:06:12,684] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 37: workstore/admin/停止按钮背后的故事/output.mp4
+[2025-07-16 22:06:12,684] [INFO] [logger:55] - 迁移视频 38: user1 -> admin
+[2025-07-16 22:06:12,684] [WARNING] [logger:66] - 新路径不存在，跳过迁移视频 38: workstore/admin/《金刚经》第八品 依法出生分/output.mp4
+[2025-07-16 22:06:12,684] [INFO] [logger:55] - 视频路径迁移完成，共迁移 0 个视频
+[2025-07-16 22:06:12,685] [INFO] [logger:55] - 没有发现中断的任务
+[2025-07-16 22:06:12,685] [INFO] [logger:55] - 任务恢复检查完成
+[2025-07-16 22:06:31,480] [INFO] [logger:55] - 用户 admin 查看我的视频页面，共 7 个视频
+[2025-07-16 22:06:31,589] [INFO] [app:2396] - 请求 workstore 文件: admin/《金刚经》第二十五品 化无所化分/covers/cover_4:3.png
+[2025-07-16 22:06:31,590] [INFO] [app:2396] - 请求 workstore 文件: admin/《金刚经》第二十六品 法身非相分/covers/cover_4:3.png
+[2025-07-16 22:06:31,590] [INFO] [app:2396] - 请求 workstore 文件: user1/停止按钮背后的故事/covers/cover_4:3.png
+[2025-07-16 22:06:31,592] [INFO] [app:2396] - 请求 workstore 文件: user1/《金刚经》第八品 依法出生分/covers/cover_4:3.png
+[2025-07-16 22:06:31,592] [INFO] [app:2396] - 请求 workstore 文件: user1/小红帽的森林奇遇/covers/cover_4:3.png
+[2025-07-16 22:06:31,592] [INFO] [app:2396] - 请求 workstore 文件: user1/白雪公主的童话/covers/cover_4:3.png
+[2025-07-16 22:06:31,597] [INFO] [app:2396] - 请求 workstore 文件: user1/纳什均衡解析/covers/cover_4:3.png
+[2025-07-16 22:06:36,215] [INFO] [logger:55] - 用户 admin 查看我的视频页面，共 7 个视频
+[2025-07-16 22:06:36,308] [INFO] [app:2396] - 请求 workstore 文件: admin/《金刚经》第二十六品 法身非相分/covers/cover_4:3.png
+[2025-07-16 22:06:36,308] [INFO] [app:2396] - 请求 workstore 文件: admin/《金刚经》第二十五品 化无所化分/covers/cover_4:3.png
+[2025-07-16 22:06:36,310] [INFO] [app:2396] - 请求 workstore 文件: user1/《金刚经》第八品 依法出生分/covers/cover_4:3.png
+[2025-07-16 22:06:36,310] [INFO] [app:2396] - 请求 workstore 文件: user1/停止按钮背后的故事/covers/cover_4:3.png
+[2025-07-16 22:06:36,313] [INFO] [app:2396] - 请求 workstore 文件: user1/小红帽的森林奇遇/covers/cover_4:3.png
+[2025-07-16 22:06:36,313] [INFO] [app:2396] - 请求 workstore 文件: user1/白雪公主的童话/covers/cover_4:3.png
+[2025-07-16 22:06:36,319] [INFO] [app:2396] - 请求 workstore 文件: user1/纳什均衡解析/covers/cover_4:3.png
+[2025-07-16 22:06:52,544] [INFO] [logger:55] - 用户 admin 查看我的视频页面，共 7 个视频
+[2025-07-16 22:06:52,651] [INFO] [app:2396] - 请求 workstore 文件: admin/《金刚经》第二十六品 法身非相分/covers/cover_4:3.png
+[2025-07-16 22:06:52,652] [INFO] [app:2396] - 请求 workstore 文件: admin/《金刚经》第二十五品 化无所化分/covers/cover_4:3.png
+[2025-07-16 22:06:52,655] [INFO] [app:2396] - 请求 workstore 文件: user1/白雪公主的童话/covers/cover_4:3.png
+[2025-07-16 22:06:52,659] [INFO] [app:2396] - 请求 workstore 文件: user1/《金刚经》第八品 依法出生分/covers/cover_4:3.png
+[2025-07-16 22:06:52,660] [INFO] [app:2396] - 请求 workstore 文件: user1/停止按钮背后的故事/covers/cover_4:3.png
+[2025-07-16 22:06:52,660] [INFO] [app:2396] - 请求 workstore 文件: user1/小红帽的森林奇遇/covers/cover_4:3.png
+[2025-07-16 22:06:52,665] [INFO] [app:2396] - 请求 workstore 文件: user1/纳什均衡解析/covers/cover_4:3.png
+[2025-07-16 22:07:41,932] [INFO] [logger:55] - 用户 admin 生成视频扣除了 1 条额度，剩余 88 条
+[2025-07-16 22:07:41,938] [INFO] [logger:55] - 用户 admin 的任务已加入队列，任务ID: 3
+[2025-07-16 22:07:41,949] [INFO] [logger:55] - 开始处理用户 admin 的队列任务，任务ID: 3, 视频ID: 41
+[2025-07-16 22:08:51,079] [INFO] [logger:55] - 用户 admin 生成视频扣除了 1 条额度，剩余 87 条
+[2025-07-16 22:08:51,082] [INFO] [logger:55] - 用户 admin 的任务已加入队列，任务ID: 4
+[2025-07-16 22:10:13,580] [INFO] [logger:55] - 用户 admin 生成视频扣除了 1 条额度，剩余 86 条
+[2025-07-16 22:10:13,583] [INFO] [logger:55] - 用户 admin 的任务已加入队列，任务ID: 4

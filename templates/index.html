@@ -236,17 +236,6 @@
         </div>
     </section>
 
-    <!-- 登录提示 -->
-    <el-dialog
-        title="需要登录"
-        :visible.sync="showLoginDialog"
-        width="30%">
-        <span>请先登录后再生成视频</span>
-        <span slot="footer" class="dialog-footer">
-            <el-button @click="showLoginDialog = false">取消</el-button>
-            <el-button type="primary" @click="goToLogin">去登录</el-button>
-        </span>
-    </el-dialog>
 </div>
 
 <style>
@@ -256,6 +245,184 @@
 }
 .scrollbar-hide::-webkit-scrollbar {
     display: none;
+}
+
+/* 登录弹窗样式 */
+.login-dialog .el-dialog {
+    border-radius: 12px;
+    background: #1e293b;
+    border: 1px solid #334155;
+}
+
+.login-dialog .el-dialog__header {
+    background: #1e293b;
+    border-bottom: 1px solid #334155;
+    color: white;
+}
+
+.login-dialog .el-dialog__title {
+    color: white;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.login-form {
+    padding: 20px 0;
+}
+
+.login-form .form-group {
+    margin-bottom: 20px;
+}
+
+.login-form .form-group label {
+    display: block;
+    margin-bottom: 8px;
+    color: #e2e8f0;
+    font-weight: 500;
+}
+
+.login-form .login-input .el-input__inner {
+    background: #334155;
+    border: 1px solid #475569;
+    color: white;
+    border-radius: 6px;
+    padding: 12px 16px;
+    height: 44px;
+}
+
+.login-form .login-input .el-input__inner:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+}
+
+.login-form .login-input .el-input__inner::placeholder {
+    color: #94a3b8;
+}
+
+.login-footer {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.login-footer .forgot-password {
+    margin-bottom: 12px;
+}
+
+.login-footer .forgot-password a {
+    color: #3b82f6;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.login-footer .forgot-password a:hover {
+    text-decoration: underline;
+}
+
+.login-footer .register-link {
+    color: #94a3b8;
+    font-size: 14px;
+}
+
+.login-footer .register-link a {
+    color: #3b82f6;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.login-footer .register-link a:hover {
+    text-decoration: underline;
+}
+
+/* 注册弹窗样式 */
+.register-dialog .el-dialog {
+    border-radius: 12px;
+    background: #1e293b;
+    border: 1px solid #334155;
+}
+
+.register-dialog .el-dialog__header {
+    background: #1e293b;
+    border-bottom: 1px solid #334155;
+    color: white;
+}
+
+.register-dialog .el-dialog__title {
+    color: white;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.register-form {
+    padding: 20px 0;
+}
+
+.register-form .register-subtitle {
+    color: #94a3b8;
+    font-size: 14px;
+    text-align: center;
+    margin-bottom: 24px;
+}
+
+.register-form .form-group {
+    margin-bottom: 20px;
+}
+
+.register-form .form-group label {
+    display: block;
+    margin-bottom: 8px;
+    color: #e2e8f0;
+    font-weight: 500;
+}
+
+.register-form .register-input .el-input__inner {
+    background: #334155;
+    border: 1px solid #475569;
+    color: white;
+    border-radius: 6px;
+    padding: 12px 16px;
+    height: 44px;
+}
+
+.register-form .register-input .el-input__inner:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+}
+
+.register-form .register-input .el-input__inner::placeholder {
+    color: #94a3b8;
+}
+
+.register-form .email-hint {
+    margin-top: 8px;
+    padding: 8px 12px;
+    background-color: rgba(59, 130, 246, 0.1);
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    border-radius: 4px;
+    color: #3b82f6;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.register-footer {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.register-footer .login-link {
+    color: #94a3b8;
+    font-size: 14px;
+}
+
+.register-footer .login-link a {
+    color: #3b82f6;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.register-footer .login-link a:hover {
+    text-decoration: underline;
 }
 </style>
 {% endblock %}
@@ -284,10 +451,10 @@
                 isDisplayTitle: true,
                 userName: '',
                 isGenerating: false,
-                showLoginDialog: false,
                 showSettings: false,
                 showUserName: true,
                 ttsModelStr: 'cosyvoice-v1',
+                savedPrompt: '', // 保存用户输入的提示词
             };
         },
         mounted() {
@@ -414,7 +581,13 @@
                 
                 if (!this.isAuthenticated) {
                     console.log('User not authenticated, showing login dialog');
-                    this.showLoginDialog = true;
+                    // 保存当前输入的内容
+                    this.savedPrompt = this.prompt;
+                    // 使用全局的登录弹窗
+                    if (window.globalVue) {
+                        window.globalVue.savedPrompt = this.prompt;
+                        window.globalVue.openLoginDialog();
+                    }
                     return;
                 }
                 
@@ -487,9 +660,24 @@
                     this.isGenerating = false;
                 });
             },
-            goToLogin() {
-                window.location.href = '/login';
+            
+            // 更新用户信息
+            updateUserInfo(user) {
+                if (window.AppConfig && window.AppConfig.globalData) {
+                    window.AppConfig.globalData.user = user;
+                    // 更新页面显示状态
+                    this.refreshPageState();
+                }
             },
+            
+            // 刷新页面状态
+            refreshPageState() {
+                // 重新加载页面以更新导航栏和其他状态
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1000);
+            },
+            
             handleSettingsClose() {
                 // 确保弹窗完全关闭
                 this.showSettings = false;

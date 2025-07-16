@@ -34,6 +34,53 @@ chmod +x deploy_scripts/deploy_from_local_optimized.sh
 - 📊 详细的变化统计和操作反馈
 - 🛡️ 智能跳过不必要的文件传输
 
+### 💡 灵活路径配置
+
+**不同设备部署路径配置**：
+由于不同开发者可能使用不同的设备和路径，可以通过环境变量来配置路径：
+
+```bash
+# 设置环境变量来适应不同的开发环境
+export SSH_KEY_PATH="/your/path/to/keys/sin_key.pem"
+export LOCAL_PROJECT_DIR="/your/path/to/VideoMaker"
+export SERVER_HOST="43.163.98.206"
+export SERVER_USER="root"
+export SERVER_PROJECT_DIR="/root/VideoMaker"
+
+# 然后执行部署
+./deploy_scripts/deploy_from_local_optimized.sh
+```
+
+**常见路径配置示例**：
+```bash
+# macOS 示例
+export SSH_KEY_PATH="/Users/username/keys/sin_key.pem"
+export LOCAL_PROJECT_DIR="/Users/username/Projects/VideoMaker"
+
+# Windows WSL 示例
+export SSH_KEY_PATH="/mnt/c/Users/username/keys/sin_key.pem"
+export LOCAL_PROJECT_DIR="/mnt/c/Users/username/Projects/VideoMaker"
+
+# Linux 示例
+export SSH_KEY_PATH="/home/username/keys/sin_key.pem"
+export LOCAL_PROJECT_DIR="/home/username/Projects/VideoMaker"
+```
+
+**一键配置脚本**：
+```bash
+# 创建个人配置文件
+cat > ~/.videomaker_deploy_config << 'EOF'
+export SSH_KEY_PATH="/your/path/to/keys/sin_key.pem"
+export LOCAL_PROJECT_DIR="/your/path/to/VideoMaker"
+export SERVER_HOST="43.163.98.206"
+export SERVER_USER="root"
+export SERVER_PROJECT_DIR="/root/VideoMaker"
+EOF
+
+# 使用配置文件部署
+source ~/.videomaker_deploy_config && ./deploy_scripts/deploy_from_local_optimized.sh
+```
+
 ### 方式二：传统一键部署
 ```bash
 chmod +x deploy_scripts/deploy_from_local.sh
@@ -461,7 +508,7 @@ systemctl restart videomaker
 - 依赖包无法正确加载
 
 **问题原因**：
-部署脚本中的虚拟环境路径与实际路径不一致
+部署脚本中的虚拟环境路径与实际路径不一致。服务器上使用的是 `.venv` 目录，但脚本中配置的是 `venv`。
 
 **诊断命令**：
 ```bash
@@ -469,35 +516,52 @@ systemctl restart videomaker
 ssh -i /path/to/key.pem root@server_ip "cd /root/VideoMaker && ls -la | grep venv"
 
 # 常见的虚拟环境目录名：
-# .venv (推荐，隐藏目录)
-# venv (传统命名)
+# .venv (推荐，隐藏目录) - 服务器实际使用的目录
+# venv (传统命名) - 部署脚本默认配置
 # env (简短命名)
 ```
 
 **解决方案**：
-```bash
-# 方案1：修正部署脚本中的路径
-# 将 deploy.sh 中的 venv/bin/activate 改为 .venv/bin/activate
 
-# 方案2：手动激活正确的虚拟环境
+**方案1：修正部署脚本中的路径（推荐）**
+```bash
+# 编辑 deploy.sh 文件，将第9行和第129行：
+VENV_DIR="$PROJECT_DIR/venv"
+source "$VENV_DIR/bin/activate"
+
+# 改为：
+VENV_DIR="$PROJECT_DIR/.venv"
+source "$VENV_DIR/bin/activate"
+```
+
+**方案2：手动激活正确的虚拟环境**
+```bash
 ssh -i /path/to/key.pem root@server_ip "
     cd /root/VideoMaker
     source .venv/bin/activate  # 注意使用正确的目录名
+    pip install -r requirements.txt
     systemctl restart videomaker
 "
+```
 
-# 方案3：重新创建统一命名的虚拟环境（如果需要）
-cd /root/VideoMaker
-rm -rf venv .venv env  # 清理旧环境
-python3 -m venv .venv  # 创建新环境
-source .venv/bin/activate
-pip install -r requirements.txt
+**方案3：智能路径检测（最佳实践）**
+```bash
+# 在 deploy.sh 中添加智能检测逻辑
+if [ -d "$PROJECT_DIR/.venv" ]; then
+    VENV_DIR="$PROJECT_DIR/.venv"
+elif [ -d "$PROJECT_DIR/venv" ]; then
+    VENV_DIR="$PROJECT_DIR/venv"
+else
+    echo "❌ 虚拟环境目录未找到"
+    exit 1
+fi
 ```
 
 **预防措施**：
 1. 在项目根目录创建 `.python-version` 文件标记Python版本
 2. 统一使用 `.venv` 作为虚拟环境目录名（现代最佳实践）
 3. 在部署脚本中添加虚拟环境路径检测逻辑
+4. 确保本地开发环境和服务器环境使用相同的虚拟环境目录名
 
 ### 部署后验证清单
 
@@ -587,6 +651,57 @@ else
     echo "❌ 虚拟环境未找到"
     exit 1
 fi
+```
+
+### 🔧 部署脚本路径配置
+
+**deploy.sh 脚本关键配置**：
+```bash
+# 默认配置（需要根据实际情况修改）
+PROJECT_DIR="/root/VideoMaker"
+VENV_DIR="$PROJECT_DIR/.venv"  # 注意：应该是 .venv 而不是 venv
+SERVICE_NAME="videomaker"
+```
+
+**常见路径配置问题及解决方案**：
+
+1. **虚拟环境路径不匹配**：
+   - 问题：脚本中是 `venv` 但服务器上是 `.venv`
+   - 解决：修改 `deploy.sh` 第9行为 `VENV_DIR="$PROJECT_DIR/.venv"`
+
+2. **SSH密钥路径错误**：
+   - 问题：不同设备上密钥路径不同
+   - 解决：使用环境变量或创建符号链接
+
+3. **项目目录路径不统一**：
+   - 问题：本地和服务器项目路径不同
+   - 解决：通过环境变量或配置文件统一管理
+
+**部署脚本智能路径检测**：
+```bash
+# 在 deploy.sh 中添加以下检测逻辑
+detect_venv_path() {
+    if [ -d "$PROJECT_DIR/.venv" ]; then
+        VENV_DIR="$PROJECT_DIR/.venv"
+        echo "✅ 发现虚拟环境: .venv"
+    elif [ -d "$PROJECT_DIR/venv" ]; then
+        VENV_DIR="$PROJECT_DIR/venv"
+        echo "✅ 发现虚拟环境: venv"
+    elif [ -d "$PROJECT_DIR/env" ]; then
+        VENV_DIR="$PROJECT_DIR/env"
+        echo "✅ 发现虚拟环境: env"
+    else
+        echo "❌ 虚拟环境目录未找到"
+        echo "请确保以下目录之一存在："
+        echo "  - $PROJECT_DIR/.venv"
+        echo "  - $PROJECT_DIR/venv"
+        echo "  - $PROJECT_DIR/env"
+        exit 1
+    fi
+}
+
+# 在脚本中调用检测函数
+detect_venv_path
 ```
 
 ---

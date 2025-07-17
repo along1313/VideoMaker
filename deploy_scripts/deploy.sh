@@ -6,7 +6,7 @@
 set -e  # 出错时停止执行
 
 PROJECT_DIR="/root/VideoMaker"
-VENV_DIR="$PROJECT_DIR/venv"
+VENV_DIR="$PROJECT_DIR/.venv"
 SERVICE_NAME="videomaker"
 BACKUP_DIR="${PROJECT_DIR}_backup_$(date +%Y%m%d_%H%M%S)"
 

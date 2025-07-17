@@ -91,6 +91,14 @@ if __name__ == '__main__':
             print("数据库初始化完成")
             log_info("数据库初始化完成")
             
+            # 检查AI服务配置
+            print("正在检查AI服务配置...")
+            log_info("正在检查AI服务配置...")
+            from app import check_ai_services
+            check_ai_services()
+            print("AI服务检查完成")
+            log_info("AI服务检查完成")
+            
             # 恢复中断的任务
             print("正在检查并恢复中断的任务...")
             log_info("正在检查并恢复中断的任务...")

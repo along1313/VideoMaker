@@ -40,6 +40,47 @@ from service.email_service import email_service
 from static.style_config import STYLE_CONFIG
 from path_manager import path_manager
 
+def check_ai_services():
+    """检查AI服务配置和可用性"""
+    try:
+        # 检查环境变量
+        required_env_vars = [
+            'ZHIPU_API_KEY',
+            'DEEPSEEK_API_KEY', 
+            'QWEN_API_KEY',
+            'COSYVOICE_API_KEY'
+        ]
+        
+        missing_vars = []
+        for var in required_env_vars:
+            if not os.getenv(var):
+                missing_vars.append(var)
+        
+        if missing_vars:
+            log_warning(f"缺少环境变量: {', '.join(missing_vars)}")
+        
+        # 测试服务实例化
+        try:
+            llm = LLMService(model_str="deepseek-reasoner")
+            log_info("LLM服务初始化成功")
+        except Exception as e:
+            log_error(f"LLM服务初始化失败: {str(e)}")
+        
+        try:
+            image_model = ImageModelService(model_str="cogview-3-flash")
+            log_info("图片生成服务初始化成功")
+        except Exception as e:
+            log_error(f"图片生成服务初始化失败: {str(e)}")
+        
+        try:
+            tts_model = TTSModelService(model_str="cosyvoice-v1")
+            log_info("TTS服务初始化成功")
+        except Exception as e:
+            log_error(f"TTS服务初始化失败: {str(e)}")
+            
+    except Exception as e:
+        log_error(f"AI服务检查失败: {str(e)}")
+
 # 初始化Flask应用
 app = Flask(__name__, static_folder='static', template_folder='templates')
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'dev_key_for_baisu_ai_video')
@@ -1408,8 +1449,24 @@ def generate_video_v3():
             })
 
     except Exception as e:
-        log_error(f"视频生成失败: {str(e)}")
-        return jsonify({'success': False, 'message': '生成失败，请重试'})
+        error_message = str(e)
+        log_error(f"视频生成失败: {error_message}")
+        
+        # 根据错误类型提供更具体的错误信息
+        if "积分不足" in error_message:
+            response_message = error_message
+        elif "内容过滤" in error_message or "敏感内容" in error_message:
+            response_message = "输入内容包含敏感信息，请修改后重试"
+        elif "网络" in error_message or "连接" in error_message:
+            response_message = "网络连接异常，请检查网络后重试"
+        elif "API" in error_message or "服务" in error_message:
+            response_message = "AI服务暂时不可用，请稍后重试"
+        elif "权限" in error_message or "认证" in error_message:
+            response_message = "服务认证失败，请联系客服"
+        else:
+            response_message = f"生成失败：{error_message[:100]}..."  # 限制错误信息长度
+        
+        return jsonify({'success': False, 'message': response_message})
 
 @app.route('/api/video-status/<int:video_id>')
 @login_required

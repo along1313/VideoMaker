@@ -158,5 +158,13 @@ STYLE_CONFIG = {
         "text_color": "white",
         "stroke_color": "black",
         "is_y_slide": True,
+    },
+     "宫崎骏": {
+        "img_generate_system_prompt": "Studio Ghibli style, Hayao Miyazaki aesthetic, soft watercolor textures, pastel color palette (muted greens, golds, lavenders), highly detailed hand-drawn background, gentle dappled sunlight, peaceful and whimsical atmosphere, magical yet nostalgic, calm wind movement, 2D animation masterpiece, --ar 16:9 --style raw --no photorealistic, sharp edges, 3D render, text, signature",
+        "img_size": "1024x1024",
+        "img_resize": 1.0,
+        "text_color": "white",
+        "stroke_color": "black",
+        "is_y_slide": True,
     }
 }

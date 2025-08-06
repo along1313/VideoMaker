@@ -88,9 +88,6 @@
 
         <!-- 简化的停止按钮（无外框） -->
         <div class="stop-section" id="stop-section" style="display: none;">
-            <button class="btn-stop" onclick="stopGeneration()">
-                <i class="fas fa-stop"></i> 停止并删除
-            </button>
             <a href="{{ url_for('index') }}" class="btn-create-new">
                 <i class="fas fa-plus"></i> 去创作新视频
             </a>
@@ -129,9 +126,9 @@
                 <h2>生成失败</h2>
             </div>
             <p id="error-text"></p>
-            <button class="btn-primary" onclick="retryGeneration()">
-                <i class="fas fa-redo"></i> 重新生成
-            </button>
+            <a href="{{ url_for('index') }}" class="btn-primary">
+                <i class="fas fa-plus"></i> 去创作新视频
+            </a>
         </div>
     </div>
 
@@ -225,9 +222,10 @@
                 <label>风格</label>
                 <el-select v-model="editingTask.style" placeholder="请选择风格">
                     <el-option label="绘本" value="绘本"></el-option>
-                    <el-option label="3D动画" value="3D动画"></el-option>
-                    <el-option label="写实" value="写实"></el-option>
-                    <el-option label="插画" value="插画"></el-option>
+                    <el-option label="黑白矢量图" value="黑白矢量图"></el-option>
+                    <el-option label="3D景深" value="3D景深"></el-option>
+                    <el-option label="水墨画" value="水墨画"></el-option>
+                    <el-option label="宫崎骏" value="宫崎骏"></el-option>
                 </el-select>
             </div>
             <div class="form-group" v-if="editingTask.template === '读一本书'">
@@ -937,35 +935,81 @@ document.addEventListener('DOMContentLoaded', function() {
                             
                             // 找到当前正在处理的任务
                             var processingTask = null;
+                            var failedTasks = [];
+                            
                             for (var i = 0; i < self.waitingTasks.length; i++) {
                                 if (self.waitingTasks[i].status === 'processing') {
                                     processingTask = self.waitingTasks[i];
                                     break;
+                                } else if (self.waitingTasks[i].status === 'failed' || self.waitingTasks[i].status === 'error') {
+                                    failedTasks.push(self.waitingTasks[i]);
+                                }
+                            }
+                            
+                            // 处理失败的任务 - 如果当前显示的是失败的任务，显示错误信息
+                            if (failedTasks.length > 0 && self.currentTask) {
+                                for (var j = 0; j < failedTasks.length; j++) {
+                                    if (failedTasks[j].video_id === self.currentTask.video_id) {
+                                        console.log('检测到失败的任务:', failedTasks[j]);
+                                        self.showError(failedTasks[j].error_message || '任务生成失败，可能是网络超时或服务异常');
+                                        // 不立即清空currentTask，让用户看到错误信息
+                                        break;
+                                    }
                                 }
                             }
                             
                             if (processingTask) {
                                 // 如果找到了正在处理的任务，而且与当前任务不同，开始轮询
                                 if (!self.currentTask || self.currentTask.video_id !== processingTask.video_id) {
+                                    console.log('发现新任务，video_id:', processingTask.video_id);
                                     // 标记这是一个新任务，需要重置显示状态
                                     self.isNewTask = true;
                                     self.currentTask = processingTask;
                                     // 更新全局videoId
                                     window.videoId = processingTask.video_id;
+                                    // 显示当前任务区域
+                                    self.updatePageDisplayForCurrentTask();
                                     // 开始轮询新任务的状态
                                     if (processingTask.video_id) {
                                         self.checkGenerationStatus(processingTask.video_id);
                                     }
+                                } else {
+                                    // 如果video_id相同，确保UI状态正确
+                                    if (self.currentTask && self.currentTask.status !== 'processing') {
+                                        self.currentTask.status = 'processing';
+                                        self.updatePageDisplayForCurrentTask();
+                                    }
                                 }
                             } else {
-                                // 如果没有正在处理的任务，清空currentTask并更新页面显示
-                                self.currentTask = null;
-                                self.updatePageDisplayForNoTask();
+                                // 如果没有正在处理的任务，检查是否需要清空当前显示
+                                if (self.currentTask && self.currentTask.status === 'processing') {
+                                    // 之前有处理中的任务，现在没有了，可能任务已完成、失败或被取消
+                                    console.log('之前的处理任务已不在列表中，可能已完成或失败');
+                                    // 延迟清空，给错误处理一些时间
+                                    setTimeout(function() {
+                                        if (!processingTask) {
+                                            self.currentTask = null;
+                                            self.updatePageDisplayForNoTask();
+                                        }
+                                    }, 2000);
+                                } else {
+                                    // 正常情况下没有处理中的任务
+                                    self.currentTask = null;
+                                    self.updatePageDisplayForNoTask();
+                                }
                             }
                         }
                     })
                     .catch(function(error) {
                         console.error('加载任务失败:', error);
+                        // 网络错误时，如果有当前任务，保持显示但标记可能有问题
+                        if (self.currentTask) {
+                            console.log('任务列表加载失败，但保持当前任务显示');
+                        }
+                        // 重试机制：5秒后重试一次
+                        setTimeout(function() {
+                            self.loadTasks();
+                        }, 5000);
                     });
             },
             
@@ -981,6 +1025,19 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 // 清空全局videoId
                 window.videoId = null;
+            },
+            
+            updatePageDisplayForCurrentTask: function() {
+                // 当有正在处理的任务时，显示当前任务区域
+                var currentTaskSection = document.getElementById('current-task');
+                if (currentTaskSection) {
+                    currentTaskSection.style.display = 'block';
+                }
+                
+                // 更新页面标题
+                if (this.currentTask && this.currentTask.title) {
+                    document.title = '正在生成视频 - ' + this.currentTask.title;
+                }
             },
             
             checkCurrentTask: function() {
@@ -1106,6 +1163,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 fetch('/api/video-status/' + videoId)
                     .then(function(response) {
+                        if (!response.ok) {
+                            throw new Error('HTTP ' + response.status + ': ' + response.statusText);
+                        }
                         return response.json();
                     })
                     .then(function(data) {
@@ -1114,6 +1174,10 @@ document.addEventListener('DOMContentLoaded', function() {
                                 self.showComplete();
                             } else if (data.status === 'failed' || data.status === 'error') {
                                 self.showError(data.message || '生成过程中出现错误');
+                                // 对于失败的任务，也要重新检查任务列表
+                                setTimeout(function() {
+                                    self.loadTasks();
+                                }, 3000);
                             } else if (data.status === 'processing') {
                                 // 更新currentTask信息
                                 if (self.currentTask) {
@@ -1134,19 +1198,35 @@ document.addEventListener('DOMContentLoaded', function() {
                                     self.checkGenerationStatus(videoId);
                                 }, 2000);
                             } else if (data.status === 'cancelled') {
-                                self.showError('任务被用户主动取消');
+                                // 任务被取消，停止当前轮询并重新加载任务列表
+                                console.log('任务被取消，video_id:', videoId);
+                                // 延迟重新加载任务列表，检查是否有新任务
+                                setTimeout(function() {
+                                    self.loadTasks();
+                                }, 1500);
                             } else {
                                 setTimeout(function() {
                                     self.checkGenerationStatus(videoId);
                                 }, 2000);
                             }
                         } else {
+                            // 服务器返回错误，可能任务已失败
+                            console.error('视频状态检查失败:', data.message);
                             self.showError(data.message || '获取状态失败');
+                            // 重新检查任务列表，可能任务已失败或有新任务
+                            setTimeout(function() {
+                                self.loadTasks();
+                            }, 3000);
                         }
                     })
                     .catch(function(error) {
-                        console.error('Error:', error);
+                        console.error('Error checking video status:', error);
+                        // 网络错误或其他异常，可能任务已失败
                         self.showError('无法获取生成状态，请刷新页面重试');
+                        // 重新检查任务列表，可能有新任务或当前任务已失败
+                        setTimeout(function() {
+                            self.loadTasks();
+                        }, 5000);
                     });
             },
             
@@ -1271,6 +1351,7 @@ document.addEventListener('DOMContentLoaded', function() {
             },
             
             showError: function(errorMessage) {
+                var self = this;
                 var statusMessage = document.getElementById('status-message');
                 var statusText = document.getElementById('status-text');
                 var loadingSpinner = document.getElementById('loading-spinner');
@@ -1278,12 +1359,56 @@ document.addEventListener('DOMContentLoaded', function() {
                 var errorText = document.getElementById('error-text');
                 var stopSection = document.getElementById('stop-section');
                 
+                console.log('显示错误:', errorMessage);
+                
+                // 更新当前任务状态为失败
+                if (self.currentTask) {
+                    self.currentTask.status = 'failed';
+                }
+                
                 if (statusMessage) statusMessage.classList.add('error');
                 if (statusText) statusText.textContent = errorMessage || '生成过程中出现错误，请重试';
                 if (loadingSpinner) loadingSpinner.style.display = 'none';
                 if (errorSection) errorSection.style.display = 'block';
-                if (errorText) errorText.textContent = errorMessage || '生成过程中出现未知错误，请重试';
                 if (stopSection) stopSection.style.display = 'none';
+                
+                // 提供更详细的错误信息
+                var detailedError = errorMessage || '生成过程中出现未知错误，请重试';
+                if (errorMessage && (errorMessage.includes('timeout') || errorMessage.includes('超时') || errorMessage.includes('Connection error'))) {
+                    detailedError = '网络连接超时，可能是AI服务繁忙。额度已返还，请稍后重试。';
+                } else if (errorMessage && errorMessage.includes('取消')) {
+                    detailedError = '任务已被取消，相关文件已清理，额度已返还。';
+                }
+                
+                if (errorText) errorText.textContent = detailedError;
+                
+                // 根据错误类型决定后续处理
+                if (errorMessage && errorMessage.includes('取消')) {
+                    console.log('检测到取消相关错误，3秒后重新检查任务状态');
+                    setTimeout(function() {
+                        self.loadTasks();
+                    }, 3000);
+                } else if (errorMessage && (errorMessage.includes('timeout') || errorMessage.includes('超时') || errorMessage.includes('Connection error'))) {
+                    console.log('检测到网络超时错误，5秒后检查新任务');
+                    // 网络超时错误，延迟较长时间再检查新任务
+                    setTimeout(function() {
+                        self.loadTasks();
+                    }, 5000);
+                } else {
+                    // 其他错误，也检查是否有新任务
+                    setTimeout(function() {
+                        self.loadTasks();
+                    }, 4000);
+                }
+                
+                // 10秒后自动清空当前任务显示，让用户看到空的任务中心
+                setTimeout(function() {
+                    if (self.currentTask && self.currentTask.status === 'failed') {
+                        console.log('自动清空失败的任务显示');
+                        self.currentTask = null;
+                        self.updatePageDisplayForNoTask();
+                    }
+                }, 10000);
             }
         }
     });
@@ -1313,7 +1438,16 @@ function stopGeneration() {
             if (data.success) {
                 alert('已成功停止生成并清理文件' + 
                       (data.credits_returned ? '，返还了 ' + data.credits_returned + ' 个额度' : ''));
-                window.location.href = '/my-videos';
+                // 清空当前任务并重新加载任务列表
+                if (window.generateVueInstance) {
+                    window.generateVueInstance.currentTask = null;
+                    // 更新全局videoId
+                    window.videoId = null;
+                    // 延迟重新加载任务列表，给后端时间启动下一个任务
+                    setTimeout(function() {
+                        window.generateVueInstance.loadTasks();
+                    }, 1500);
+                }
             } else {
                 alert('停止失败：' + data.message);
                 if (stopButton) {
@@ -1333,9 +1467,6 @@ function stopGeneration() {
     }
 }
 
-function retryGeneration() {
-    window.location.reload();
-}
 
 function deleteVideo(videoId) {
     if (confirm('确定要删除这个视频吗？')) {

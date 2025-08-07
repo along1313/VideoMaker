@@ -1,0 +1,385 @@
+{% extends 'base.html' %}
+
+{% block title %}开通会员 - 百速AI{% endblock %}
+
+{% block content %}
+<div class="membership-container">
+    <!-- 标题区域 -->
+    <section class="text-center mb-16">
+        <h1 class="text-5xl md:text-6xl font-bold text-white mb-4">
+            <span class="bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500">
+                开通会员
+            </span>
+        </h1>
+        <p class="text-lg text-slate-400 max-w-2xl mx-auto">选择适合您的会员计划，享受更多功能特权</p>
+    </section>
+
+    <!-- 会员套餐区域 -->
+    <section class="max-w-6xl mx-auto">
+        <div class="grid md:grid-cols-2 gap-8">
+            
+            <!-- 免费档 -->
+            <div class="membership-card free-tier">
+                <div class="membership-header">
+                    <h2 class="membership-title">免费</h2>
+                    <div class="membership-price">
+                        <span class="price-symbol">¥</span>
+                        <span class="price-amount">0</span>
+                        <span class="price-period">/月</span>
+                    </div>
+                </div>
+                
+                <div class="membership-features">
+                    <div class="feature-item">
+                        <span class="feature-icon">✓</span>
+                        <span class="feature-text">每月3次免费额度</span>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">✓</span>
+                        <span class="feature-text">提示词模式，文案模式</span>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">✓</span>
+                        <span class="feature-text">所有模板，所有风格</span>
+                    </div>
+                </div>
+                
+                <div class="membership-button-container">
+                    <button class="membership-button free-button" disabled>
+                        当前计划
+                    </button>
+                </div>
+            </div>
+            
+            <!-- 商务会员档 -->
+            <div class="membership-card premium-tier">
+                <div class="membership-badge">推荐</div>
+                <div class="membership-header">
+                    <h2 class="membership-title">商务会员</h2>
+                    <div class="membership-price">
+                        <span class="price-symbol">¥</span>
+                        <span class="price-amount">定制</span>
+                        <span class="price-period"></span>
+                    </div>
+                </div>
+                
+                <div class="membership-features">
+                    <div class="feature-item">
+                        <span class="feature-icon">✓</span>
+                        <span class="feature-text">定制额度</span>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">✓</span>
+                        <span class="feature-text">视频显示文本可设置</span>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">✓</span>
+                        <span class="feature-text">无宣传广告</span>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">✓</span>
+                        <span class="feature-text">无水印</span>
+                    </div>
+                </div>
+                
+                <div class="membership-button-container">
+                    <button class="membership-button premium-button">
+                        联系客服
+                    </button>
+                </div>
+                
+                <div class="contact-info">
+                    <p class="contact-text">商务会员购买额度请联系客服微信</p>
+                    <p class="contact-wechat">micchu80</p>
+                </div>
+            </div>
+            
+        </div>
+    </section>
+    
+    <!-- 特色说明区域 -->
+    <section class="features-explanation mt-20">
+        <div class="max-w-4xl mx-auto">
+            <h2 class="text-3xl font-bold text-center text-white mb-12">为什么选择百速AI会员</h2>
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="feature-card">
+                    <div class="feature-icon-large">
+                        <span class="material-icons">bolt</span>
+                    </div>
+                    <h3 class="feature-title">高效生成</h3>
+                    <p class="feature-description">AI技术驱动，10-20分钟内快速生成高质量视频内容</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon-large">
+                        <span class="material-icons">palette</span>
+                    </div>
+                    <h3 class="feature-title">多样风格</h3>
+                    <p class="feature-description">支持绘本、3D景深、水墨画、宫崎骏等多种视觉风格</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon-large">
+                        <span class="material-icons">verified</span>
+                    </div>
+                    <h3 class="feature-title">专业品质</h3>
+                    <p class="feature-description">商务会员享受无水印、定制化服务，满足专业需求</p>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<style>
+.membership-container {
+    min-height: 100vh;
+    padding: 40px 20px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f172a;
+    color: #e2e8f0;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* 会员卡片 */
+.membership-card {
+    background: rgba(30, 41, 59, 0.5);
+    border-radius: 16px;
+    padding: 40px 32px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.membership-card:hover {
+    border-color: rgba(255, 255, 255, 0.2);
+    background: rgba(30, 41, 59, 0.7);
+    transform: translateY(-4px);
+}
+
+.premium-tier {
+    border-color: #3b82f6;
+    background: rgba(59, 130, 246, 0.1);
+}
+
+.premium-tier:hover {
+    border-color: #60a5fa;
+    background: rgba(59, 130, 246, 0.15);
+}
+
+/* 推荐标识 */
+.membership-badge {
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    color: white;
+    padding: 6px 20px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+/* 会员标题 */
+.membership-header {
+    text-align: center;
+    margin-bottom: 32px;
+}
+
+.membership-title {
+    font-size: 28px;
+    font-weight: 600;
+    color: #f1f5f9;
+    margin-bottom: 16px;
+}
+
+/* 价格 */
+.membership-price {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: 4px;
+}
+
+.price-symbol {
+    font-size: 20px;
+    color: #94a3b8;
+    font-weight: 500;
+}
+
+.price-amount {
+    font-size: 48px;
+    font-weight: 700;
+    color: #f1f5f9;
+}
+
+.price-period {
+    font-size: 18px;
+    color: #94a3b8;
+    font-weight: 500;
+}
+
+/* 功能特性 */
+.membership-features {
+    margin-bottom: 32px;
+}
+
+.feature-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+    padding: 8px 0;
+}
+
+.feature-icon {
+    color: #10b981;
+    font-weight: 700;
+    font-size: 18px;
+    width: 24px;
+    text-align: center;
+}
+
+.feature-text {
+    color: #cbd5e1;
+    font-size: 16px;
+    line-height: 1.5;
+}
+
+/* 按钮 */
+.membership-button-container {
+    text-align: center;
+    margin-bottom: 24px;
+}
+
+.membership-button {
+    width: 100%;
+    padding: 16px 32px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.free-button {
+    background: #6b7280;
+    color: #d1d5db;
+    cursor: not-allowed;
+}
+
+.premium-button {
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    color: white;
+}
+
+.premium-button:hover {
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    transform: translateY(-1px);
+}
+
+/* 联系信息 */
+.contact-info {
+    text-align: center;
+    padding-top: 24px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.contact-text {
+    color: #94a3b8;
+    font-size: 14px;
+    margin-bottom: 8px;
+}
+
+.contact-wechat {
+    color: #3b82f6;
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: 1px;
+}
+
+/* 特色说明 */
+.features-explanation {
+    padding-top: 80px;
+}
+
+.feature-card {
+    text-align: center;
+    padding: 32px 24px;
+    background: rgba(30, 41, 59, 0.3);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    transition: all 0.3s ease;
+}
+
+.feature-card:hover {
+    border-color: rgba(255, 255, 255, 0.1);
+    background: rgba(30, 41, 59, 0.5);
+    transform: translateY(-2px);
+}
+
+.feature-icon-large {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 64px;
+    height: 64px;
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    border-radius: 50%;
+    margin-bottom: 20px;
+    color: white;
+    font-size: 32px;
+}
+
+.feature-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: #f1f5f9;
+    margin-bottom: 12px;
+}
+
+.feature-description {
+    color: #94a3b8;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .membership-container {
+        padding: 20px 15px;
+    }
+    
+    .membership-card {
+        padding: 32px 24px;
+    }
+    
+    .price-amount {
+        font-size: 36px;
+    }
+    
+    .membership-title {
+        font-size: 24px;
+    }
+    
+    .feature-title {
+        font-size: 18px;
+    }
+}
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // 商务会员按钮点击事件
+    const premiumButton = document.querySelector('.premium-button');
+    if (premiumButton) {
+        premiumButton.addEventListener('click', function() {
+            // 可以在这里添加联系客服的逻辑，比如弹窗显示二维码等
+            alert('请添加客服微信：micchu80\n获取商务会员详细信息');
+        });
+    }
+});
+</script>
+{% endblock %}

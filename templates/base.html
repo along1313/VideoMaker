@@ -160,15 +160,17 @@
                     <a class="hover:text-blue-400 transition-colors" href="{{ url_for('index') }}">首页</a>
                     {% if current_user.is_authenticated %}
                         <a class="hover:text-blue-400 transition-colors" href="{{ url_for('my_videos') }}">我的视频</a>
-                        <a class="hover:text-blue-400 transition-colors" href="{{ url_for('my_tasks') }}">我的任务</a>
+                        <a class="hover:text-blue-400 transition-colors" href="{{ url_for('task_center') }}">我的任务</a>
                         <a class="hover:text-blue-400 transition-colors" href="{{ url_for('profile') }}">个人中心</a>
                         {% if current_user.is_admin %}
                             <a class="hover:text-blue-400 transition-colors" href="{{ url_for('admin_dashboard') }}">管理后台</a>
                         {% endif %}
+                        <a class="hover:text-blue-400 transition-colors" href="{{ url_for('membership') }}">开通会员</a>
                         <a class="hover:text-blue-400 transition-colors" href="{{ url_for('contact') }}">联系我们</a>
                     {% else %}
                         <a class="hover:text-blue-400 transition-colors cursor-pointer" onclick="window.globalVue.openLoginDialog()">登录</a>
                         <a class="hover:text-blue-400 transition-colors cursor-pointer" onclick="window.globalVue.openRegisterDialog()">注册</a>
+                        <a class="hover:text-blue-400 transition-colors" href="{{ url_for('membership') }}">开通会员</a>
                         <a class="hover:text-blue-400 transition-colors" href="{{ url_for('contact') }}">联系我们</a>
                     {% endif %}
                 </nav>

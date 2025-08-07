@@ -191,46 +191,61 @@ def recover_interrupted_tasks():
             
             if not interrupted_tasks:
                 log_info("没有发现中断的任务")
-                return
-            
-            log_info(f"发现 {len(interrupted_tasks)} 个中断的任务，开始恢复...")
-            
-            for task in interrupted_tasks:
-                try:
-                    # 重置任务状态为waiting
-                    task.status = 'waiting'
-                    task.started_at = None
-                    
-                    # 如果已经创建了视频记录，将其状态重置为pending
-                    if task.video_id:
-                        video = Video.query.get(task.video_id)
-                        if video:
-                            video.status = 'pending'
-                            log_info(f"重置视频ID {task.video_id} 状态为pending")
-                    
-                    db.session.commit()
-                    log_info(f"恢复任务 {task.id}，用户 {task.user_id}，标题: {task.title[:30]}...")
-                    
-                    # 启动任务处理
-                    import threading
-                    thread = threading.Thread(target=process_next_queue_task, args=(task.user_id,))
-                    thread.daemon = True
-                    thread.start()
-                    
-                    log_info(f"任务 {task.id} 已重新启动")
-                    
-                except Exception as e:
-                    log_error(f"恢复任务 {task.id} 失败: {str(e)}")
-                    # 如果恢复失败，标记为失败状态
-                    task.status = 'failed'
-                    task.completed_at = datetime.utcnow()
-                    if task.video_id:
-                        video = Video.query.get(task.video_id)
-                        if video:
-                            video.status = 'failed'
-                    db.session.commit()
+            else:
+                log_info(f"发现 {len(interrupted_tasks)} 个中断的任务，开始恢复...")
+                
+                for task in interrupted_tasks:
+                    try:
+                        # 重置任务状态为waiting
+                        task.status = 'waiting'
+                        task.started_at = None
+                        
+                        # 如果已经创建了视频记录，将其状态重置为pending
+                        if task.video_id:
+                            video = Video.query.get(task.video_id)
+                            if video:
+                                video.status = 'pending'
+                                log_info(f"重置视频ID {task.video_id} 状态为pending")
+                        
+                        db.session.commit()
+                        log_info(f"恢复任务 {task.id}，用户 {task.user_id}，标题: {task.title[:30]}...")
+                        
+                        # 启动任务处理
+                        import threading
+                        thread = threading.Thread(target=process_next_queue_task, args=(task.user_id,))
+                        thread.daemon = True
+                        thread.start()
+                        
+                        log_info(f"任务 {task.id} 已重新启动")
+                        
+                    except Exception as e:
+                        log_error(f"恢复任务 {task.id} 失败: {str(e)}")
+                        # 如果恢复失败，标记为失败状态
+                        task.status = 'failed'
+                        task.completed_at = datetime.utcnow()
+                        if task.video_id:
+                            video = Video.query.get(task.video_id)
+                            if video:
+                                video.status = 'failed'
+                        db.session.commit()
             
             log_info("任务恢复完成")
+            
+            # 检查是否有等待中的任务需要启动
+            waiting_tasks = TaskQueue.query.filter_by(status='waiting').all()
+            if waiting_tasks:
+                log_info(f"发现 {len(waiting_tasks)} 个等待中的任务，开始启动...")
+                
+                # 按用户分组，为每个用户启动一个处理线程
+                user_ids = set(task.user_id for task in waiting_tasks)
+                for user_id in user_ids:
+                    import threading
+                    thread = threading.Thread(target=process_next_queue_task, args=(user_id,))
+                    thread.daemon = True
+                    thread.start()
+                    log_info(f"已为用户 {user_id} 启动任务处理线程")
+            else:
+                log_info("没有等待中的任务需要启动")
             
     except Exception as e:
         log_error(f"恢复中断任务时发生错误: {str(e)}")
@@ -1218,9 +1233,9 @@ def my_videos():
                              videos_json='[]',
                              error=f'加载视频列表失败: {str(e)}')
 
-@app.route('/my-tasks')
+@app.route('/task-center')
 @login_required
-def my_tasks():
+def task_center():
     """统一的任务管理页面"""
     # 查找用户当前正在处理的任务
     current_processing_task = TaskQueue.query.filter_by(
@@ -1243,6 +1258,13 @@ def my_tasks():
         current_video = MockVideo()
     
     return render_template('generate.html', video=current_video)
+
+# 向后兼容的路由重定向
+@app.route('/my-tasks')
+@login_required
+def my_tasks_redirect():
+    """向后兼容：重定向到新的任务中心路由"""
+    return redirect(url_for('task_center'))
 
 @app.route('/generate/<int:video_id>')
 @login_required
@@ -1437,7 +1459,7 @@ def generate_video_v3():
             return jsonify({
                 'success': True,
                 'message': '任务已开始处理',
-                'redirect_url': '/my-tasks'
+                'redirect_url': '/task-center'
             })
         else:
             # 返回队列信息，统一跳转到任务中心
@@ -1445,7 +1467,7 @@ def generate_video_v3():
             return jsonify({
                 'success': True,
                 'message': f'您有视频正在生成中，新任务已加入队列（排队位置：{queue_position}）',
-                'redirect_url': '/my-tasks'
+                'redirect_url': '/task-center'
             })
 
     except Exception as e:
@@ -1537,7 +1559,7 @@ def get_task_queue():
         ).filter(TaskQueue.status.in_(['completed', 'failed', 'cancelled'])).order_by(TaskQueue.completed_at.desc()).limit(20).all()
         
         def serialize_task(task):
-            return {
+            task_data = {
                 'id': task.id,
                 'title': task.title,
                 'prompt': task.prompt,
@@ -1548,8 +1570,33 @@ def get_task_queue():
                 'video_id': task.video_id,
                 'created_at': task.created_at.isoformat() if task.created_at else None,
                 'started_at': task.started_at.isoformat() if task.started_at else None,
-                'completed_at': task.completed_at.isoformat() if task.completed_at else None
+                'completed_at': task.completed_at.isoformat() if task.completed_at else None,
+                'mode': task.mode if hasattr(task, 'mode') else 'prompt'
             }
+            
+            # 如果任务失败，尝试获取错误信息
+            if task.status == 'failed' and task.video_id:
+                try:
+                    # 先从generation_status中查找错误信息
+                    for task_id, task_status in generation_status.items():
+                        if task_status.get('video_id') == task.video_id:
+                            error_msg = task_status.get('message', '')
+                            if error_msg and '生成失败' in error_msg:
+                                task_data['error_message'] = error_msg
+                                break
+                    
+                    # 如果没有找到，检查视频记录的错误信息
+                    if 'error_message' not in task_data:
+                        video = Video.query.get(task.video_id)
+                        if video and hasattr(video, 'error_message') and video.error_message:
+                            task_data['error_message'] = video.error_message
+                        else:
+                            task_data['error_message'] = '任务生成失败，可能是网络超时或服务异常'
+                except Exception as e:
+                    log_error(f"获取任务错误信息失败: {str(e)}")
+                    task_data['error_message'] = '任务生成失败，可能是网络超时或服务异常'
+            
+            return task_data
         
         return jsonify({
             'success': True,
@@ -1862,6 +1909,12 @@ def stop_generation(video_id):
         # 清理已创建的文件和目录
         cleanup_result = cleanup_video_files(video)
         
+        # 删除对应的TaskQueue记录
+        task_queue_record = TaskQueue.query.filter_by(video_id=video_id, user_id=current_user.id).first()
+        if task_queue_record:
+            db.session.delete(task_queue_record)
+            log_info(f"已删除TaskQueue记录，任务ID: {task_queue_record.id}", "video")
+        
         # 返还用户额度
         credits_to_return = video.credits_used or 1
         current_user.credits += credits_to_return
@@ -1870,7 +1923,40 @@ def stop_generation(video_id):
         db.session.delete(video)
         db.session.commit()
         
+        # 不要立即删除generation_status，而是标记为已取消，让运行中的工作流能够检查到取消状态
+        # 稍后会有清理机制删除已取消的任务状态
+        cancelled_tasks = []
+        for task_id, task_data in generation_status.items():
+            if task_data.get('video_id') == video_id:
+                if task_data.get('status') != 'cancelled':
+                    task_data['status'] = 'cancelled'
+                    task_data['message'] = '用户主动停止生成'
+                    cancelled_tasks.append(task_id)
+                    log_info(f"标记任务状态为已取消，任务ID: {task_id}", "video")
+        
+        # 延迟清理已取消的任务状态（给运行中的工作流一些时间检查取消状态）
+        def cleanup_cancelled_tasks():
+            import time
+            time.sleep(5)  # 等待5秒
+            for task_id in cancelled_tasks:
+                if task_id in generation_status:
+                    del generation_status[task_id]
+                    log_info(f"延迟清理已取消的任务状态，任务ID: {task_id}", "video")
+        
+        # 在后台线程中执行清理
+        import threading
+        cleanup_thread = threading.Thread(target=cleanup_cancelled_tasks)
+        cleanup_thread.daemon = True
+        cleanup_thread.start()
+        
         log_info(f"用户 {current_user.username} 停止生成成功，返还 {credits_to_return} 额度，当前余额: {current_user.credits}", "video")
+        
+        # 启动下一个队列任务（如果存在）
+        import threading
+        thread = threading.Thread(target=process_next_queue_task, args=(current_user.id,))
+        thread.daemon = True
+        thread.start()
+        log_info(f"已启动线程检查下一个队列任务，用户ID: {current_user.id}", "video")
         
         return jsonify({
             'success': True, 
@@ -2722,6 +2808,12 @@ def admin_refresh_monthly_credits():
         flash(f'刷新失败：{str(e)}', 'danger')
     
     return redirect(url_for('admin_users'))
+
+# 会员页面
+@app.route('/membership')
+def membership():
+    """开通会员页面"""
+    return render_template('membership.html')
 
 # 联系我们页面
 @app.route('/contact', methods=['GET', 'POST'])

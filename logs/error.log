@@ -982,3 +982,610 @@ Traceback (most recent call last):
   File "/Users/zhusisi/CascadeProjects/VideoMaker/service/work_flow_service.py", line 226, in check_cancellation
     raise Exception("任务被用户主动取消")
 Exception: 任务被用户主动取消
+[2025-07-18 12:14:10,308] [ERROR] [logger:61] - 查询视频状态出错 - 视频ID: 44, 错误: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+[2025-07-18 12:15:19,094] [ERROR] [logger:61] - 队列视频生成任务失败: 任务被用户主动取消
+Traceback (most recent call last):
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/app.py", line 320, in queue_task
+    result = asyncio.run(run_work_flow_v3_with_progress(
+        text=next_task.prompt,
+    ...<11 lines>...
+        generation_status=generation_status
+    ))
+  File "/opt/homebrew/Cellar/python@3.13/3.13.3/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ~~~~~~~~~~^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.3/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.3/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py", line 719, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/service/work_flow_service.py", line 421, in run_work_flow_v3_with_progress
+    raise e
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/service/work_flow_service.py", line 262, in run_work_flow_v3_with_progress
+    check_cancellation()
+    ~~~~~~~~~~~~~~~~~~^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/service/work_flow_service.py", line 226, in check_cancellation
+    raise Exception("任务被用户主动取消")
+Exception: 任务被用户主动取消
+[2025-07-18 13:51:10,655] [ERROR] [logger:61] - 队列视频生成任务失败: 任务被用户主动取消
+Traceback (most recent call last):
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/app.py", line 320, in queue_task
+    result = asyncio.run(run_work_flow_v3_with_progress(
+        text=next_task.prompt,
+    ...<11 lines>...
+        generation_status=generation_status
+    ))
+  File "/opt/homebrew/Cellar/python@3.13/3.13.3/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ~~~~~~~~~~^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.3/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.3/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py", line 719, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/service/work_flow_service.py", line 421, in run_work_flow_v3_with_progress
+    raise e
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/service/work_flow_service.py", line 262, in run_work_flow_v3_with_progress
+    check_cancellation()
+    ~~~~~~~~~~~~~~~~~~^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/service/work_flow_service.py", line 226, in check_cancellation
+    raise Exception("任务被用户主动取消")
+Exception: 任务被用户主动取消
+[2025-07-18 13:56:36,705] [ERROR] [logger:61] - 查询视频状态出错 - 视频ID: 45, 错误: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+[2025-07-18 13:57:27,926] [ERROR] [logger:61] - 队列视频生成任务失败: 任务被用户主动取消
+Traceback (most recent call last):
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/app.py", line 320, in queue_task
+    result = asyncio.run(run_work_flow_v3_with_progress(
+        text=next_task.prompt,
+    ...<11 lines>...
+        generation_status=generation_status
+    ))
+  File "/opt/homebrew/Cellar/python@3.13/3.13.3/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ~~~~~~~~~~^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.3/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.3/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py", line 719, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/service/work_flow_service.py", line 421, in run_work_flow_v3_with_progress
+    raise e
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/service/work_flow_service.py", line 336, in run_work_flow_v3_with_progress
+    check_cancellation()
+    ~~~~~~~~~~~~~~~~~~^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/service/work_flow_service.py", line 226, in check_cancellation
+    raise Exception("任务被用户主动取消")
+Exception: 任务被用户主动取消
+[2025-07-18 14:01:50,348] [ERROR] [logger:61] - 队列视频生成任务失败: Connection error.
+Traceback (most recent call last):
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/httpx/_transports/default.py", line 101, in map_httpcore_exceptions
+    yield
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/httpx/_transports/default.py", line 250, in handle_request
+    resp = self._pool.handle_request(req)
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/httpcore/_sync/connection_pool.py", line 256, in handle_request
+    raise exc from None
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/httpcore/_sync/connection_pool.py", line 236, in handle_request
+    response = connection.handle_request(
+        pool_request.request
+    )
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/httpcore/_sync/http_proxy.py", line 288, in handle_request
+    connect_response = self._connection.handle_request(
+        connect_request
+    )
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/httpcore/_sync/connection.py", line 101, in handle_request
+    raise exc
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/httpcore/_sync/connection.py", line 78, in handle_request
+    stream = self._connect(request)
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/httpcore/_sync/connection.py", line 124, in _connect
+    stream = self._network_backend.connect_tcp(**kwargs)
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/httpcore/_backends/sync.py", line 207, in connect_tcp
+    with map_exceptions(exc_map):
+         ~~~~~~~~~~~~~~^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.3/Frameworks/Python.framework/Versions/3.13/lib/python3.13/contextlib.py", line 162, in __exit__
+    self.gen.throw(value)
+    ~~~~~~~~~~~~~~^^^^^^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/httpcore/_exceptions.py", line 14, in map_exceptions
+    raise to_exc(exc) from exc
+httpcore.ConnectError: [Errno 61] Connection refused
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/openai/_base_client.py", line 972, in request
+    response = self._client.send(
+        request,
+        stream=stream or self._should_stream_response_body(request=request),
+        **kwargs,
+    )
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/httpx/_client.py", line 914, in send
+    response = self._send_handling_auth(
+        request,
+    ...<2 lines>...
+        history=[],
+    )
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/httpx/_client.py", line 942, in _send_handling_auth
+    response = self._send_handling_redirects(
+        request,
+        follow_redirects=follow_redirects,
+        history=history,
+    )
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/httpx/_client.py", line 979, in _send_handling_redirects
+    response = self._send_single_request(request)
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/httpx/_client.py", line 1014, in _send_single_request
+    response = transport.handle_request(request)
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/httpx/_transports/default.py", line 249, in handle_request
+    with map_httpcore_exceptions():
+         ~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.3/Frameworks/Python.framework/Versions/3.13/lib/python3.13/contextlib.py", line 162, in __exit__
+    self.gen.throw(value)
+    ~~~~~~~~~~~~~~^^^^^^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/httpx/_transports/default.py", line 118, in map_httpcore_exceptions
+    raise mapped_exc(message) from exc
+httpx.ConnectError: [Errno 61] Connection refused
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/app.py", line 320, in queue_task
+    result = asyncio.run(run_work_flow_v3_with_progress(
+        text=next_task.prompt,
+    ...<11 lines>...
+        generation_status=generation_status
+    ))
+  File "/opt/homebrew/Cellar/python@3.13/3.13.3/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ~~~~~~~~~~^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.3/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.3/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py", line 719, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/service/work_flow_service.py", line 421, in run_work_flow_v3_with_progress
+    raise e
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/service/work_flow_service.py", line 257, in run_work_flow_v3_with_progress
+    work_flow_record = await func_and_retry_parse_json(text, script_service.generate_json_script_from_prompt, json_retry_times)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/utility.py", line 466, in func_and_retry_parse_json
+    work_flow_record = func(text, **kwargs)
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/service/script_service.py", line 152, in generate_json_script_from_prompt
+    content = self.llm.generate(messages, **config)
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/service/ai_service.py", line 63, in generate
+    response = self.client.chat.completions.create(
+        model=self.model_str,
+        messages=messages,
+        **kwargs
+    )
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/openai/_utils/_utils.py", line 287, in wrapper
+    return func(*args, **kwargs)
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/openai/resources/chat/completions/completions.py", line 925, in create
+    return self._post(
+           ~~~~~~~~~~^
+        "/chat/completions",
+        ^^^^^^^^^^^^^^^^^^^^
+    ...<43 lines>...
+        stream_cls=Stream[ChatCompletionChunk],
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/openai/_base_client.py", line 1249, in post
+    return cast(ResponseT, self.request(cast_to, opts, stream=stream, stream_cls=stream_cls))
+                           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/openai/_base_client.py", line 1004, in request
+    raise APIConnectionError(request=request) from err
+openai.APIConnectionError: Connection error.
+[2025-07-18 14:05:51,176] [ERROR] [logger:61] - 查询视频状态出错 - 视频ID: 47, 错误: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+[2025-07-18 14:07:05,260] [ERROR] [logger:61] - 查询视频状态出错 - 视频ID: 49, 错误: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+[2025-07-18 14:08:10,713] [ERROR] [logger:61] - 查询视频状态出错 - 视频ID: 49, 错误: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+[2025-07-18 14:08:12,935] [ERROR] [logger:61] - 查询视频状态出错 - 视频ID: 49, 错误: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+[2025-07-18 14:18:04,569] [ERROR] [logger:61] - 查询视频状态出错 - 视频ID: 51, 错误: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+[2025-07-18 14:18:26,902] [ERROR] [logger:61] - 队列视频生成任务失败: 任务被用户主动取消
+Traceback (most recent call last):
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/app.py", line 320, in queue_task
+    result = asyncio.run(run_work_flow_v3_with_progress(
+        text=next_task.prompt,
+    ...<11 lines>...
+        generation_status=generation_status
+    ))
+  File "/opt/homebrew/Cellar/python@3.13/3.13.3/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ~~~~~~~~~~^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.3/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.3/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py", line 719, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/service/work_flow_service.py", line 421, in run_work_flow_v3_with_progress
+    raise e
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/service/work_flow_service.py", line 262, in run_work_flow_v3_with_progress
+    check_cancellation()
+    ~~~~~~~~~~~~~~~~~~^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/service/work_flow_service.py", line 226, in check_cancellation
+    raise Exception("任务被用户主动取消")
+Exception: 任务被用户主动取消
+[2025-07-18 14:35:02,727] [ERROR] [logger:61] - 查询视频状态出错 - 视频ID: 53, 错误: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+[2025-07-18 14:35:24,474] [ERROR] [logger:61] - 队列视频生成任务失败: Request timed out.
+Traceback (most recent call last):
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/httpx/_transports/default.py", line 101, in map_httpcore_exceptions
+    yield
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/httpx/_transports/default.py", line 250, in handle_request
+    resp = self._pool.handle_request(req)
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/httpcore/_sync/connection_pool.py", line 256, in handle_request
+    raise exc from None
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/httpcore/_sync/connection_pool.py", line 236, in handle_request
+    response = connection.handle_request(
+        pool_request.request
+    )
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/httpcore/_sync/http_proxy.py", line 316, in handle_request
+    stream = stream.start_tls(**kwargs)
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/httpcore/_sync/http11.py", line 376, in start_tls
+    return self._stream.start_tls(ssl_context, server_hostname, timeout)
+           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/httpcore/_backends/sync.py", line 154, in start_tls
+    with map_exceptions(exc_map):
+         ~~~~~~~~~~~~~~^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.3/Frameworks/Python.framework/Versions/3.13/lib/python3.13/contextlib.py", line 162, in __exit__
+    self.gen.throw(value)
+    ~~~~~~~~~~~~~~^^^^^^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/httpcore/_exceptions.py", line 14, in map_exceptions
+    raise to_exc(exc) from exc
+httpcore.ConnectTimeout: _ssl.c:1011: The handshake operation timed out
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/openai/_base_client.py", line 972, in request
+    response = self._client.send(
+        request,
+        stream=stream or self._should_stream_response_body(request=request),
+        **kwargs,
+    )
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/httpx/_client.py", line 914, in send
+    response = self._send_handling_auth(
+        request,
+    ...<2 lines>...
+        history=[],
+    )
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/httpx/_client.py", line 942, in _send_handling_auth
+    response = self._send_handling_redirects(
+        request,
+        follow_redirects=follow_redirects,
+        history=history,
+    )
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/httpx/_client.py", line 979, in _send_handling_redirects
+    response = self._send_single_request(request)
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/httpx/_client.py", line 1014, in _send_single_request
+    response = transport.handle_request(request)
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/httpx/_transports/default.py", line 249, in handle_request
+    with map_httpcore_exceptions():
+         ~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.3/Frameworks/Python.framework/Versions/3.13/lib/python3.13/contextlib.py", line 162, in __exit__
+    self.gen.throw(value)
+    ~~~~~~~~~~~~~~^^^^^^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/httpx/_transports/default.py", line 118, in map_httpcore_exceptions
+    raise mapped_exc(message) from exc
+httpx.ConnectTimeout: _ssl.c:1011: The handshake operation timed out
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/app.py", line 320, in queue_task
+    result = asyncio.run(run_work_flow_v3_with_progress(
+        text=next_task.prompt,
+    ...<11 lines>...
+        generation_status=generation_status
+    ))
+  File "/opt/homebrew/Cellar/python@3.13/3.13.3/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ~~~~~~~~~~^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.3/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.3/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py", line 719, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/service/work_flow_service.py", line 421, in run_work_flow_v3_with_progress
+    raise e
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/service/work_flow_service.py", line 257, in run_work_flow_v3_with_progress
+    work_flow_record = await func_and_retry_parse_json(text, script_service.generate_json_script_from_prompt, json_retry_times)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/utility.py", line 466, in func_and_retry_parse_json
+    work_flow_record = func(text, **kwargs)
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/service/script_service.py", line 152, in generate_json_script_from_prompt
+    content = self.llm.generate(messages, **config)
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/service/ai_service.py", line 63, in generate
+    response = self.client.chat.completions.create(
+        model=self.model_str,
+        messages=messages,
+        **kwargs
+    )
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/openai/_utils/_utils.py", line 287, in wrapper
+    return func(*args, **kwargs)
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/openai/resources/chat/completions/completions.py", line 925, in create
+    return self._post(
+           ~~~~~~~~~~^
+        "/chat/completions",
+        ^^^^^^^^^^^^^^^^^^^^
+    ...<43 lines>...
+        stream_cls=Stream[ChatCompletionChunk],
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/openai/_base_client.py", line 1249, in post
+    return cast(ResponseT, self.request(cast_to, opts, stream=stream, stream_cls=stream_cls))
+                           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/openai/_base_client.py", line 990, in request
+    raise APITimeoutError(request=request) from err
+openai.APITimeoutError: Request timed out.
+[2025-07-18 14:35:53,960] [ERROR] [logger:61] - 队列视频生成任务失败: Connection error.
+Traceback (most recent call last):
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/httpx/_transports/default.py", line 101, in map_httpcore_exceptions
+    yield
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/httpx/_transports/default.py", line 250, in handle_request
+    resp = self._pool.handle_request(req)
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/httpcore/_sync/connection_pool.py", line 256, in handle_request
+    raise exc from None
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/httpcore/_sync/connection_pool.py", line 236, in handle_request
+    response = connection.handle_request(
+        pool_request.request
+    )
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/httpcore/_sync/http_proxy.py", line 297, in handle_request
+    raise ProxyError(msg)
+httpcore.ProxyError: 503 Service Unavailable
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/openai/_base_client.py", line 972, in request
+    response = self._client.send(
+        request,
+        stream=stream or self._should_stream_response_body(request=request),
+        **kwargs,
+    )
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/httpx/_client.py", line 914, in send
+    response = self._send_handling_auth(
+        request,
+    ...<2 lines>...
+        history=[],
+    )
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/httpx/_client.py", line 942, in _send_handling_auth
+    response = self._send_handling_redirects(
+        request,
+        follow_redirects=follow_redirects,
+        history=history,
+    )
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/httpx/_client.py", line 979, in _send_handling_redirects
+    response = self._send_single_request(request)
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/httpx/_client.py", line 1014, in _send_single_request
+    response = transport.handle_request(request)
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/httpx/_transports/default.py", line 249, in handle_request
+    with map_httpcore_exceptions():
+         ~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.3/Frameworks/Python.framework/Versions/3.13/lib/python3.13/contextlib.py", line 162, in __exit__
+    self.gen.throw(value)
+    ~~~~~~~~~~~~~~^^^^^^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/httpx/_transports/default.py", line 118, in map_httpcore_exceptions
+    raise mapped_exc(message) from exc
+httpx.ProxyError: 503 Service Unavailable
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/app.py", line 320, in queue_task
+    result = asyncio.run(run_work_flow_v3_with_progress(
+        text=next_task.prompt,
+    ...<11 lines>...
+        generation_status=generation_status
+    ))
+  File "/opt/homebrew/Cellar/python@3.13/3.13.3/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ~~~~~~~~~~^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.3/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.3/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py", line 719, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/service/work_flow_service.py", line 421, in run_work_flow_v3_with_progress
+    raise e
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/service/work_flow_service.py", line 257, in run_work_flow_v3_with_progress
+    work_flow_record = await func_and_retry_parse_json(text, script_service.generate_json_script_from_prompt, json_retry_times)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/utility.py", line 466, in func_and_retry_parse_json
+    work_flow_record = func(text, **kwargs)
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/service/script_service.py", line 152, in generate_json_script_from_prompt
+    content = self.llm.generate(messages, **config)
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/service/ai_service.py", line 63, in generate
+    response = self.client.chat.completions.create(
+        model=self.model_str,
+        messages=messages,
+        **kwargs
+    )
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/openai/_utils/_utils.py", line 287, in wrapper
+    return func(*args, **kwargs)
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/openai/resources/chat/completions/completions.py", line 925, in create
+    return self._post(
+           ~~~~~~~~~~^
+        "/chat/completions",
+        ^^^^^^^^^^^^^^^^^^^^
+    ...<43 lines>...
+        stream_cls=Stream[ChatCompletionChunk],
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/openai/_base_client.py", line 1249, in post
+    return cast(ResponseT, self.request(cast_to, opts, stream=stream, stream_cls=stream_cls))
+                           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/openai/_base_client.py", line 1004, in request
+    raise APIConnectionError(request=request) from err
+openai.APIConnectionError: Connection error.
+[2025-07-18 14:53:05,563] [ERROR] [logger:61] - 查询视频状态出错 - 视频ID: 54, 错误: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+[2025-07-18 14:53:05,597] [ERROR] [logger:61] - 查询视频状态出错 - 视频ID: 54, 错误: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+[2025-07-18 15:22:43,087] [ERROR] [logger:61] - 查询视频状态出错 - 视频ID: 55, 错误: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+[2025-07-18 15:24:16,038] [ERROR] [logger:61] - 队列视频生成任务失败: 智谱AI图片生成失败: cannot schedule new futures after shutdown
+Traceback (most recent call last):
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/service/ai_service.py", line 148, in generate
+    response = await asyncio.to_thread(
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<5 lines>...
+    )
+    ^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.3/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/threads.py", line 25, in to_thread
+    return await loop.run_in_executor(None, func_call)
+                 ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.3/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py", line 895, in run_in_executor
+    executor.submit(func, *args), loop=self)
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.3/Frameworks/Python.framework/Versions/3.13/lib/python3.13/concurrent/futures/thread.py", line 171, in submit
+    raise RuntimeError('cannot schedule new futures after shutdown')
+RuntimeError: cannot schedule new futures after shutdown
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/app.py", line 335, in queue_task
+    result = asyncio.run(run_work_flow_v3_with_progress(
+        text=next_task.prompt,
+    ...<11 lines>...
+        generation_status=generation_status
+    ))
+  File "/opt/homebrew/Cellar/python@3.13/3.13.3/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ~~~~~~~~~~^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.3/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.3/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py", line 719, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/service/work_flow_service.py", line 421, in run_work_flow_v3_with_progress
+    raise e
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/service/work_flow_service.py", line 321, in run_work_flow_v3_with_progress
+    work_flow_record = await generate_picture_from_json(
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<8 lines>...
+    )
+    ^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/workflow.py", line 64, in generate_picture_from_json
+    image_url = await picture_generate_service.generate_picture_from_json(
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/service/picture_generate_service.py", line 57, in generate_picture_from_json
+    return await self.image_model.generate(prompt, size)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/service/ai_service.py", line 158, in generate
+    raise ValueError(f"智谱AI图片生成失败: {str(e)}")
+ValueError: 智谱AI图片生成失败: cannot schedule new futures after shutdown
+[2025-07-18 15:32:09,689] [ERROR] [logger:61] - 查询视频状态出错 - 视频ID: 61, 错误: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+[2025-07-18 15:32:10,224] [ERROR] [logger:61] - 查询视频状态出错 - 视频ID: 61, 错误: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+[2025-07-18 15:32:44,300] [ERROR] [logger:61] - 查询视频状态出错 - 视频ID: 61, 错误: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+[2025-07-18 16:23:24,038] [ERROR] [logger:61] - 查询视频状态出错 - 视频ID: 61, 错误: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+[2025-07-18 16:23:31,639] [ERROR] [logger:61] - 查询视频状态出错 - 视频ID: 61, 错误: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+[2025-07-19 15:00:08,754] [ERROR] [logger:61] - 队列视频生成任务失败: 任务被用户主动取消
+Traceback (most recent call last):
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/app.py", line 335, in queue_task
+    result = asyncio.run(run_work_flow_v3_with_progress(
+        text=next_task.prompt,
+    ...<11 lines>...
+        generation_status=generation_status
+    ))
+  File "/opt/homebrew/Cellar/python@3.13/3.13.3/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ~~~~~~~~~~^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.3/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.3/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py", line 719, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/service/work_flow_service.py", line 427, in run_work_flow_v3_with_progress
+    raise e
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/service/work_flow_service.py", line 257, in run_work_flow_v3_with_progress
+    work_flow_record = await func_and_retry_parse_json(text, script_service.generate_json_script_from_prompt, json_retry_times, task_id=task_id, generation_status=generation_status)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/utility.py", line 484, in func_and_retry_parse_json
+    check_cancellation()
+    ~~~~~~~~~~~~~~~~~~^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/utility.py", line 472, in check_cancellation
+    raise Exception("任务被用户主动取消")
+Exception: 任务被用户主动取消
+[2025-08-07 16:46:26,770] [ERROR] [logger:61] - 队列视频生成任务失败: API调用失败: {'id': '04e39ae2c5836d54f28da5d5c1dd3775', 'data': None, 'base_resp': {'status_code': 2013, 'status_msg': 'invalid params, prompt length must be less than 1500'}}
+Traceback (most recent call last):
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/app.py", line 335, in queue_task
+    result = asyncio.run(run_work_flow_v3_with_progress(
+        text=next_task.prompt,
+    ...<11 lines>...
+        generation_status=generation_status
+    ))
+  File "/opt/homebrew/Cellar/python@3.13/3.13.3/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ~~~~~~~~~~^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.3/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.3/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py", line 719, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/service/work_flow_service.py", line 427, in run_work_flow_v3_with_progress
+    raise e
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/service/work_flow_service.py", line 321, in run_work_flow_v3_with_progress
+    work_flow_record = await generate_picture_from_json(
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<10 lines>...
+    )
+    ^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/workflow.py", line 79, in generate_picture_from_json
+    image_url = await picture_generate_service.generate_picture_from_json(
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/service/picture_generate_service.py", line 60, in generate_picture_from_json
+    return await self.image_model.generate(prompt, size)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/service/ai_service.py", line 259, in generate
+    raise ValueError(f"API调用失败: {response_data}")
+ValueError: API调用失败: {'id': '04e39ae2c5836d54f28da5d5c1dd3775', 'data': None, 'base_resp': {'status_code': 2013, 'status_msg': 'invalid params, prompt length must be less than 1500'}}
+[2025-08-08 11:25:19,899] [ERROR] [logger:61] - 队列视频生成任务失败: API调用失败: {'id': '04e4a11fd81456a68170e4cd39f0ba6e', 'data': None, 'base_resp': {'status_code': 2013, 'status_msg': 'invalid params, prompt length must be less than 1500'}}
+Traceback (most recent call last):
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/app.py", line 335, in queue_task
+    result = asyncio.run(run_work_flow_v3_with_progress(
+        text=next_task.prompt,
+    ...<11 lines>...
+        generation_status=generation_status
+    ))
+  File "/opt/homebrew/Cellar/python@3.13/3.13.3/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ~~~~~~~~~~^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.3/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.3/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py", line 719, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/service/work_flow_service.py", line 427, in run_work_flow_v3_with_progress
+    raise e
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/service/work_flow_service.py", line 321, in run_work_flow_v3_with_progress
+    work_flow_record = await generate_picture_from_json(
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<10 lines>...
+    )
+    ^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/workflow.py", line 79, in generate_picture_from_json
+    image_url = await picture_generate_service.generate_picture_from_json(
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/service/picture_generate_service.py", line 60, in generate_picture_from_json
+    return await self.image_model.generate(prompt, size)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/service/ai_service.py", line 259, in generate
+    raise ValueError(f"API调用失败: {response_data}")
+ValueError: API调用失败: {'id': '04e4a11fd81456a68170e4cd39f0ba6e', 'data': None, 'base_resp': {'status_code': 2013, 'status_msg': 'invalid params, prompt length must be less than 1500'}}

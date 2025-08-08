@@ -17,6 +17,9 @@ from static.model_info import ZHIPU_MODELS, DASHSCOPE_MODELS, DEEPSEEK_MODELS, G
 import asyncio
 import tempfile
 import json
+import base64
+from PIL import Image
+from io import BytesIO
 
 
 load_dotenv()
@@ -129,6 +132,12 @@ class ImageModelService:
                 raise ValueError("GEMINI_API_KEY not found in environment variables")
             self.client = genai.Client(api_key=self.api_key)
             self.model_str = model_str
+        elif model_str in MINIMAX_MODELS:
+            self.api_key = os.environ.get("MINIMAX_API_KEY")
+            self.group_id = os.environ.get("MINIMAX_GROUP_ID")
+            if not self.api_key or not self.group_id:
+                raise ValueError("MINIMAX_API_KEY and MINIMAX_GROUP_ID must be set in environment variables")
+            self.model_str = model_str
         else:
             raise ValueError("Model not found")
         
@@ -198,6 +207,58 @@ class ImageModelService:
                 elif part.inline_data is not None:
                     image = Image.open(BytesIO((part.inline_data.data)))
                     return image
+                
+        elif self.model_str in MINIMAX_MODELS:
+            # 计算"aspect_ratio"，将size参数比如“1024x768"或者“1024*768”转换为类似“1:1”，“16:9”比例表示
+            if "x" in size:
+                width, height = size.split("x")
+            else:
+                width, height = size.split("*")
+
+            url = "https://api.minimax.chat/v1/image_generation"
+            api_key=self.api_key
+
+            payload = json.dumps({
+            "model": self.model_str, 
+            "prompt": prompt,
+            "response_format": "url",
+            "width": int(width),
+            "height": int(height),
+            "n": 1,
+            "prompt_optimizer": False
+            })
+            headers = {
+                'Authorization': f'Bearer {api_key}',
+                'Content-Type': 'application/json',
+                'X-Minimax-Group-Id': self.group_id
+            }
+
+            response = requests.request("POST", url, headers=headers, data=payload)
+            response_data = response.json()
+            
+            # 打印响应状态和图片信息
+            print(f"MiniMax API status_code: {response_data.get('base_resp', {}).get('status_code')}")
+            print(f"MiniMax API status_msg: {response_data.get('base_resp', {}).get('status_msg')}")
+            
+            # 根据API文档，返回格式应该是 data.image_urls 数组
+            if response_data.get("base_resp", {}).get("status_code") == 0:
+                if "data" in response_data and "image_urls" in response_data["data"]:
+                    image_urls = response_data["data"]["image_urls"]
+                    print(f"返回图片数量: {len(image_urls)}")
+                    
+                    # 因为设置了 n=1，只会返回一张图片
+                    if len(image_urls) > 0:
+                        image_url = image_urls[0]
+                        print(f"图片URL: {image_url}")
+                        return image_url
+                    else:
+                        raise ValueError(f"API未返回图片URL: {response_data}")
+                else:
+                    raise ValueError(f"API响应格式异常: {response_data}")
+            else:
+                raise ValueError(f"API调用失败: {response_data}")
+
+
         else:
             raise ValueError("Model not found")
         
@@ -212,6 +273,30 @@ class ImageModelService:
                 image_or_url.save(file_path)
         elif self.model_str in GEMINI_MODELS:
             image_or_url.save(file_path)
+        elif self.model_str in MINIMAX_MODELS:
+            # 处理URL下载
+            if isinstance(image_or_url, str):
+                if image_or_url.startswith('http'):
+                    # 从URL下载图片
+                    print(f"从URL下载图片: {image_or_url}")
+                    response = requests.get(image_or_url)
+                    if response.status_code == 200:
+                        image = Image.open(BytesIO(response.content))
+                        image.save(file_path)
+                        print(f"MiniMax图片下载并保存成功: {file_path}")
+                    else:
+                        raise ValueError(f"下载图片失败，HTTP状态码: {response.status_code}")
+                else:
+                    # 如果不是URL，可能是base64数据（向后兼容）
+                    try:
+                        image_data = base64.b64decode(image_or_url)
+                        image = Image.open(BytesIO(image_data))
+                        image.save(file_path)
+                        print(f"MiniMax图片（base64）保存成功: {file_path}")
+                    except Exception as e:
+                        raise ValueError(f"无法处理图片数据，既不是URL也不是有效的base64: {e}")
+            else:
+                image_or_url.save(file_path)
         else:
             raise ValueError("Model not found")
 

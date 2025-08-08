@@ -67,7 +67,7 @@ def check_ai_services():
             log_error(f"LLM服务初始化失败: {str(e)}")
         
         try:
-            image_model = ImageModelService(model_str="cogview-3-flash")
+            image_model = ImageModelService(model_str="image-01")
             log_info("图片生成服务初始化成功")
         except Exception as e:
             log_error(f"图片生成服务初始化失败: {str(e)}")
@@ -654,7 +654,7 @@ def generate_video_task(prompt, style, user_id, video_id, mode='prompt'):
             style=style,
             template="通用",  # 默认模板
             llm_model_str="deepseek-reasoner",
-            image_model_str="cogview-3-flash",
+            # image_model_str 使用默认值 "image-01"
             tts_model_str="cosyvoice-v1",
             is_prompt_mode=(mode == 'prompt'),
             status_callback=status_callback

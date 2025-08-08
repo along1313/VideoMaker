@@ -648,7 +648,7 @@
                         // 显示成功消息
                         this.$message.success(response.data.message || '任务已创建');
                         // 跳转到统一的任务中心页面
-                        window.location.href = response.data.redirect_url || '/my-tasks';
+                        window.location.href = response.data.redirect_url || '/task-center';
                     } else {
                         this.$message.error(response.data.message || '生成失败');
                         this.isGenerating = false;

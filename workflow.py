@@ -20,6 +20,14 @@ load_dotenv()
 # 字体路径
 FONT_PAHT = "lib/font"
 
+def check_workflow_cancellation(task_id=None, generation_status=None):
+    """检查工作流是否被取消"""
+    if task_id and generation_status and task_id in generation_status:
+        if generation_status[task_id].get('status') == 'cancelled':
+            print(f"[工作流] 检测到任务被取消，任务ID: {task_id}")
+            raise Exception("任务被用户主动取消")
+    return False
+
 async def generate_picture_from_json(work_flow_record: dict, 
                          picture_generate_service: PictureGenerateService, 
                          result_dir: str, 
@@ -27,6 +35,8 @@ async def generate_picture_from_json(work_flow_record: dict,
                          style: str = "黑白矢量图",
                          is_generate_title_picture: bool = False,
                          screen_size: tuple = (1280, 720),
+                         task_id: str = None,
+                         generation_status: dict = None,
                          **kwargs
                         ):
     """
@@ -60,12 +70,21 @@ async def generate_picture_from_json(work_flow_record: dict,
     async with aiohttp.ClientSession() as session:
         # 收集所有图片生成任务
         for index, item in enumerate(content):
+            # 检查是否被取消
+            check_workflow_cancellation(task_id, generation_status)
+            
+            print(f"[图片生成] 正在生成第 {index + 1}/{len(content)} 张图片...")
+            
             # 直接使用work_flow_record和index生成图片，不需要picture_prompt
             image_url = await picture_generate_service.generate_picture_from_json(
                 work_flow_record, 
                 style=style, 
                 index_number=index
             )
+            
+            # 再次检查是否被取消
+            check_workflow_cancellation(task_id, generation_status)
+            
             image_path = os.path.join(result_dir, f"{index}_0.png")
             # 创建下载任务
             task = download_and_save_image(session, image_url, image_path)
@@ -348,6 +367,8 @@ def generate_audio(
         voice_name: str="default",
         pitch_rate: float=1.0,
         is_generate_title_audio: bool=False,
+        task_id: str = None,
+        generation_status: dict = None,
         **kwargs
         ):
     """
@@ -385,9 +406,18 @@ def generate_audio(
     # 生成音频
     content = work_flow_record['content']
     for index, item in enumerate(content):
+        # 检查是否被取消
+        check_workflow_cancellation(task_id, generation_status)
+        
+        print(f"[音频生成] 正在生成第 {index + 1}/{len(content)} 段音频...")
+        
         text = item['voice_text']
         audio_path = os.path.join(result_dir, f"{index}.mp3")
         audio = tts_model.generate(text, voice_name=voice_name, pitch_rate=pitch_rate)
+        
+        # 再次检查是否被取消
+        check_workflow_cancellation(task_id, generation_status)
+        
         tts_model.save_audio(audio, audio_path)
 
         new_work_flow_record['content'][index]['audio_path'] = audio_path
@@ -466,7 +496,9 @@ def generate_video(
     bg_pic_path = None, 
     bgm_path = None, 
     is_display_title = True, 
-    is_need_ad_end = False,):
+    is_need_ad_end = False,
+    task_id = None,
+    generation_status = None,):
     """
     生成视频的函数
 
@@ -481,6 +513,11 @@ def generate_video(
     ImageClip: 背景图片剪辑对象
     """
 
+    # 检查是否被取消
+    check_workflow_cancellation(task_id, generation_status)
+    
+    print("[视频生成] 正在初始化视频配置...")
+    
     config = STYLE_CONFIG.get(style)
     if config is None:
         config = STYLE_CONFIG['绘本']
@@ -493,6 +530,11 @@ def generate_video(
     
     video_duration = work_flow_record['content'][-1]['voice_time'][0]+work_flow_record['content'][-1]['voice_time'][1]
 
+    # 检查是否被取消
+    check_workflow_cancellation(task_id, generation_status)
+    
+    print("[视频生成] 正在初始化背景图片...")
+    
     # 初始化背景图片
     if bg_pic_path is None:
         bg_clip = ColorClip(size=screan_size, color=(255, 255, 255), duration=video_duration)
@@ -508,9 +550,19 @@ def generate_video(
             title_img_clip = ImageClip(title_img_path).with_start(work_flow_record['title_time'][0]).with_duration(work_flow_record['title_time'][1]+1).resized(template_config['config']['title_picture_resize']).with_position(('center', 'center'))
             img_clips.append(title_img_clip)
 
+    # 检查是否被取消
+    check_workflow_cancellation(task_id, generation_status)
+    
+    print("[视频生成] 正在处理视频内容...")
+    
     # 生成图片剪辑
     int_direction = "up"
     for index, item in enumerate(work_flow_record['content']):
+        # 检查是否被取消
+        check_workflow_cancellation(task_id, generation_status)
+        
+        print(f"[视频生成] 正在处理第 {index + 1}/{len(work_flow_record['content'])} 个内容片段...")
+        
         for i in range(len(item['picture_path'])):
             img_path = item['picture_path'][i]
             img_clip = ImageClip(img_path).with_start(item['picture_time'][i][0]).with_duration(item['picture_time'][i][1])
@@ -520,7 +572,8 @@ def generate_video(
                 img_clip = img_clip.with_position(('center', 'center')).resized(config['img_resize'])
             img_clips.append(img_clip)
             if int_direction == "up":
-                int_direction = "down"
+                #这里做了修改，保持总是向上滑动
+                int_direction = "up"
             else:
                 int_direction = "up"
     
@@ -653,7 +706,12 @@ def generate_video(
     output_path = os.path.join(result_dir, "output.mp4")
     final_clip.write_videofile(output_path, fps=24, preset="superfast",threads=2, codec="libx264", audio_codec="aac")
 
-def generate_cover(work_flow_record, project_dir, **kwargs):   
+def generate_cover(work_flow_record, project_dir, task_id=None, generation_status=None, **kwargs):   
+    # 检查是否被取消
+    check_workflow_cancellation(task_id, generation_status)
+    
+    print("[封面生成] 正在生成封面...")
+    
     text = work_flow_record['title']
     cover_image_path = os.path.join(project_dir, "images", "0_0.png")
     cover_dir = os.path.join(project_dir, "covers")

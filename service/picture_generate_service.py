@@ -34,10 +34,13 @@ class PictureGenerateService:
         :return: 生成的图片URL
         """
         system_prompt_part1 = """
-        请根据以下表示分镜信息的JSON文本中对应的"index"的"voice_text"内容生成与voice_text内容协调的图片。
+        请根据以下视频脚本JSON文本中,对应的"index"中的"image_description"内容，生成与此分镜对应的“image_description”内容一致的图片。
+        请注意，你首先根据index编号提取image_description内容，然后再参考整个本JSON脚本文本主体内容，生成与提取的“image_description”一致的图片。
+        如果"main_character_description"字段不为空，请参考其中描述的主要角色，以及角色出场的场景编号。
+        图片风格要求为：
         """
         system_prompt_part2 = """
-        你现在要生成index:{index_number}对应的voice_text内容。JSON文本为：
+        你现在要生成index:{index_number}对应的“image_description”内容。JSON文本为：
         """
         system_prompt_part2 = system_prompt_part2.format(index_number=index_number)
 

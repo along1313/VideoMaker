@@ -254,9 +254,9 @@ async def run_work_flow_v3_with_progress(
         
         # 生成脚本
         if is_prompt_mode == True:
-            work_flow_record = await func_and_retry_parse_json(text, script_service.generate_json_script_from_prompt, json_retry_times)
+            work_flow_record = await func_and_retry_parse_json(text, script_service.generate_json_script_from_prompt, json_retry_times, task_id=task_id, generation_status=generation_status)
         else:
-            work_flow_record = await func_and_retry_parse_json(text, script_service.generate_json_script_from_text, json_retry_times)
+            work_flow_record = await func_and_retry_parse_json(text, script_service.generate_json_script_from_text, json_retry_times, task_id=task_id, generation_status=generation_status)
         
         # 检查取消状态 - 脚本生成后
         check_cancellation()
@@ -324,7 +324,9 @@ async def run_work_flow_v3_with_progress(
             image_dir, 
             style=style,
             title_font_path=title_font_path,
-            screen_size=screan_size,      
+            screen_size=screan_size,
+            task_id=task_id,
+            generation_status=generation_status,
             **template_config,
             **kwargs
         )
@@ -347,6 +349,8 @@ async def run_work_flow_v3_with_progress(
             work_flow_record, 
             audio_dir, 
             tts_model,
+            task_id=task_id,
+            generation_status=generation_status,
             **template_config,
             **kwargs
         )
@@ -380,7 +384,9 @@ async def run_work_flow_v3_with_progress(
                        bg_pic_path=bg_pic_path,
                        bgm_path=bgm_path,
                        is_display_title=is_display_title,
-                       is_need_ad_end=is_need_ad_end)   
+                       is_need_ad_end=is_need_ad_end,
+                       task_id=task_id,
+                       generation_status=generation_status)   
         print(f'视频生成完成')
 
         # 检查取消状态 - 封面生成前
@@ -393,7 +399,7 @@ async def run_work_flow_v3_with_progress(
         os.makedirs(cover_dir, exist_ok=True)
 
         # 生成封面
-        work_flow_record = generate_cover(work_flow_record, project_dir, font_path=cover_font_path)
+        work_flow_record = generate_cover(work_flow_record, project_dir, font_path=cover_font_path, task_id=task_id, generation_status=generation_status)
         print(f'封面生成完成')
 
         update_progress(6, '视频生成完成！', 100)

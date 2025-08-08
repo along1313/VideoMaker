@@ -157,7 +157,7 @@ def check_service_health():
             print(f"❌ LLM服务实例化失败: {str(e)}")
         
         try:
-            image_model = ImageModelService(model_str="cogview-3-flash")
+            image_model = ImageModelService(model_str="image-01")
             print("✅ 图片生成服务实例化成功")
         except Exception as e:
             print(f"❌ 图片生成服务实例化失败: {str(e)}")

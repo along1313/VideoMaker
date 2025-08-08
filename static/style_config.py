@@ -152,7 +152,7 @@ STYLE_CONFIG = {
         "is_y_slide": True,
     },
     "水墨画": {
-        "img_generate_system_prompt": "--niji 5 --style raw 国画风格，柔和毛笔质感，意境淡雅，构图简洁，纯黑白色彩，中国风格，--no cartoon, anime, photograph, realism, 3D render, modern art, texture, shadow, photo, realistic, depth of field, camera",
+        "img_generate_system_prompt": "生成以下风格的图片，--niji 5 --style raw 国画风格，柔和毛笔质感，意境淡雅，构图简洁，纯黑白色彩，中国风格，--no cartoon, anime, photograph, realism, 3D render, modern art, texture, shadow, photo, realistic, depth of field, camera。",
         "img_size": "1024x1024",
         "img_resize": 1.0,
         "text_color": "white",
@@ -160,7 +160,7 @@ STYLE_CONFIG = {
         "is_y_slide": True,
     },
      "宫崎骏": {
-        "img_generate_system_prompt": "Studio Ghibli style, Hayao Miyazaki aesthetic, soft watercolor textures, pastel color palette (muted greens, golds, lavenders), highly detailed hand-drawn background, gentle dappled sunlight, peaceful and whimsical atmosphere, magical yet nostalgic, calm wind movement, 2D animation masterpiece, --ar 16:9 --style raw --no photorealistic, sharp edges, 3D render, text, signature",
+        "img_generate_system_prompt": "生成以下风格的图片，宫崎骏风格，吉卜力工作室美学，柔和的水彩纹理，柔和的色系调色板，高度细致的手绘背景，宁静而梦幻的氛围，充满魔幻色彩又带有怀旧感，2D动画杰作, 绝对不要出现照片，写实风格--style raw --no photorealistic, sharp edges, 3D render, text, signature",
         "img_size": "1024x1024",
         "img_resize": 1.0,
         "text_color": "white",

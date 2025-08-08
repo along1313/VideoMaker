@@ -453,24 +453,50 @@ def count_text_chars(text_array):
     
     return total_chars
     
-async def func_and_retry_parse_json(text, func, n_retry = 3, **kwargs):
+async def func_and_retry_parse_json(text, func, n_retry = 3, task_id=None, generation_status=None, **kwargs):
     """
     尝试解析JSON，如果失败则重试
     :param text: 将被解析的文本
     :param func: 尝试处理文本为json格式的函数
     :param n_retry: 重试次数
+    :param task_id: 任务ID，用于取消检查
+    :param generation_status: 生成状态字典，用于取消检查
     :param **kwargs: 传递给func的其他参数
     :return: 解析后的JSON
     """
+    def check_cancellation():
+        """检查是否被取消"""
+        if task_id and generation_status and task_id in generation_status:
+            if generation_status[task_id].get('status') == 'cancelled':
+                print(f"[脚本生成] 检测到任务被取消，任务ID: {task_id}")
+                raise Exception("任务被用户主动取消")
+    
+    # 检查取消状态 - LLM调用前
+    check_cancellation()
+    
+    print(f"[脚本生成] 开始调用LLM生成脚本...")
+    
     # 第一次调用时传入所有参数
     work_flow_record = func(text, **kwargs)
+    
     for i in range(n_retry):
+        # 每次重试前检查取消状态
+        check_cancellation()
+        
         try:          
-            return parse_json(work_flow_record)
+            result = parse_json(work_flow_record)
+            print(f"[脚本生成] 脚本生成完成，解析成功")
+            return result
         except Exception as e:
             print(f'结构化失败: {str(e)}, retry {i+1} times')
+            
+            # 重试前再次检查取消状态
+            check_cancellation()
+            
             # 重试时使用上一次生成的结果作为输入
             work_flow_record = func(work_flow_record, **kwargs)
+    
+    print(f"[脚本生成] 经过 {n_retry} 次重试仍然失败")
     return None
 
 def make_blank_audio(duration, output_path, fps=44100):

@@ -25,7 +25,7 @@ class PictureGenerateService:
 
         return await self.image_model.generate(prompt, size)
     
-    async def generate_picture_from_json(self, work_flow_record: dict, style: str = None, index_number: int = None):
+    async def generate_picture_from_json_old(self, work_flow_record: dict, style: str = None, index_number: int = None):
         """
         从工作流记录生成图片
         :param work_flow_record: 工作流记录字典
@@ -62,3 +62,36 @@ class PictureGenerateService:
     async def save_image(self, image_or_url, file_path: str):
         return await self.image_model.save_image(image_or_url, file_path)
     
+    async def generate_picture_from_json(self, work_flow_record: dict, style: str = None, index_number: int = None):
+        """
+        从工作流记录生成图片
+        :param work_flow_record: 工作流记录字典
+        :param style: 图片风格
+        :param index_number: 内容索引
+        :return: 生成的图片URL
+        """
+
+        style_config = STYLE_CONFIG.get(style)  
+        if style_config is None:
+            print(f'未设置风格，使用默认风格')
+            size = "1024x1024"
+        else:
+            self.system_prompt = style_config['img_generate_system_prompt']
+            size = style_config['img_size']
+
+        prompt_image_description = work_flow_record['content'][index_number]['image_description']
+
+        prompt_main_character_description = ""
+        for main_character in work_flow_record['main_character_description']:
+            if index_number in main_character['index']:
+                prompt_main_character_description += main_character['description'] + "\n"
+        if prompt_main_character_description != "":
+            prompt = self.system_prompt + "\n" + "画面描述: " + prompt_image_description + "\n" + "人物描述: " + prompt_main_character_description           
+        else:
+            prompt = self.system_prompt + "\n" + "画面描述: " + prompt_image_description
+        print(f'####test_prompt####')
+        print(prompt)
+        return await self.image_model.generate(prompt, size)
+    
+    async def save_image(self, image_or_url, file_path: str):
+        return await self.image_model.save_image(image_or_url, file_path)

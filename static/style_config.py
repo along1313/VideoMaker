@@ -4,7 +4,7 @@ TEMPLATE_CONFIG = {
         "config": {
             "template": "通用",
             "tts_model_str": "speech-02-turbo",
-            "voice_name": "Chinese (Mandarin)_Wise_Women",
+            "voice_name": "Chinese (Mandarin)_Gentle_Senior",
             "is_generate_title_picture": False,
             "is_generate_title_audio": False,
             "title_picture_resize": 1.0
@@ -44,6 +44,13 @@ TEMPLATE_CONFIG = {
         }
     }
 
+}
+
+TTS_VOICE_CONFIG = {
+    "语音1（男）": "Chinese (Mandarin)_Radio_Host",
+    "语音2（男）": "Chinese (Mandarin)_Lyrical_Voice",
+    "语音3（女）": "Chinese (Mandarin)_Gentle_Senior",
+    "语音4（女）": "Chinese (Mandarin)_Wise_Women",
 }
 
 STYLE_CONFIG = {
@@ -160,7 +167,23 @@ STYLE_CONFIG = {
         "is_y_slide": True,
     },
      "宫崎骏": {
-        "img_generate_system_prompt": "生成以下风格的图片，宫崎骏风格，吉卜力工作室美学，柔和的水彩纹理，柔和的色系调色板，高度细致的手绘背景，宁静而梦幻的氛围，充满魔幻色彩又带有怀旧感，2D动画杰作, 绝对不要出现照片，写实风格--style raw --no photorealistic, sharp edges, 3D render, text, signature",
+        "img_generate_system_prompt": "生成以下风格的图片，宫崎骏风格，吉卜力工作室美学，柔和的水彩纹理，柔和的色系调色板，高度细致的手绘背景，宁静而梦幻的氛围，充满魔幻色彩又带有怀旧感，2D动画杰作, 使用颜色不少于3种 --style raw。 绝对不要出现照片以及写实风格 --no photorealistic, sharp edges, 3D render, text, signature",
+        "img_size": "1024x1024",
+        "img_resize": 1.0,
+        "text_color": "white",
+        "stroke_color": "black",
+        "is_y_slide": True,
+    },
+    "黑白线条": {
+        "img_generate_system_prompt": "生成以下风格的图片，黑白卡通插画风格，扁平化阴影，漫画风，简洁背景，线条清晰，高对比度，分镜头漫画感。",
+        "img_size": "1024x1024",
+        "img_resize": 1.0,
+        "text_color": "white",
+        "stroke_color": "black",
+        "is_y_slide": True,
+    },
+    "平面水彩": {
+        "img_generate_system_prompt": "生成以下风格的图片，卡通插画风格，扁平化阴影，漫画风，简洁背景，线条清晰，单色填充色无渐变，分镜头漫画感，暖色调，使用颜色不少于3种。",
         "img_size": "1024x1024",
         "img_resize": 1.0,
         "text_color": "white",

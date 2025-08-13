@@ -332,6 +332,8 @@ class TTSModelService:
             self.voice_list = [
                 "Chinese (Mandarin)_Lyrical_Voice",
                 "Chinese (Mandarin)_Wise_Women", 
+                "Chinese (Mandarin)_Gentle_Senior",
+                "Chinese (Mandarin)_Radio_Host",
             ]
         else:
             raise ValueError("Model not found")
@@ -372,8 +374,7 @@ class TTSModelService:
             return data
         
         elif self.model_str in MINIMAX_MODELS:
-            if voice_name == "default":
-                voice_name = "Chinese (Mandarin)_Lyrical_Voice"
+            # voice_name 已经从模板配置中正确传递，无需再次覆盖
             return self._generate_minimax_tts(text, voice_name, **kwargs)
         else:
             raise ValueError("Model not found")
@@ -396,8 +397,12 @@ class TTSModelService:
         Returns:
             bytes: 音频数据
         """
-        # 设置默认语音
-        if voice_name == "default" or voice_name not in self.voice_list:
+        # 只在voice_name为"default"且不在语音列表中时使用兜底语音
+        if voice_name == "default":
+            voice_name = "Chinese (Mandarin)_Lyrical_Voice"
+        # 如果配置的语音不在支持列表中，使用兜底语音
+        elif voice_name not in self.voice_list:
+            print(f"警告: 语音 '{voice_name}' 不在支持列表中，使用默认语音")
             voice_name = "Chinese (Mandarin)_Lyrical_Voice"
             
         url = f"https://api.minimax.chat/v1/t2a_v2?GroupId={self.group_id}"

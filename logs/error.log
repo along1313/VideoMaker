@@ -1589,3 +1589,604 @@ Traceback (most recent call last):
   File "/Users/zhusisi/CascadeProjects/VideoMaker/service/ai_service.py", line 259, in generate
     raise ValueError(f"API调用失败: {response_data}")
 ValueError: API调用失败: {'id': '04e4a11fd81456a68170e4cd39f0ba6e', 'data': None, 'base_resp': {'status_code': 2013, 'status_msg': 'invalid params, prompt length must be less than 1500'}}
+[2025-08-11 09:30:39,432] [ERROR] [logger:61] - 队列视频生成任务失败: string indices must be integers, not 'str'
+Traceback (most recent call last):
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/app.py", line 335, in queue_task
+    result = asyncio.run(run_work_flow_v3_with_progress(
+        text=next_task.prompt,
+    ...<11 lines>...
+        generation_status=generation_status
+    ))
+  File "/opt/homebrew/Cellar/python@3.13/3.13.3/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ~~~~~~~~~~^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.3/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.3/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py", line 719, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/service/work_flow_service.py", line 427, in run_work_flow_v3_with_progress
+    raise e
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/service/work_flow_service.py", line 321, in run_work_flow_v3_with_progress
+    work_flow_record = await generate_picture_from_json(
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<10 lines>...
+    )
+    ^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/workflow.py", line 79, in generate_picture_from_json
+    image_url = await picture_generate_service.generate_picture_from_json(
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/service/picture_generate_service.py", line 86, in generate_picture_from_json
+    if index_number in main_character['index']:
+                       ~~~~~~~~~~~~~~^^^^^^^^^
+TypeError: string indices must be integers, not 'str'
+[2025-08-11 14:14:53,044] [ERROR] [logger:61] - 队列视频生成任务失败: MiniMax API 请求失败: HTTPSConnectionPool(host='api.minimax.chat', port=443): Max retries exceeded with url: /v1/t2a_v2?GroupId=1939653802781057615 (Caused by ProxyError('Unable to connect to proxy', RemoteDisconnected('Remote end closed connection without response')))
+Traceback (most recent call last):
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/urllib3/connectionpool.py", line 787, in urlopen
+    response = self._make_request(
+        conn,
+    ...<10 lines>...
+        **response_kw,
+    )
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/urllib3/connectionpool.py", line 534, in _make_request
+    response = conn.getresponse()
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/urllib3/connection.py", line 516, in getresponse
+    httplib_response = super().getresponse()
+  File "/opt/homebrew/Cellar/python@3.13/3.13.3/Frameworks/Python.framework/Versions/3.13/lib/python3.13/http/client.py", line 1430, in getresponse
+    response.begin()
+    ~~~~~~~~~~~~~~^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.3/Frameworks/Python.framework/Versions/3.13/lib/python3.13/http/client.py", line 331, in begin
+    version, status, reason = self._read_status()
+                              ~~~~~~~~~~~~~~~~~^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.3/Frameworks/Python.framework/Versions/3.13/lib/python3.13/http/client.py", line 300, in _read_status
+    raise RemoteDisconnected("Remote end closed connection without"
+                             " response")
+http.client.RemoteDisconnected: Remote end closed connection without response
+
+The above exception was the direct cause of the following exception:
+
+urllib3.exceptions.ProxyError: ('Unable to connect to proxy', RemoteDisconnected('Remote end closed connection without response'))
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/requests/adapters.py", line 667, in send
+    resp = conn.urlopen(
+        method=request.method,
+    ...<9 lines>...
+        chunked=chunked,
+    )
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/urllib3/connectionpool.py", line 841, in urlopen
+    retries = retries.increment(
+        method, url, error=new_e, _pool=self, _stacktrace=sys.exc_info()[2]
+    )
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/urllib3/util/retry.py", line 519, in increment
+    raise MaxRetryError(_pool, url, reason) from reason  # type: ignore[arg-type]
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+urllib3.exceptions.MaxRetryError: HTTPSConnectionPool(host='api.minimax.chat', port=443): Max retries exceeded with url: /v1/t2a_v2?GroupId=1939653802781057615 (Caused by ProxyError('Unable to connect to proxy', RemoteDisconnected('Remote end closed connection without response')))
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/service/ai_service.py", line 437, in _generate_minimax_tts
+    response = requests.post(url, headers=headers, json=payload, timeout=60)
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/requests/api.py", line 115, in post
+    return request("post", url, data=data, json=json, **kwargs)
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/requests/api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/requests/sessions.py", line 589, in request
+    resp = self.send(prep, **send_kwargs)
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/requests/sessions.py", line 703, in send
+    r = adapter.send(request, **kwargs)
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/requests/adapters.py", line 694, in send
+    raise ProxyError(e, request=request)
+requests.exceptions.ProxyError: HTTPSConnectionPool(host='api.minimax.chat', port=443): Max retries exceeded with url: /v1/t2a_v2?GroupId=1939653802781057615 (Caused by ProxyError('Unable to connect to proxy', RemoteDisconnected('Remote end closed connection without response')))
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/app.py", line 335, in queue_task
+    result = asyncio.run(run_work_flow_v3_with_progress(
+        text=next_task.prompt,
+    ...<11 lines>...
+        generation_status=generation_status
+    ))
+  File "/opt/homebrew/Cellar/python@3.13/3.13.3/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ~~~~~~~~~~^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.3/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.3/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py", line 719, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/service/work_flow_service.py", line 427, in run_work_flow_v3_with_progress
+    raise e
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/service/work_flow_service.py", line 347, in run_work_flow_v3_with_progress
+    work_flow_record = await asyncio.to_thread(
+                       ^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<8 lines>...
+    )
+    ^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.3/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/threads.py", line 25, in to_thread
+    return await loop.run_in_executor(None, func_call)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.3/Frameworks/Python.framework/Versions/3.13/lib/python3.13/concurrent/futures/thread.py", line 59, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/workflow.py", line 416, in generate_audio
+    audio = tts_model.generate(text, voice_name=voice_name, pitch_rate=pitch_rate)
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/service/ai_service.py", line 377, in generate
+    return self._generate_minimax_tts(text, voice_name, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/service/ai_service.py", line 466, in _generate_minimax_tts
+    raise ValueError(f"MiniMax API 请求失败: {str(e)}")
+ValueError: MiniMax API 请求失败: HTTPSConnectionPool(host='api.minimax.chat', port=443): Max retries exceeded with url: /v1/t2a_v2?GroupId=1939653802781057615 (Caused by ProxyError('Unable to connect to proxy', RemoteDisconnected('Remote end closed connection without response')))
+[2025-08-12 11:32:16,503] [ERROR] [logger:61] - 队列视频生成任务失败: Connection error.
+Traceback (most recent call last):
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/httpx/_transports/default.py", line 101, in map_httpcore_exceptions
+    yield
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/httpx/_transports/default.py", line 127, in __iter__
+    for part in self._httpcore_stream:
+                ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/httpcore/_sync/connection_pool.py", line 407, in __iter__
+    raise exc from None
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/httpcore/_sync/connection_pool.py", line 403, in __iter__
+    for part in self._stream:
+                ^^^^^^^^^^^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/httpcore/_sync/http11.py", line 342, in __iter__
+    raise exc
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/httpcore/_sync/http11.py", line 334, in __iter__
+    for chunk in self._connection._receive_response_body(**kwargs):
+                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/httpcore/_sync/http11.py", line 203, in _receive_response_body
+    event = self._receive_event(timeout=timeout)
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/httpcore/_sync/http11.py", line 213, in _receive_event
+    with map_exceptions({h11.RemoteProtocolError: RemoteProtocolError}):
+         ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.3/Frameworks/Python.framework/Versions/3.13/lib/python3.13/contextlib.py", line 162, in __exit__
+    self.gen.throw(value)
+    ~~~~~~~~~~~~~~^^^^^^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/httpcore/_exceptions.py", line 14, in map_exceptions
+    raise to_exc(exc) from exc
+httpcore.RemoteProtocolError: peer closed connection without sending complete message body (incomplete chunked read)
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/openai/_base_client.py", line 972, in request
+    response = self._client.send(
+        request,
+        stream=stream or self._should_stream_response_body(request=request),
+        **kwargs,
+    )
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/httpx/_client.py", line 928, in send
+    raise exc
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/httpx/_client.py", line 922, in send
+    response.read()
+    ~~~~~~~~~~~~~^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/httpx/_models.py", line 881, in read
+    self._content = b"".join(self.iter_bytes())
+                    ~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/httpx/_models.py", line 897, in iter_bytes
+    for raw_bytes in self.iter_raw():
+                     ~~~~~~~~~~~~~^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/httpx/_models.py", line 951, in iter_raw
+    for raw_stream_bytes in self.stream:
+                            ^^^^^^^^^^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/httpx/_client.py", line 153, in __iter__
+    for chunk in self._stream:
+                 ^^^^^^^^^^^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/httpx/_transports/default.py", line 126, in __iter__
+    with map_httpcore_exceptions():
+         ~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.3/Frameworks/Python.framework/Versions/3.13/lib/python3.13/contextlib.py", line 162, in __exit__
+    self.gen.throw(value)
+    ~~~~~~~~~~~~~~^^^^^^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/httpx/_transports/default.py", line 118, in map_httpcore_exceptions
+    raise mapped_exc(message) from exc
+httpx.RemoteProtocolError: peer closed connection without sending complete message body (incomplete chunked read)
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/app.py", line 335, in queue_task
+    result = asyncio.run(run_work_flow_v3_with_progress(
+        text=next_task.prompt,
+    ...<12 lines>...
+        generation_status=generation_status
+    ))
+  File "/opt/homebrew/Cellar/python@3.13/3.13.3/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ~~~~~~~~~~^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.3/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.3/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py", line 719, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/service/work_flow_service.py", line 436, in run_work_flow_v3_with_progress
+    raise e
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/service/work_flow_service.py", line 266, in run_work_flow_v3_with_progress
+    work_flow_record = await func_and_retry_parse_json(text, script_service.generate_json_script_from_prompt, json_retry_times, task_id=task_id, generation_status=generation_status)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/utility.py", line 480, in func_and_retry_parse_json
+    work_flow_record = func(text, **kwargs)
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/service/script_service.py", line 157, in generate_json_script_from_prompt
+    content = self.llm.generate(messages, **config)
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/service/ai_service.py", line 66, in generate
+    response = self.client.chat.completions.create(
+        model=self.model_str,
+        messages=messages,
+        **kwargs
+    )
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/openai/_utils/_utils.py", line 287, in wrapper
+    return func(*args, **kwargs)
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/openai/resources/chat/completions/completions.py", line 925, in create
+    return self._post(
+           ~~~~~~~~~~^
+        "/chat/completions",
+        ^^^^^^^^^^^^^^^^^^^^
+    ...<43 lines>...
+        stream_cls=Stream[ChatCompletionChunk],
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/openai/_base_client.py", line 1249, in post
+    return cast(ResponseT, self.request(cast_to, opts, stream=stream, stream_cls=stream_cls))
+                           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/openai/_base_client.py", line 1004, in request
+    raise APIConnectionError(request=request) from err
+openai.APIConnectionError: Connection error.
+[2025-08-13 08:35:48,541] [ERROR] [logger:61] - 队列视频生成任务失败: Connection error.
+Traceback (most recent call last):
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/httpx/_transports/default.py", line 101, in map_httpcore_exceptions
+    yield
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/httpx/_transports/default.py", line 127, in __iter__
+    for part in self._httpcore_stream:
+                ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/httpcore/_sync/connection_pool.py", line 407, in __iter__
+    raise exc from None
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/httpcore/_sync/connection_pool.py", line 403, in __iter__
+    for part in self._stream:
+                ^^^^^^^^^^^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/httpcore/_sync/http11.py", line 342, in __iter__
+    raise exc
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/httpcore/_sync/http11.py", line 334, in __iter__
+    for chunk in self._connection._receive_response_body(**kwargs):
+                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/httpcore/_sync/http11.py", line 203, in _receive_response_body
+    event = self._receive_event(timeout=timeout)
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/httpcore/_sync/http11.py", line 213, in _receive_event
+    with map_exceptions({h11.RemoteProtocolError: RemoteProtocolError}):
+         ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.3/Frameworks/Python.framework/Versions/3.13/lib/python3.13/contextlib.py", line 162, in __exit__
+    self.gen.throw(value)
+    ~~~~~~~~~~~~~~^^^^^^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/httpcore/_exceptions.py", line 14, in map_exceptions
+    raise to_exc(exc) from exc
+httpcore.RemoteProtocolError: peer closed connection without sending complete message body (incomplete chunked read)
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/openai/_base_client.py", line 972, in request
+    response = self._client.send(
+        request,
+        stream=stream or self._should_stream_response_body(request=request),
+        **kwargs,
+    )
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/httpx/_client.py", line 928, in send
+    raise exc
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/httpx/_client.py", line 922, in send
+    response.read()
+    ~~~~~~~~~~~~~^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/httpx/_models.py", line 881, in read
+    self._content = b"".join(self.iter_bytes())
+                    ~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/httpx/_models.py", line 897, in iter_bytes
+    for raw_bytes in self.iter_raw():
+                     ~~~~~~~~~~~~~^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/httpx/_models.py", line 951, in iter_raw
+    for raw_stream_bytes in self.stream:
+                            ^^^^^^^^^^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/httpx/_client.py", line 153, in __iter__
+    for chunk in self._stream:
+                 ^^^^^^^^^^^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/httpx/_transports/default.py", line 126, in __iter__
+    with map_httpcore_exceptions():
+         ~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.3/Frameworks/Python.framework/Versions/3.13/lib/python3.13/contextlib.py", line 162, in __exit__
+    self.gen.throw(value)
+    ~~~~~~~~~~~~~~^^^^^^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/httpx/_transports/default.py", line 118, in map_httpcore_exceptions
+    raise mapped_exc(message) from exc
+httpx.RemoteProtocolError: peer closed connection without sending complete message body (incomplete chunked read)
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/app.py", line 335, in queue_task
+    result = asyncio.run(run_work_flow_v3_with_progress(
+        text=next_task.prompt,
+    ...<13 lines>...
+        generation_status=generation_status
+    ))
+  File "/opt/homebrew/Cellar/python@3.13/3.13.3/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ~~~~~~~~~~^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.3/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.3/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py", line 719, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/service/work_flow_service.py", line 436, in run_work_flow_v3_with_progress
+    raise e
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/service/work_flow_service.py", line 266, in run_work_flow_v3_with_progress
+    work_flow_record = await func_and_retry_parse_json(text, script_service.generate_json_script_from_prompt, json_retry_times, task_id=task_id, generation_status=generation_status)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/utility.py", line 480, in func_and_retry_parse_json
+    work_flow_record = func(text, **kwargs)
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/service/script_service.py", line 157, in generate_json_script_from_prompt
+    content = self.llm.generate(messages, **config)
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/service/ai_service.py", line 66, in generate
+    response = self.client.chat.completions.create(
+        model=self.model_str,
+        messages=messages,
+        **kwargs
+    )
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/openai/_utils/_utils.py", line 287, in wrapper
+    return func(*args, **kwargs)
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/openai/resources/chat/completions/completions.py", line 925, in create
+    return self._post(
+           ~~~~~~~~~~^
+        "/chat/completions",
+        ^^^^^^^^^^^^^^^^^^^^
+    ...<43 lines>...
+        stream_cls=Stream[ChatCompletionChunk],
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/openai/_base_client.py", line 1249, in post
+    return cast(ResponseT, self.request(cast_to, opts, stream=stream, stream_cls=stream_cls))
+                           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/openai/_base_client.py", line 1004, in request
+    raise APIConnectionError(request=request) from err
+openai.APIConnectionError: Connection error.
+[2025-08-13 08:46:07,590] [ERROR] [logger:61] - 队列视频生成任务失败: Connection error.
+Traceback (most recent call last):
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/httpx/_transports/default.py", line 101, in map_httpcore_exceptions
+    yield
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/httpx/_transports/default.py", line 127, in __iter__
+    for part in self._httpcore_stream:
+                ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/httpcore/_sync/connection_pool.py", line 407, in __iter__
+    raise exc from None
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/httpcore/_sync/connection_pool.py", line 403, in __iter__
+    for part in self._stream:
+                ^^^^^^^^^^^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/httpcore/_sync/http11.py", line 342, in __iter__
+    raise exc
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/httpcore/_sync/http11.py", line 334, in __iter__
+    for chunk in self._connection._receive_response_body(**kwargs):
+                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/httpcore/_sync/http11.py", line 203, in _receive_response_body
+    event = self._receive_event(timeout=timeout)
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/httpcore/_sync/http11.py", line 213, in _receive_event
+    with map_exceptions({h11.RemoteProtocolError: RemoteProtocolError}):
+         ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.3/Frameworks/Python.framework/Versions/3.13/lib/python3.13/contextlib.py", line 162, in __exit__
+    self.gen.throw(value)
+    ~~~~~~~~~~~~~~^^^^^^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/httpcore/_exceptions.py", line 14, in map_exceptions
+    raise to_exc(exc) from exc
+httpcore.RemoteProtocolError: peer closed connection without sending complete message body (incomplete chunked read)
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/openai/_base_client.py", line 972, in request
+    response = self._client.send(
+        request,
+        stream=stream or self._should_stream_response_body(request=request),
+        **kwargs,
+    )
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/httpx/_client.py", line 928, in send
+    raise exc
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/httpx/_client.py", line 922, in send
+    response.read()
+    ~~~~~~~~~~~~~^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/httpx/_models.py", line 881, in read
+    self._content = b"".join(self.iter_bytes())
+                    ~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/httpx/_models.py", line 897, in iter_bytes
+    for raw_bytes in self.iter_raw():
+                     ~~~~~~~~~~~~~^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/httpx/_models.py", line 951, in iter_raw
+    for raw_stream_bytes in self.stream:
+                            ^^^^^^^^^^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/httpx/_client.py", line 153, in __iter__
+    for chunk in self._stream:
+                 ^^^^^^^^^^^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/httpx/_transports/default.py", line 126, in __iter__
+    with map_httpcore_exceptions():
+         ~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.3/Frameworks/Python.framework/Versions/3.13/lib/python3.13/contextlib.py", line 162, in __exit__
+    self.gen.throw(value)
+    ~~~~~~~~~~~~~~^^^^^^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/httpx/_transports/default.py", line 118, in map_httpcore_exceptions
+    raise mapped_exc(message) from exc
+httpx.RemoteProtocolError: peer closed connection without sending complete message body (incomplete chunked read)
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/app.py", line 335, in queue_task
+    result = asyncio.run(run_work_flow_v3_with_progress(
+        text=next_task.prompt,
+    ...<13 lines>...
+        generation_status=generation_status
+    ))
+  File "/opt/homebrew/Cellar/python@3.13/3.13.3/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ~~~~~~~~~~^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.3/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.3/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py", line 719, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/service/work_flow_service.py", line 436, in run_work_flow_v3_with_progress
+    raise e
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/service/work_flow_service.py", line 266, in run_work_flow_v3_with_progress
+    work_flow_record = await func_and_retry_parse_json(text, script_service.generate_json_script_from_prompt, json_retry_times, task_id=task_id, generation_status=generation_status)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/utility.py", line 480, in func_and_retry_parse_json
+    work_flow_record = func(text, **kwargs)
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/service/script_service.py", line 157, in generate_json_script_from_prompt
+    content = self.llm.generate(messages, **config)
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/service/ai_service.py", line 66, in generate
+    response = self.client.chat.completions.create(
+        model=self.model_str,
+        messages=messages,
+        **kwargs
+    )
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/openai/_utils/_utils.py", line 287, in wrapper
+    return func(*args, **kwargs)
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/openai/resources/chat/completions/completions.py", line 925, in create
+    return self._post(
+           ~~~~~~~~~~^
+        "/chat/completions",
+        ^^^^^^^^^^^^^^^^^^^^
+    ...<43 lines>...
+        stream_cls=Stream[ChatCompletionChunk],
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/openai/_base_client.py", line 1249, in post
+    return cast(ResponseT, self.request(cast_to, opts, stream=stream, stream_cls=stream_cls))
+                           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/openai/_base_client.py", line 1004, in request
+    raise APIConnectionError(request=request) from err
+openai.APIConnectionError: Connection error.
+[2025-08-13 09:22:46,502] [ERROR] [logger:61] - 队列视频生成任务失败: Connection error.
+Traceback (most recent call last):
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/httpx/_transports/default.py", line 101, in map_httpcore_exceptions
+    yield
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/httpx/_transports/default.py", line 127, in __iter__
+    for part in self._httpcore_stream:
+                ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/httpcore/_sync/connection_pool.py", line 407, in __iter__
+    raise exc from None
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/httpcore/_sync/connection_pool.py", line 403, in __iter__
+    for part in self._stream:
+                ^^^^^^^^^^^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/httpcore/_sync/http11.py", line 342, in __iter__
+    raise exc
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/httpcore/_sync/http11.py", line 334, in __iter__
+    for chunk in self._connection._receive_response_body(**kwargs):
+                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/httpcore/_sync/http11.py", line 203, in _receive_response_body
+    event = self._receive_event(timeout=timeout)
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/httpcore/_sync/http11.py", line 213, in _receive_event
+    with map_exceptions({h11.RemoteProtocolError: RemoteProtocolError}):
+         ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.3/Frameworks/Python.framework/Versions/3.13/lib/python3.13/contextlib.py", line 162, in __exit__
+    self.gen.throw(value)
+    ~~~~~~~~~~~~~~^^^^^^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/httpcore/_exceptions.py", line 14, in map_exceptions
+    raise to_exc(exc) from exc
+httpcore.RemoteProtocolError: peer closed connection without sending complete message body (incomplete chunked read)
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/openai/_base_client.py", line 972, in request
+    response = self._client.send(
+        request,
+        stream=stream or self._should_stream_response_body(request=request),
+        **kwargs,
+    )
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/httpx/_client.py", line 928, in send
+    raise exc
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/httpx/_client.py", line 922, in send
+    response.read()
+    ~~~~~~~~~~~~~^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/httpx/_models.py", line 881, in read
+    self._content = b"".join(self.iter_bytes())
+                    ~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/httpx/_models.py", line 897, in iter_bytes
+    for raw_bytes in self.iter_raw():
+                     ~~~~~~~~~~~~~^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/httpx/_models.py", line 951, in iter_raw
+    for raw_stream_bytes in self.stream:
+                            ^^^^^^^^^^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/httpx/_client.py", line 153, in __iter__
+    for chunk in self._stream:
+                 ^^^^^^^^^^^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/httpx/_transports/default.py", line 126, in __iter__
+    with map_httpcore_exceptions():
+         ~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.3/Frameworks/Python.framework/Versions/3.13/lib/python3.13/contextlib.py", line 162, in __exit__
+    self.gen.throw(value)
+    ~~~~~~~~~~~~~~^^^^^^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/httpx/_transports/default.py", line 118, in map_httpcore_exceptions
+    raise mapped_exc(message) from exc
+httpx.RemoteProtocolError: peer closed connection without sending complete message body (incomplete chunked read)
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/app.py", line 335, in queue_task
+    result = asyncio.run(run_work_flow_v3_with_progress(
+        text=next_task.prompt,
+    ...<13 lines>...
+        generation_status=generation_status
+    ))
+  File "/opt/homebrew/Cellar/python@3.13/3.13.3/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ~~~~~~~~~~^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.3/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.3/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py", line 719, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/service/work_flow_service.py", line 436, in run_work_flow_v3_with_progress
+    raise e
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/service/work_flow_service.py", line 266, in run_work_flow_v3_with_progress
+    work_flow_record = await func_and_retry_parse_json(text, script_service.generate_json_script_from_prompt, json_retry_times, task_id=task_id, generation_status=generation_status)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/utility.py", line 480, in func_and_retry_parse_json
+    work_flow_record = func(text, **kwargs)
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/service/script_service.py", line 157, in generate_json_script_from_prompt
+    content = self.llm.generate(messages, **config)
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/service/ai_service.py", line 66, in generate
+    response = self.client.chat.completions.create(
+        model=self.model_str,
+        messages=messages,
+        **kwargs
+    )
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/openai/_utils/_utils.py", line 287, in wrapper
+    return func(*args, **kwargs)
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/openai/resources/chat/completions/completions.py", line 925, in create
+    return self._post(
+           ~~~~~~~~~~^
+        "/chat/completions",
+        ^^^^^^^^^^^^^^^^^^^^
+    ...<43 lines>...
+        stream_cls=Stream[ChatCompletionChunk],
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/openai/_base_client.py", line 1249, in post
+    return cast(ResponseT, self.request(cast_to, opts, stream=stream, stream_cls=stream_cls))
+                           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/zhusisi/CascadeProjects/VideoMaker/.venv/lib/python3.13/site-packages/openai/_base_client.py", line 1004, in request
+    raise APIConnectionError(request=request) from err
+openai.APIConnectionError: Connection error.

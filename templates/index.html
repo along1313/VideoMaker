@@ -106,6 +106,7 @@
             :modal="true"
             :modal-append-to-body="true"
             :append-to-body="true"
+            :z-index="2000"
             @close="handleSettingsClose"
             @open="handleSettingsOpen">
             <div class="setting-row checkbox-row">
@@ -130,6 +131,77 @@
                     <div v-if="!isVipUser" class="vip-notice">* 仅会员可自定义账号名称</div>
                 </div>
             </div>
+            
+            <!-- 背景音乐设置 -->
+            <div class="setting-row">
+                <div class="bgm-section">
+                    <div class="bgm-header">
+                        <el-checkbox v-model="enableBgm">需要背景音乐</el-checkbox>
+                    </div>
+                    
+                    <div v-if="enableBgm" class="bgm-management">
+                        <div class="bgm-list">
+                            <div v-for="music in backgroundMusicList" :key="music.id" 
+                                 class="bgm-item" 
+                                 :class="{ 'selected': selectedBgmId === music.id }"
+                                 @click="selectBgm(music.id)">
+                                <div class="bgm-info">
+                                    <span class="bgm-name" v-text="music.name"></span>
+                                    <span v-if="music.is_default" class="bgm-default-tag">默认</span>
+                                </div>
+                                <div class="bgm-actions">
+                                    <button v-if="!music.is_default" 
+                                            @click.stop="deleteBgm(music.id)"
+                                            class="bgm-delete-btn">-</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="bgm-upload">
+                            <button @click="showBgmUpload = true" class="bgm-add-btn">+ 添加背景音乐</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 设置对话框底部按钮 -->
+            <div slot="footer" class="dialog-footer">
+                <el-button type="primary" @click="showSettings = false">完成</el-button>
+            </div>
+        </el-dialog>
+        
+        <!-- 背景音乐上传对话框 -->
+        <el-dialog 
+            title="上传背景音乐" 
+            :visible.sync="showBgmUpload" 
+            width="400px"
+            :close-on-click-modal="true"
+            :modal="true"
+            :modal-append-to-body="true"
+            :append-to-body="true"
+            :z-index="3000"
+            class="bgm-upload-dialog">
+            <div class="bgm-upload-form">
+                <div class="form-group">
+                    <label>音乐名称</label>
+                    <el-input v-model="newBgmName" placeholder="请输入音乐名称" maxlength="50"></el-input>
+                </div>
+                <div class="form-group">
+                    <label>选择文件</label>
+                    <input type="file" 
+                           ref="bgmFileInput"
+                           @change="handleBgmFileSelect"
+                           accept=".mp3,.wav"
+                           class="file-input">
+                    <div class="file-info">
+                        <small>支持MP3、WAV格式，文件大小不超过5MB</small>
+                    </div>
+                </div>
+            </div>
+            <div slot="footer" class="dialog-footer">
+                <el-button @click="showBgmUpload = false">取消</el-button>
+                <el-button type="primary" @click="uploadBgm" :loading="bgmUploading">上传</el-button>
+            </div>
         </el-dialog>
     </section>
 
@@ -142,7 +214,7 @@
                 <span class="material-icons text-white">chevron_left</span>
             </button>
             <div class="template-slider overflow-x-auto scrollbar-hide" ref="templateSlider">
-                <div class="flex gap-8 min-w-max px-4">
+                <div class="flex gap-8 min-w-max px-4 justify-center">
                     <div class="bg-glass rounded-2xl p-4 text-center cursor-pointer transition-all duration-300 card-hover flex-shrink-0 w-64"
                          :class="{ 'border-2 border-blue-500': selectedTemplate === '通用', 'border-transparent border-2': selectedTemplate !== '通用' }" 
                          @click="selectTemplate('通用')"
@@ -216,7 +288,7 @@
                 <span class="material-icons text-white">chevron_left</span>
             </button>
             <div class="style-slider overflow-x-auto scrollbar-hide" ref="styleSlider">
-                <div class="flex gap-8 min-w-max px-4">
+                <div class="flex gap-6 min-w-max px-4 justify-center">
                     {% for style_name, style_img in styles.items() %}
                     <div class="bg-glass rounded-2xl p-4 text-center cursor-pointer transition-all duration-300 card-hover flex-shrink-0 w-64"
                          :class="{ 'border-2 border-blue-500': selectedStyle === '{{ style_name|safe }}', 'border-transparent border-2': selectedStyle !== '{{ style_name|safe }}' }" 
@@ -231,6 +303,38 @@
             </div>
             <button class="absolute right-0 top-1/2 -translate-y-1/2 translate-x-12 bg-slate-800/50 p-2 rounded-full hover:bg-slate-700 transition-colors z-10"
                     @click="scrollStyleRight">
+                <span class="material-icons text-white">chevron_right</span>
+            </button>
+        </div>
+    </section>
+
+    <!-- 语音选择区域 -->
+    <section class="mb-20">
+        <h2 class="text-3xl font-bold text-center text-white mb-10">选择视频语音</h2>
+        <div class="relative py-8">
+            <button class="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-12 bg-slate-800/50 p-2 rounded-full hover:bg-slate-700 transition-colors z-10"
+                    @click="scrollVoiceLeft">
+                <span class="material-icons text-white">chevron_left</span>
+            </button>
+            <div class="voice-slider overflow-x-auto scrollbar-hide pt-3" ref="voiceSlider">
+                <div class="flex gap-6 min-w-max px-4 justify-center">
+                    {% for voice_name, voice_audio in voices.items() %}
+                    <div class="bg-glass rounded-2xl p-4 text-center cursor-pointer transition-all duration-300 card-hover flex-shrink-0 w-40"
+                         :class="{ 'border-2 border-blue-500': selectedVoice === '{{ voice_name|safe }}', 'border-transparent border-2': selectedVoice !== '{{ voice_name|safe }}' }" 
+                         @click="selectVoice('{{ voice_name|safe }}')">
+                        <h3 class="text-base font-semibold text-white mb-3">{{ voice_name }}</h3>
+                        <button class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded-full text-sm transition-colors flex items-center gap-2 mx-auto"
+                                @click.stop="playVoicePreview('{{ voice_audio }}', '{{ voice_name|safe }}')">
+                            <span class="material-icons text-sm">play_arrow</span>
+                            <span v-if="currentPlayingVoice === '{{ voice_name|safe }}' && isPlaying">播放中</span>
+                            <span v-else>试听</span>
+                        </button>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <button class="absolute right-0 top-1/2 -translate-y-1/2 translate-x-12 bg-slate-800/50 p-2 rounded-full hover:bg-slate-700 transition-colors z-10"
+                    @click="scrollVoiceRight">
                 <span class="material-icons text-white">chevron_right</span>
             </button>
         </div>
@@ -443,6 +547,7 @@
             return {
                 selectedTemplate: '通用',
                 selectedStyle: '绘本',
+                selectedVoice: '语音1（男）', // 默认选择第一个语音
                 inputMode: 'prompt',
                 prompt: '',
                 bookCoverUrl: '',
@@ -454,7 +559,19 @@
                 showSettings: false,
                 showUserName: true,
                 ttsModelStr: 'cosyvoice-v1',
+                // 语音播放相关
+                currentAudio: null,
+                isPlaying: false,
+                currentPlayingVoice: null,
                 savedPrompt: '', // 保存用户输入的提示词
+                
+                // 背景音乐相关
+                enableBgm: true, // 默认启用背景音乐
+                backgroundMusicList: [], // 背景音乐列表
+                selectedBgmId: null, // 选中的背景音乐ID
+                showBgmUpload: false, // 是否显示上传对话框
+                newBgmName: '', // 新音乐名称
+                bgmUploading: false // 是否正在上传
             };
         },
         mounted() {
@@ -467,6 +584,9 @@
             
             // 加载保存的设置
             this.loadSettings();
+            
+            // 加载背景音乐列表
+            this.loadBackgroundMusic();
         },
         computed: {
             // 使用计算属性获取用户信息，直接从window.AppConfig获取
@@ -522,6 +642,61 @@
             },
             selectStyle(style) {
                 this.selectedStyle = style;
+            },
+            selectVoice(voice) {
+                this.selectedVoice = voice;
+                // 停止当前播放的音频
+                if (this.currentAudio && !this.currentAudio.paused) {
+                    this.currentAudio.pause();
+                    this.isPlaying = false;
+                    this.currentPlayingVoice = null;
+                }
+            },
+            playVoicePreview(audioUrl, voiceName) {
+                // 如果正在播放同一个语音，则停止播放
+                if (this.currentPlayingVoice === voiceName && this.isPlaying) {
+                    this.currentAudio.pause();
+                    this.isPlaying = false;
+                    this.currentPlayingVoice = null;
+                    return;
+                }
+                
+                // 停止当前播放的音频
+                if (this.currentAudio && !this.currentAudio.paused) {
+                    this.currentAudio.pause();
+                }
+                
+                // 创建新的音频对象
+                this.currentAudio = new Audio(audioUrl);
+                this.currentPlayingVoice = voiceName;
+                this.isPlaying = true;
+                
+                // 播放音频
+                this.currentAudio.play().catch(error => {
+                    console.error('播放音频失败:', error);
+                    this.$message.error('播放失败，请重试');
+                    this.isPlaying = false;
+                    this.currentPlayingVoice = null;
+                });
+                
+                // 音频播放结束时重置状态
+                this.currentAudio.onended = () => {
+                    this.isPlaying = false;
+                    this.currentPlayingVoice = null;
+                };
+                
+                // 音频播放错误时重置状态
+                this.currentAudio.onerror = () => {
+                    this.isPlaying = false;
+                    this.currentPlayingVoice = null;
+                    this.$message.error('音频加载失败');
+                };
+            },
+            scrollVoiceLeft() {
+                this.$refs.voiceSlider.scrollLeft -= 300;
+            },
+            scrollVoiceRight() {
+                this.$refs.voiceSlider.scrollLeft += 300;
             },
             onModeChange() {
                 this.prompt = '';
@@ -609,6 +784,7 @@
                 const formData = new FormData();
                 formData.append('template', this.selectedTemplate);
                 formData.append('style', this.selectedStyle);
+                formData.append('voice', this.selectedVoice); // 添加语音参数
                 formData.append('mode', this.inputMode);
                 formData.append('prompt', this.prompt);
                 formData.append('is_display_title', this.isDisplayTitle);
@@ -635,6 +811,15 @@
                     formData.append('book_title', this.bookTitle);
                     if (this.bookCoverFile) {
                         formData.append('book_cover', this.bookCoverFile);
+                    }
+                }
+                
+                // 背景音乐设置
+                if (this.enableBgm && this.selectedBgmId) {
+                    // 找到选中的背景音乐
+                    const selectedMusic = this.backgroundMusicList.find(music => music.id === this.selectedBgmId);
+                    if (selectedMusic) {
+                        formData.append('bgm_path', selectedMusic.file_path);
                     }
                 }
                 
@@ -743,6 +928,12 @@
                             this.userName = settings.userName;
                         }
                         
+                        // 恢复背景音乐设置
+                        this.enableBgm = settings.enableBgm !== undefined ? settings.enableBgm : false;
+                        if (settings.selectedBgmId) {
+                            this.selectedBgmId = settings.selectedBgmId;
+                        }
+                        
                         console.log('Settings loaded:', settings);
                     }
                 } catch (error) {
@@ -756,7 +947,9 @@
                         isDisplayTitle: this.isDisplayTitle,
                         showUserName: this.showUserName,
                         ttsModelStr: this.ttsModelStr,
-                        userName: this.userName
+                        userName: this.userName,
+                        enableBgm: this.enableBgm,
+                        selectedBgmId: this.selectedBgmId
                     };
                     
                     localStorage.setItem('videoSettings', JSON.stringify(settings));
@@ -802,6 +995,130 @@
                         behavior: 'smooth'
                     });
                 }
+            },
+            
+            // 背景音乐相关方法
+            async loadBackgroundMusic() {
+                try {
+                    const response = await fetch('/api/background-music', {
+                        method: 'GET',
+                        credentials: 'include'
+                    });
+                    
+                    if (response.ok) {
+                        const result = await response.json();
+                        if (result.success) {
+                            this.backgroundMusicList = result.music;
+                            // 如果没有保存的选择，默认选择第一个音乐（通常是默认音乐）
+                            if (!this.selectedBgmId && this.backgroundMusicList.length > 0) {
+                                this.selectedBgmId = this.backgroundMusicList[0].id;
+                            }
+                            // 如果有保存的选择，验证该选择是否仍然有效
+                            else if (this.selectedBgmId) {
+                                const savedMusic = this.backgroundMusicList.find(music => music.id === this.selectedBgmId);
+                                if (!savedMusic) {
+                                    // 如果保存的音乐已被删除，回退到默认选择
+                                    this.selectedBgmId = this.backgroundMusicList.length > 0 ? this.backgroundMusicList[0].id : null;
+                                }
+                            }
+                        }
+                    }
+                } catch (error) {
+                    console.error('加载背景音乐列表失败:', error);
+                }
+            },
+            
+            selectBgm(musicId) {
+                this.selectedBgmId = musicId;
+            },
+            
+            async deleteBgm(musicId) {
+                if (confirm('确定要删除这个背景音乐吗？')) {
+                    try {
+                        const response = await fetch(`/api/background-music/${musicId}`, {
+                            method: 'DELETE',
+                            credentials: 'include'
+                        });
+                        
+                        if (response.ok) {
+                            const result = await response.json();
+                            if (result.success) {
+                                this.$message.success('背景音乐删除成功');
+                                this.loadBackgroundMusic(); // 重新加载列表
+                            } else {
+                                this.$message.error(result.message || '删除失败');
+                            }
+                        }
+                    } catch (error) {
+                        console.error('删除背景音乐失败:', error);
+                        this.$message.error('删除失败');
+                    }
+                }
+            },
+            
+            handleBgmFileSelect(event) {
+                const file = event.target.files[0];
+                if (file) {
+                    // 验证文件类型
+                    const allowedTypes = ['audio/mp3', 'audio/wav', 'audio/mpeg'];
+                    if (!allowedTypes.includes(file.type)) {
+                        this.$message.error('只支持MP3和WAV格式的音频文件');
+                        return;
+                    }
+                    
+                    // 验证文件大小（5MB）
+                    if (file.size > 5 * 1024 * 1024) {
+                        this.$message.error('文件大小不能超过5MB');
+                        return;
+                    }
+                }
+            },
+            
+            async uploadBgm() {
+                if (!this.newBgmName.trim()) {
+                    this.$message.error('请输入音乐名称');
+                    return;
+                }
+                
+                const fileInput = this.$refs.bgmFileInput;
+                if (!fileInput.files[0]) {
+                    this.$message.error('请选择音频文件');
+                    return;
+                }
+                
+                this.bgmUploading = true;
+                
+                try {
+                    const formData = new FormData();
+                    formData.append('file', fileInput.files[0]);
+                    formData.append('name', this.newBgmName.trim());
+                    
+                    const response = await fetch('/api/background-music', {
+                        method: 'POST',
+                        credentials: 'include',
+                        body: formData
+                    });
+                    
+                    if (response.ok) {
+                        const result = await response.json();
+                        if (result.success) {
+                            this.$message.success('背景音乐上传成功');
+                            this.showBgmUpload = false;
+                            this.newBgmName = '';
+                            fileInput.value = '';
+                            this.loadBackgroundMusic(); // 重新加载列表
+                        } else {
+                            this.$message.error(result.message || '上传失败');
+                        }
+                    } else {
+                        this.$message.error('上传失败');
+                    }
+                } catch (error) {
+                    console.error('上传背景音乐失败:', error);
+                    this.$message.error('上传失败');
+                } finally {
+                    this.bgmUploading = false;
+                }
             }
         },
         watch: {
@@ -817,9 +1134,192 @@
             },
             userName() {
                 this.saveSettings();
+            },
+            enableBgm() {
+                this.saveSettings();
+            },
+            selectedBgmId() {
+                this.saveSettings();
             }
         }
         });
     });
 </script>
+
+<style>
+/* 背景音乐管理样式 */
+.bgm-section {
+    margin-top: 15px;
+}
+
+.bgm-header {
+    margin-bottom: 10px;
+}
+
+.bgm-management {
+    margin-top: 10px;
+    padding: 10px;
+    background: rgba(30, 41, 59, 0.5);
+    border-radius: 8px;
+    border: 1px solid #475569;
+}
+
+.bgm-list {
+    max-height: 120px;
+    overflow-y: auto;
+    margin-bottom: 10px;
+}
+
+.bgm-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 10px;
+    margin-bottom: 5px;
+    background: rgba(51, 65, 85, 0.8);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: 2px solid transparent;
+}
+
+.bgm-item:hover {
+    background: rgba(59, 130, 246, 0.2);
+}
+
+.bgm-item.selected {
+    border-color: #3b82f6;
+    background: rgba(59, 130, 246, 0.3);
+}
+
+.bgm-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.bgm-name {
+    color: #e2e8f0;
+    font-size: 13px;
+}
+
+.bgm-default-tag {
+    background: #10b981;
+    color: white;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 10px;
+}
+
+.bgm-actions {
+    display: flex;
+    align-items: center;
+}
+
+.bgm-delete-btn {
+    background: #ef4444;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.bgm-delete-btn:hover {
+    background: #dc2626;
+}
+
+.bgm-add-btn {
+    width: 100%;
+    padding: 8px;
+    background: #3b82f6;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
+    transition: background 0.2s;
+}
+
+.bgm-add-btn:hover {
+    background: #2563eb;
+}
+
+.bgm-upload-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.bgm-upload-form .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.bgm-upload-form label {
+    color: #374151;
+    font-weight: 500;
+    font-size: 14px;
+}
+
+.file-input {
+    padding: 8px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 14px;
+}
+
+.file-info {
+    margin-top: 5px;
+}
+
+.file-info small {
+    color: #6b7280;
+    font-size: 12px;
+}
+
+/* 对话框层级设置 */
+.settings-dialog.el-dialog__wrapper {
+    z-index: 2000 !important;
+}
+
+.settings-dialog .el-dialog {
+    z-index: 2001 !important;
+}
+
+.settings-dialog .el-overlay {
+    z-index: 1999 !important;
+}
+
+/* 背景音乐上传对话框层级设置 - 确保在设置对话框之上 */
+.bgm-upload-dialog.el-dialog__wrapper {
+    z-index: 3000 !important;
+}
+
+.bgm-upload-dialog .el-dialog {
+    z-index: 3001 !important;
+}
+
+.bgm-upload-dialog .el-overlay {
+    z-index: 2999 !important;
+}
+
+/* 设置对话框底部按钮样式 */
+.settings-dialog .dialog-footer {
+    text-align: center;
+    padding: 10px 0;
+}
+
+.settings-dialog .dialog-footer .el-button {
+    padding: 10px 30px;
+    font-size: 14px;
+}
+</style>
+
 {% endblock %} 

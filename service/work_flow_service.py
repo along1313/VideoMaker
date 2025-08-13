@@ -13,7 +13,7 @@ from service.picture_prompt_service import PicturePromptService
 from service.picture_generate_service import PictureGenerateService
 from utility import parse_json, func_and_retry_parse_json
 from workflow import generate_picture_from_json, generate_audio, add_time, generate_video, generate_cover
-from static.style_config import TEMPLATE_CONFIG
+from static.style_config import TEMPLATE_CONFIG, TTS_VOICE_CONFIG
 
 
 async def run_work_flow_v3(
@@ -23,7 +23,7 @@ async def run_work_flow_v3(
     style: str, 
     template: str,
     llm_model_str: str = "deepseek-reasoner", 
-    image_model_str: str = "cogview-3-flash", 
+    image_model_str: str = "image-01", 
     tts_model_str: str = "cosyvoice-v1", 
     is_prompt_mode = True,
     json_retry_times = 3,
@@ -176,8 +176,9 @@ async def run_work_flow_v3_with_progress(
     user_id: str,  #使用用户的id作为项目目录的名称
     style: str, 
     template: str,
+    voice: str = None,  # 添加语音参数
     llm_model_str: str = "deepseek-reasoner", 
-    image_model_str: str = "cogview-3-flash", 
+    image_model_str: str = "image-01", 
     tts_model_str: str = "cosyvoice-v1", 
     is_prompt_mode = True,
     json_retry_times = 3,
@@ -188,7 +189,7 @@ async def run_work_flow_v3_with_progress(
     caption_text_font_path = "lib/font/STHeiti Medium.ttc",
     cover_font_path= "lib/font/字制区喜脉体.ttf", 
     bg_pic_path = None,
-    bgm_path = "lib/music/bgm.wav", 
+    bgm_path = None,  # 背景音乐路径，None表示不使用背景音乐
     user_name = "百速AI",
     is_display_title = True,
     is_need_ad_end = False,
@@ -207,7 +208,15 @@ async def run_work_flow_v3_with_progress(
     # 动态选择 tts_model_str 和 voice_name
     template_config = TEMPLATE_CONFIG.get(template, {}).get('config', {})
     tts_model_str = template_config.get('tts_model_str', tts_model_str)
-    voice_name = template_config.get('voice_name', 'default')
+    
+    # 从语音选择参数获取voice_name
+    if voice and voice in TTS_VOICE_CONFIG:
+        voice_name = TTS_VOICE_CONFIG[voice]
+        print(f"使用选择的语音: {voice} -> {voice_name}")
+    else:
+        # 如果没有选择或选择无效，使用默认语音
+        voice_name = TTS_VOICE_CONFIG.get('语音1（男）', 'Chinese (Mandarin)_Radio_Host')
+        print(f"使用默认语音: {voice_name}")
     
     def update_progress(step, message, progress):
         """更新进度状态"""

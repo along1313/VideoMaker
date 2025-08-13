@@ -37,7 +37,7 @@ from logger import log_info, log_error, log_warning, log_video_task
 from service.ai_service import LLMService, ImageModelService, TTSModelService
 from service.work_flow_service import run_work_flow_v3_with_progress
 from service.email_service import email_service
-from static.style_config import STYLE_CONFIG
+from static.style_config import STYLE_CONFIG, TTS_VOICE_CONFIG
 from path_manager import path_manager
 
 def check_ai_services():
@@ -338,12 +338,14 @@ def process_next_queue_task(user_id):
                         user_id=user_dir_name,  # 传用户名
                         style=next_task.style,
                         template=next_task.template,
+                        voice=next_task.voice,  # 添加语音参数
                         tts_model_str=next_task.tts_model_str,
                         is_prompt_mode=(next_task.mode == 'prompt'),
                         uploaded_title_picture_path=next_task.book_cover_path,
                         input_title_voice_text=next_task.book_title,
                         user_name=next_task.user_name,
                         is_display_title=next_task.is_display_title,
+                        bgm_path=next_task.bgm_path,  # 添加背景音乐路径
                         task_id=task_id,
                         generation_status=generation_status
                     ))
@@ -547,6 +549,7 @@ class TaskQueue(db.Model):
     prompt = db.Column(db.Text, nullable=False)
     style = db.Column(db.String(50), nullable=False)
     template = db.Column(db.String(50), nullable=False, default='通用')
+    voice = db.Column(db.String(100), nullable=True)  # 语音选择
     mode = db.Column(db.String(20), default='prompt')  # prompt(提示词模式) 或 script(文案模式)
     estimated_credits = db.Column(db.Integer, default=1)  # 预估消耗的额度
     is_display_title = db.Column(db.Boolean, default=True)
@@ -554,6 +557,7 @@ class TaskQueue(db.Model):
     tts_model_str = db.Column(db.String(50), default='cosyvoice-v1')
     book_title = db.Column(db.String(200), nullable=True)  # 书本标题（仅读书模板使用）
     book_cover_path = db.Column(db.String(200), nullable=True)  # 书本封面路径
+    bgm_path = db.Column(db.String(200), nullable=True)  # 背景音乐路径，None表示不使用背景音乐
     status = db.Column(db.String(20), default='waiting')  # waiting, processing, completed, failed, cancelled
     queue_position = db.Column(db.Integer, default=0)  # 队列位置
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
@@ -563,6 +567,21 @@ class TaskQueue(db.Model):
     # 关系
     user = db.relationship('User', backref='task_queue', lazy=True)
     video = db.relationship('Video', backref='task_queue_item', lazy=True)
+
+# 背景音乐模型
+class BackgroundMusic(db.Model):
+    """背景音乐模型，存储用户上传的背景音乐"""
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)  # NULL表示全局默认音乐
+    name = db.Column(db.String(100), nullable=False)  # 音乐名称
+    file_path = db.Column(db.String(200), nullable=False)  # 音乐文件路径
+    file_size = db.Column(db.Integer, nullable=False)  # 文件大小（字节）
+    file_type = db.Column(db.String(10), nullable=False)  # 文件类型（mp3/wav）
+    is_default = db.Column(db.Boolean, default=False)  # 是否为默认音乐
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    # 关系
+    user = db.relationship('User', backref='background_music', lazy=True)
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -727,7 +746,14 @@ def index():
         style_img = f"/static/img/{style_name}.png"
         styles[style_name] = style_img
     
-    return render_template('index.html', styles=styles)
+    # 添加语音配置
+    voices = {}
+    voice_names = list(TTS_VOICE_CONFIG.keys())
+    for voice_name in voice_names:
+        # 直接使用语音名称作为文件名
+        voices[voice_name] = f"/static/audio/{voice_name}.mp3"
+    
+    return render_template('index.html', styles=styles, voices=voices)
 
 # Google Search Console验证文件
 @app.route('/google0d5274732e0bb492.html')
@@ -1360,9 +1386,11 @@ def generate_video_v3():
         prompt = request.form.get('prompt')
         style = request.form.get('style')
         template = request.form.get('template')
+        voice = request.form.get('voice')
         mode = request.form.get('mode')
         is_display_title = request.form.get('is_display_title') == 'true' or request.form.get('is_display_title') == 'True'
         user_name = request.form.get('user_name')
+        bgm_path = request.form.get('bgm_path')  # 背景音乐路径
         # 处理用户名为空的情况
         if not user_name or user_name.strip() == '' or user_name.strip().lower() == 'null':
             user_name = None
@@ -1427,6 +1455,7 @@ def generate_video_v3():
             prompt=prompt,
             style=style,
             template=template,
+            voice=voice,  # 添加语音参数
             mode=mode,
             estimated_credits=credits_to_deduct,
             is_display_title=is_display_title,
@@ -1434,6 +1463,7 @@ def generate_video_v3():
             tts_model_str=request.form.get('tts_model_str', 'cosyvoice-v1'),
             book_title=request.form.get('book_title') if template == '读一本书' else None,
             book_cover_path=uploaded_title_picture_path if template == '读一本书' else None,
+            bgm_path=bgm_path,  # 添加背景音乐路径
             status='waiting'
         )
         db.session.add(task_queue)
@@ -2938,6 +2968,177 @@ def admin_delete_message(message_id):
         flash(f'删除失败：{str(e)}', 'danger')
     
     return redirect(url_for('admin_messages'))
+
+# ============ 背景音乐管理API ============
+
+# API：获取用户背景音乐列表
+@app.route('/api/background-music', methods=['GET'])
+@login_required
+def get_background_music():
+    """获取用户的背景音乐列表"""
+    try:
+        # 获取默认音乐和用户自己的音乐
+        default_music = BackgroundMusic.query.filter_by(is_default=True).first()
+        user_music = BackgroundMusic.query.filter_by(user_id=current_user.id).all()
+        
+        music_list = []
+        
+        # 添加默认音乐
+        if default_music:
+            music_list.append({
+                'id': default_music.id,
+                'name': default_music.name,
+                'file_path': default_music.file_path,
+                'file_size': default_music.file_size,
+                'file_type': default_music.file_type,
+                'is_default': True,
+                'created_at': default_music.created_at.isoformat()
+            })
+        
+        # 添加用户音乐
+        for music in user_music:
+            music_list.append({
+                'id': music.id,
+                'name': music.name,
+                'file_path': music.file_path,
+                'file_size': music.file_size,
+                'file_type': music.file_type,
+                'is_default': False,
+                'created_at': music.created_at.isoformat()
+            })
+        
+        return jsonify({'success': True, 'music': music_list})
+        
+    except Exception as e:
+        log_error(f"获取背景音乐列表失败，用户: {current_user.username}, 错误: {str(e)}", "bgm")
+        return jsonify({'success': False, 'message': f'获取背景音乐列表失败: {str(e)}'})
+
+# API：上传背景音乐
+@app.route('/api/background-music', methods=['POST'])
+@login_required
+def upload_background_music():
+    """上传新的背景音乐"""
+    try:
+        # 检查文件是否存在
+        if 'file' not in request.files:
+            return jsonify({'success': False, 'message': '没有选择文件'})
+        
+        file = request.files['file']
+        name = request.form.get('name', '').strip()
+        
+        if file.filename == '':
+            return jsonify({'success': False, 'message': '没有选择文件'})
+        
+        if not name:
+            return jsonify({'success': False, 'message': '请输入音乐名称'})
+        
+        # 检查文件类型
+        allowed_extensions = {'mp3', 'wav'}
+        file_ext = file.filename.rsplit('.', 1)[1].lower()
+        if file_ext not in allowed_extensions:
+            return jsonify({'success': False, 'message': '只支持MP3和WAV格式的音频文件'})
+        
+        # 检查文件大小（5MB限制）
+        file.seek(0, 2)  # 移动到文件末尾
+        file_size = file.tell()
+        file.seek(0)  # 回到文件开头
+        
+        if file_size > 5 * 1024 * 1024:  # 5MB
+            return jsonify({'success': False, 'message': '文件大小不能超过5MB'})
+        
+        # 检查用户是否已有同名音乐
+        existing_music = BackgroundMusic.query.filter_by(
+            user_id=current_user.id, 
+            name=name
+        ).first()
+        if existing_music:
+            return jsonify({'success': False, 'message': '已存在同名的背景音乐'})
+        
+        # 创建用户音乐目录
+        user_music_dir = os.path.join('static', 'music', 'users', str(current_user.id))
+        os.makedirs(user_music_dir, exist_ok=True)
+        
+        # 生成唯一文件名
+        import uuid
+        unique_filename = f"{uuid.uuid4().hex}.{file_ext}"
+        file_path = os.path.join(user_music_dir, unique_filename)
+        
+        # 保存文件
+        file.save(file_path)
+        
+        # 创建数据库记录
+        new_music = BackgroundMusic(
+            user_id=current_user.id,
+            name=name,
+            file_path=file_path,
+            file_size=file_size,
+            file_type=file_ext,
+            is_default=False
+        )
+        
+        db.session.add(new_music)
+        db.session.commit()
+        
+        log_info(f"用户 {current_user.username} 上传背景音乐成功: {name}", "bgm")
+        
+        return jsonify({
+            'success': True, 
+            'message': '背景音乐上传成功',
+            'music': {
+                'id': new_music.id,
+                'name': new_music.name,
+                'file_path': new_music.file_path,
+                'file_size': new_music.file_size,
+                'file_type': new_music.file_type,
+                'is_default': False,
+                'created_at': new_music.created_at.isoformat()
+            }
+        })
+        
+    except Exception as e:
+        db.session.rollback()
+        log_error(f"上传背景音乐失败，用户: {current_user.username}, 错误: {str(e)}", "bgm")
+        return jsonify({'success': False, 'message': f'上传失败: {str(e)}'})
+
+# API：删除背景音乐
+@app.route('/api/background-music/<int:music_id>', methods=['DELETE'])
+@login_required
+def delete_background_music(music_id):
+    """删除背景音乐"""
+    try:
+        # 查找音乐记录
+        music = BackgroundMusic.query.filter_by(
+            id=music_id, 
+            user_id=current_user.id
+        ).first()
+        
+        if not music:
+            return jsonify({'success': False, 'message': '背景音乐不存在或无权限删除'})
+        
+        # 不能删除默认音乐
+        if music.is_default:
+            return jsonify({'success': False, 'message': '不能删除默认背景音乐'})
+        
+        # 删除文件
+        if os.path.exists(music.file_path):
+            try:
+                os.remove(music.file_path)
+                log_info(f"删除音乐文件: {music.file_path}", "bgm")
+            except Exception as e:
+                log_error(f"删除音乐文件失败: {music.file_path}, 错误: {str(e)}", "bgm")
+        
+        # 删除数据库记录
+        db.session.delete(music)
+        db.session.commit()
+        
+        log_info(f"用户 {current_user.username} 删除背景音乐: {music.name}", "bgm")
+        
+        return jsonify({'success': True, 'message': '背景音乐删除成功'})
+        
+    except Exception as e:
+        db.session.rollback()
+        log_error(f"删除背景音乐失败，用户: {current_user.username}, 音乐ID: {music_id}, 错误: {str(e)}", "bgm")
+        return jsonify({'success': False, 'message': f'删除失败: {str(e)}'})
 
 if __name__ == '__main__':
     # 确保数据库表存在

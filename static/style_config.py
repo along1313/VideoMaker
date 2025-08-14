@@ -51,6 +51,7 @@ TTS_VOICE_CONFIG = {
     "语音2（男）": "Chinese (Mandarin)_Lyrical_Voice",
     "语音3（女）": "Chinese (Mandarin)_Gentle_Senior",
     "语音4（女）": "Chinese (Mandarin)_Wise_Women",
+    "语音5（男）": "English_Diligent_Man",
 }
 
 STYLE_CONFIG = {

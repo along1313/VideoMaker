@@ -334,6 +334,7 @@ class TTSModelService:
                 "Chinese (Mandarin)_Wise_Women", 
                 "Chinese (Mandarin)_Gentle_Senior",
                 "Chinese (Mandarin)_Radio_Host",
+                "English_Diligent_Man"
             ]
         else:
             raise ValueError("Model not found")

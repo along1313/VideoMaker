@@ -177,7 +177,7 @@ async def run_work_flow_v3_with_progress(
     style: str, 
     template: str,
     voice: str = None,  # 添加语音参数
-    llm_model_str: str = "deepseek-reasoner", 
+    llm_model_str: str = "gemini-2.5-flash", 
     image_model_str: str = "image-01", 
     tts_model_str: str = "cosyvoice-v1", 
     is_prompt_mode = True,

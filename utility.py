@@ -380,59 +380,74 @@ def generate_covers(input_path, output_dir, text, **keywords):
 
 def split_text(text, min_length=8, max_length=25):
     """
-    优先按句号/问号/感叹号切分字幕，尽量不在句号中间断开
+    优化的文本切分算法：
+    1. 从开始切max_length长度的文本
+    2. 从后向前找最后一个强断句符号（。！？.!?）
+    3. 如果没有找到，再找弱断句符号（，,;；）
+    4. 如果仍然没有，从max_length-5位置强行切开
+    5. 每段开头去除标点符号
     """
-    # 预处理
-    text = ' '.join(text.replace('\n', ' ').split())
-    # 1. 先按"。！？!?切句
-    sentences = re.split(r'([。！？!?])', text)
-    # 合并标点
-    chunks = []
-    for i in range(0, len(sentences)-1, 2):
-        chunk = sentences[i] + sentences[i+1]
-        chunks.append(chunk)
-    if len(sentences) % 2 == 1:
-        chunks.append(sentences[-1])
-
-    # 2. 对每个句子做二次切分
+    # 预处理：清理换行和多余空格
+    text = ' '.join(text.replace('\n', ' ').split()).strip()
+    if not text:
+        return []
+    
     result = []
-    for chunk in chunks:
-        chunk = chunk.strip()
-        if not chunk:
-            continue
-        if len(chunk) <= max_length:
-            result.append(chunk)
-        else:
-            # 优先按逗号、顿号、分号等切分
-            subs = re.split(r'([，,、；;])', chunk)
-            temp = ''
-            for sub in subs:
-                if not sub:
-                    continue
-                if len(temp) + len(sub) <= max_length:
-                    temp += sub
-                else:
-                    if temp:
-                        result.append(temp)
-                    temp = sub
-            if temp:
-                result.append(temp)
-            # 最后还超长就强制截断
-            i = 0
-            while i < len(result):
-                seg = result[i]
-                while len(seg) > max_length:
-                    result.insert(i+1, seg[max_length:])
-                    seg = seg[:max_length]
-                result[i] = seg
-                i += 1
-    # 合并过短的
+    start = 0
+    
+    while start < len(text):
+        # 如果剩余文本长度小于等于max_length，直接作为最后一段
+        if start + max_length >= len(text):
+            last_segment = text[start:].strip()
+            # 去掉开头的标点符号
+            last_segment = re.sub(r'^[。！？.!?，,;；]+', '', last_segment).strip()
+            if last_segment:
+                result.append(last_segment)
+            break
+        
+        # 切出max_length长度的文本段
+        current_segment = text[start:start + max_length]
+        
+        # 从后向前寻找最佳切分点
+        cut_pos = -1
+        
+        # 优先寻找强断句符号
+        for i in range(len(current_segment) - 1, -1, -1):
+            if current_segment[i] in '。！？.!?':
+                cut_pos = i
+                break
+        
+        # 如果没有强断句符号，寻找弱断句符号
+        if cut_pos == -1:
+            for i in range(len(current_segment) - 1, -1, -1):
+                if current_segment[i] in '，,;；':
+                    cut_pos = i
+                    break
+        
+        # 如果仍然没有找到，从max_length-5位置强行切开
+        if cut_pos == -1:
+            cut_pos = max(0, max_length - 5)
+        
+        # 提取这一段（不包含切分点的标点符号）
+        segment = current_segment[:cut_pos].strip()
+        
+        # 去掉开头的标点符号
+        segment = re.sub(r'^[。！？.!?，,;；]+', '', segment).strip()
+        
+        if segment:
+            result.append(segment)
+        
+        # 移动到下一段的起始位置（跳过切分点的标点符号）
+        start = start + cut_pos + 1
+    
+    # 合并过短的片段
     merged = []
-    for seg in result:
-        if merged and len(merged[-1]) < min_length:
-            merged[-1] += seg
+    for segment in result:
+        if merged and len(merged[-1]) < min_length and len(merged[-1] + segment) <= max_length:
+            merged[-1] += segment
         else:
-            merged.append(seg)
+            merged.append(segment)
+    
     return [s.strip() for s in merged if s.strip()]
     
 

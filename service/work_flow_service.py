@@ -179,7 +179,7 @@ async def run_work_flow_v3_with_progress(
     voice: str = None,  # 添加语音参数
     llm_model_str: str = "gemini-2.5-flash", 
     image_model_str: str = "image-01", 
-    tts_model_str: str = "cosyvoice-v1", 
+    tts_model_str: str = "speech-2.5-turbo-preview", 
     is_prompt_mode = True,
     json_retry_times = 3,
     uploaded_title_picture_path = None,
@@ -257,15 +257,55 @@ async def run_work_flow_v3_with_progress(
         update_progress(1, '正在撰写脚本', 10)
         print(f'#####Work Flow 1 生成视频脚本json####')
         
-        # 实例化服务
-        llm = LLMService(model_str=llm_model_str)
-        script_service = ScriptService(llm)
+        # 实例化服务并添加模型降级机制
+        work_flow_record = None
+        fallback_model = "deepseek-reasoner"
+        current_model = llm_model_str
         
-        # 生成脚本
-        if is_prompt_mode == True:
-            work_flow_record = await func_and_retry_parse_json(text, script_service.generate_json_script_from_prompt, json_retry_times, task_id=task_id, generation_status=generation_status)
-        else:
-            work_flow_record = await func_and_retry_parse_json(text, script_service.generate_json_script_from_text, json_retry_times, task_id=task_id, generation_status=generation_status)
+        # 尝试使用指定的模型
+        try:
+            print(f"尝试使用LLM模型: {current_model}")
+            llm = LLMService(model_str=current_model)
+            script_service = ScriptService(llm)
+            
+            # 生成脚本
+            if is_prompt_mode == True:
+                work_flow_record = await func_and_retry_parse_json(text, script_service.generate_json_script_from_prompt, json_retry_times, task_id=task_id, generation_status=generation_status)
+            else:
+                work_flow_record = await func_and_retry_parse_json(text, script_service.generate_json_script_from_text, json_retry_times, task_id=task_id, generation_status=generation_status)
+                
+            print(f"✅ {current_model} 脚本生成成功")
+            
+        except Exception as e:
+            error_msg = str(e)
+            print(f"❌ {current_model} 模型失败: {error_msg}")
+            
+            # 如果当前模型不是降级模型，则尝试降级
+            if current_model != fallback_model:
+                print(f"🔄 自动降级到备用模型: {fallback_model}")
+                
+                try:
+                    # 重新实例化降级模型
+                    llm = LLMService(model_str=fallback_model)
+                    script_service = ScriptService(llm)
+                    
+                    # 使用降级模型重新生成脚本
+                    if is_prompt_mode == True:
+                        work_flow_record = await func_and_retry_parse_json(text, script_service.generate_json_script_from_prompt, json_retry_times, task_id=task_id, generation_status=generation_status)
+                    else:
+                        work_flow_record = await func_and_retry_parse_json(text, script_service.generate_json_script_from_text, json_retry_times, task_id=task_id, generation_status=generation_status)
+                    
+                    print(f"✅ 降级模型 {fallback_model} 脚本生成成功")
+                    current_model = fallback_model  # 更新当前使用的模型
+                    
+                except Exception as fallback_error:
+                    print(f"❌ 降级模型 {fallback_model} 也失败了: {str(fallback_error)}")
+                    # 抛出原始错误和降级错误的组合信息
+                    raise Exception(f"主模型({llm_model_str})失败: {error_msg}; 降级模型({fallback_model})也失败: {str(fallback_error)}")
+            else:
+                # 如果已经是降级模型，直接抛出错误
+                print(f"❌ 降级模型 {fallback_model} 失败，无更多备用模型")
+                raise e
         
         # 检查取消状态 - 脚本生成后
         check_cancellation()

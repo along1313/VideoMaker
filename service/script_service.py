@@ -130,7 +130,7 @@ class ScriptService:
         10. 请以JSON格式提供你的回复，结构如下：
         {{
                 "user_prompt": "...", # 用户原始提示词，不要修改
-                "title": "...", # 视频标题，不要超过10个字
+                "title": "...", # 视频标题，不要超过14个字
                 "main_character_description": [
                         {{
                             "description": "...", # 角色描述

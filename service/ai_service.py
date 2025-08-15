@@ -56,12 +56,55 @@ class LLMService:
             # 转换 OpenAI 格式的消息为 Gemini 格式
             contents = self._convert_messages_to_gemini_format(messages)
             print(f'Gemini contents: {contents}')
-            response = self.client.models.generate_content(
-                model=self.model_str,
-                contents=contents,
-                **kwargs
-            )
-            return response.text
+            
+            # 添加重试机制处理超时
+            max_retries = 2
+            for attempt in range(max_retries):
+                try:
+                    print(f'Gemini API调用尝试 {attempt + 1}/{max_retries}')
+                    start_time = time.time()
+                    
+                    response = self.client.models.generate_content(
+                        model=self.model_str,
+                        contents=contents,
+                        **kwargs
+                    )
+                    
+                    end_time = time.time()
+                    print(f'Gemini API调用成功，耗时: {end_time - start_time:.2f}秒')
+                    return response.text
+                    
+                except Exception as e:
+                    end_time = time.time()
+                    elapsed = end_time - start_time if 'start_time' in locals() else 0
+                    error_msg = str(e)
+                    
+                    print(f'Gemini API调用失败 (尝试 {attempt + 1}/{max_retries})，耗时: {elapsed:.2f}秒')
+                    print(f'错误类型: {type(e).__name__}')
+                    print(f'错误信息: {error_msg}')
+                    
+                    # 检查是否是超时或网络错误
+                    is_timeout = any(keyword in error_msg.lower() 
+                                   for keyword in ['timeout', 'timed out', 'deadline', 'network'])
+                    
+                    if is_timeout:
+                        print('🚨 检测到超时或网络错误')
+                        
+                        # 如果不是最后一次尝试，等待后重试
+                        if attempt < max_retries - 1:
+                            wait_time = (attempt + 1) * 2  # 递增等待时间
+                            print(f'等待 {wait_time} 秒后重试...')
+                            time.sleep(wait_time)
+                            continue
+                    else:
+                        # 非超时错误，直接抛出
+                        print('❌ 非超时错误，不重试')
+                        raise e
+                    
+                    # 最后一次尝试也失败了
+                    if attempt == max_retries - 1:
+                        print(f'❌ Gemini API调用失败，已重试 {max_retries} 次')
+                        raise e
         else:
             response = self.client.chat.completions.create(
                 model=self.model_str,
